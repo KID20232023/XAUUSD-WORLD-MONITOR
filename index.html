@@ -1,0 +1,180 @@
+//@version=5
+indicator("NEM INDICATOR", overlay=true, max_lines_count=500, max_boxes_count=500, max_labels_count=500)
+
+// ============================================================
+// NEM INDICATOR
+// 機能:
+//   1. 水平サポート・レジスタンスゾーン（赤/ピンク帯）
+//   2. 自動トレンドライン（黄色点線）
+//   3. 三角形パターン検出
+//   4. Buy / Sell シグナル
+//   5. エントリーボックス（緑/青）
+// ============================================================
+
+// ══════════════════════════════════════════════
+// 設定
+// ══════════════════════════════════════════════
+grp1 = "▶ サポート・レジスタンスゾーン"
+sr_lookback   = input.int(50,  "ピボット検索期間",       group=grp1)
+sr_zone_pct   = input.float(0.2,"ゾーン幅 (%)",         group=grp1, step=0.05)
+sr_max_zones  = input.int(5,   "最大ゾーン数",           group=grp1)
+
+grp2 = "▶ トレンドライン"
+tl_left       = input.int(10,  "左ピボット本数",         group=grp2)
+tl_right      = input.int(10,  "右ピボット本数",         group=grp2)
+
+grp3 = "▶ シグナル"
+sig_vol_filter = input.bool(true, "出来高フィルター使用", group=grp3)
+sig_vol_mult   = input.float(1.5, "出来高倍率",          group=grp3, step=0.1)
+
+grp4 = "▶ 表示"
+show_sr       = input.bool(true,  "S/Rゾーン表示",       group=grp4)
+show_tl       = input.bool(true,  "トレンドライン表示",   group=grp4)
+show_triangle = input.bool(true,  "三角形パターン表示",   group=grp4)
+show_signal   = input.bool(true,  "シグナル表示",         group=grp4)
+show_box      = input.bool(true,  "エントリーボックス表示", group=grp4)
+
+// ══════════════════════════════════════════════
+// カラー定義
+// ══════════════════════════════════════════════
+COL_SR_BEAR  = color.new(color.red,    70)
+COL_SR_BULL  = color.new(color.red,    70)
+COL_TL_UP    = color.new(color.yellow,  0)
+COL_TL_DOWN  = color.new(color.yellow,  0)
+COL_TRI      = color.new(color.yellow,  0)
+COL_BUY_BOX  = color.new(color.green,  75)
+COL_SELL_BOX = color.new(color.blue,   75)
+COL_BUY_LBL  = color.new(color.white,   0)
+COL_SELL_LBL = color.new(color.white,   0)
+
+// ══════════════════════════════════════════════
+// ユーティリティ
+// ══════════════════════════════════════════════
+atr     = ta.atr(14)
+vol_avg = ta.sma(volume, 20)
+
+// ══════════════════════════════════════════════
+// 1. サポート・レジスタンスゾーン
+// ══════════════════════════════════════════════
+ph = ta.pivothigh(high, sr_lookback, sr_lookback)
+pl = ta.pivotlow(low,   sr_lookback, sr_lookback)
+
+zone_width(price) =>
+    price * sr_zone_pct / 100
+
+if show_sr
+    if not na(ph)
+        w = zone_width(ph)
+        box.new(bar_index - sr_lookback, ph + w, bar_index + 20, ph - w, border_color=COL_SR_BEAR, bgcolor=COL_SR_BEAR, extend=extend.right)
+    if not na(pl)
+        w = zone_width(pl)
+        box.new(bar_index - sr_lookback, pl + w, bar_index + 20, pl - w, border_color=COL_SR_BULL, bgcolor=COL_SR_BULL, extend=extend.right)
+
+// ══════════════════════════════════════════════
+// 2. 自動トレンドライン（黄色点線）
+// ══════════════════════════════════════════════
+ph2 = ta.pivothigh(high, tl_left, tl_right)
+pl2 = ta.pivotlow(low,   tl_left, tl_right)
+
+var float ph2_prev = na
+var int   ph2_bar  = na
+var float ph2_cur  = na
+var int   ph2_cbar = na
+
+var float pl2_prev = na
+var int   pl2_bar  = na
+var float pl2_cur  = na
+var int   pl2_cbar = na
+
+if not na(ph2)
+    ph2_prev  := ph2_cur
+    ph2_bar   := ph2_cbar
+    ph2_cur   := ph2
+    ph2_cbar  := bar_index - tl_right
+
+if not na(pl2)
+    pl2_prev  := pl2_cur
+    pl2_bar   := pl2_cbar
+    pl2_cur   := pl2
+    pl2_cbar  := bar_index - tl_right
+
+if show_tl
+    if not na(ph2_prev) and not na(ph2_cur) and ph2_bar != ph2_cbar
+        line.new(ph2_bar, ph2_prev, ph2_cbar, ph2_cur, color=COL_TL_DOWN, style=line.style_dotted, width=2, extend=extend.right)
+    if not na(pl2_prev) and not na(pl2_cur) and pl2_bar != pl2_cbar
+        line.new(pl2_bar, pl2_prev, pl2_cbar, pl2_cur, color=COL_TL_UP, style=line.style_dotted, width=2, extend=extend.right)
+
+// ══════════════════════════════════════════════
+// 3. 三角形パターン検出（収束型）
+// ══════════════════════════════════════════════
+var float tri_high1 = na
+var int   tri_hbar1 = na
+var float tri_high2 = na
+var int   tri_hbar2 = na
+var float tri_low1  = na
+var int   tri_lbar1 = na
+var float tri_low2  = na
+var int   tri_lbar2 = na
+
+if not na(ph2)
+    tri_high2 := tri_high1
+    tri_hbar2 := tri_hbar1
+    tri_high1 := ph2
+    tri_hbar1 := bar_index - tl_right
+
+if not na(pl2)
+    tri_low2  := tri_low1
+    tri_lbar2 := tri_lbar1
+    tri_low1  := pl2
+    tri_lbar1 := bar_index - tl_right
+
+is_triangle = not na(tri_high1) and not na(tri_high2) and
+              not na(tri_low1)  and not na(tri_low2)  and
+              tri_high1 < tri_high2 and tri_low1 > tri_low2
+
+if show_triangle and is_triangle and not na(ph2)
+    line.new(tri_hbar2, tri_high2, tri_hbar1, tri_high1, color=COL_TRI, style=line.style_dotted, width=2)
+    line.new(tri_lbar2, tri_low2,  tri_lbar1, tri_low1,  color=COL_TRI, style=line.style_dotted, width=2)
+
+// ══════════════════════════════════════════════
+// 4. Buy / Sell シグナル + エントリーボックス
+// ══════════════════════════════════════════════
+ema_fast   = ta.ema(close, 21)
+ema_slow   = ta.ema(close, 55)
+trend_up   = ema_fast > ema_slow
+trend_down = ema_fast < ema_slow
+
+vol_ok_buy  = sig_vol_filter ? volume > vol_avg * sig_vol_mult : true
+vol_ok_sell = sig_vol_filter ? volume > vol_avg * sig_vol_mult : true
+
+buy_signal  = show_signal and trend_up   and not na(pl2) and close > open and vol_ok_buy  and low  <= pl2_cur * 1.002
+sell_signal = show_signal and trend_down and not na(ph2) and close < open and vol_ok_sell and high >= ph2_cur * 0.998
+
+if buy_signal
+    label.new(bar_index, low - atr * 0.5, "Buy", style=label.style_label_up, color=color.new(color.teal, 0), textcolor=COL_BUY_LBL, size=size.small)
+
+if sell_signal
+    label.new(bar_index, high + atr * 0.5, "Sell", style=label.style_label_down, color=color.new(color.red, 0), textcolor=COL_SELL_LBL, size=size.small)
+
+box_height = atr * 2
+
+if show_box and buy_signal
+    b1_l   = bar_index
+    b1_r   = bar_index + 10
+    b1_top = low + box_height
+    b1_bot = low
+    box.new(b1_l, b1_top, b1_r, b1_bot, border_color=color.new(color.green, 0), bgcolor=COL_BUY_BOX)
+
+if show_box and sell_signal
+    b2_l   = bar_index
+    b2_r   = bar_index + 10
+    b2_top = high
+    b2_bot = high - box_height
+    box.new(b2_l, b2_top, b2_r, b2_bot, border_color=color.new(color.blue, 0), bgcolor=COL_SELL_BOX)
+
+// ══════════════════════════════════════════════
+// 5. アラート
+// ══════════════════════════════════════════════
+alertcondition(buy_signal,  "NEM Buy Signal",  "NEM INDICATOR: Buy シグナル検出")
+alertcondition(sell_signal, "NEM Sell Signal", "NEM INDICATOR: Sell シグナル検出")
+alertcondition(not na(ph2) or not na(pl2), "New Trendline Detected", "NEM INDICATOR: New Trendline Detected")
