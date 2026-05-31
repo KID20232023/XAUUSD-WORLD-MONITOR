@@ -7,262 +7,75 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#020208;--p:#07070f;--p2:#111124;--ln:#2d2d50;
-  --tx:#fff;--sub:#9a9ab5;--g:#00e676;--r:#ff1744;
-  --o:#ff9100;--y:#ffd600;--c:#00e5ff
+--bg:#020208;--p:#07070f;--p2:#111124;--ln:#2d2d50;
+--g:#00e676;--r:#ff1744;--o:#ff9100;--y:#ffd600;--c:#00e5ff;
+--asia:#2979ff;--london:#ff9100;--us:#9c27b0;--gray:#5a5a7a;
 }
-html,body{
-  width:100%;height:100%;background:var(--bg);color:var(--tx);
-  font-family:Arial,"Hiragino Sans",Meiryo,sans-serif;overflow:hidden
-}
-#app{
-  height:100vh;
-  display:grid;
-  grid-template-rows:50px 46px 30px minmax(0,1fr) 310px 20px;
-  gap:3px;
-  padding:3px;
-}
-.card,.box{
-  background:var(--p);
-  border:1px solid var(--ln);
-  border-radius:4px;
-  overflow:hidden;
-}
-.hd{
-  height:24px;
-  padding:0 8px;
-  border-bottom:1px solid var(--ln);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#04040b;
-  color:var(--y);
-  font-size:11px;
-  font-weight:900;
-}
-#topbar{
-  display:grid;
-  grid-template-columns:245px 135px 100px 115px 1fr;
-  gap:3px;
-}
-.box{
-  padding:5px 8px;
-  display:flex;
-  align-items:center;
-}
+html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:Arial,"Hiragino Sans",Meiryo,sans-serif;overflow:hidden}
+#app{height:100vh;display:grid;grid-template-rows:50px 46px 30px minmax(0,1fr) 310px 20px;gap:3px;padding:3px}
+.card,.box{background:var(--p);border:1px solid var(--ln);border-radius:4px;overflow:hidden}
+.hd{height:24px;padding:0 8px;border-bottom:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between;background:#04040b;color:var(--y);font-size:11px;font-weight:900}
+#topbar{display:grid;grid-template-columns:245px 135px 100px 115px 1fr;gap:3px}
+.box{padding:5px 8px;display:flex;align-items:center}
 .l1{font-size:13px;font-weight:900;color:var(--y)}
-.l2,.sub{font-size:8px;color:var(--sub);font-weight:900}
+.l2,.sub{font-size:8px;color:#9a9ab5;font-weight:900}
 .clock{font-size:17px;color:var(--g);font-weight:900;font-family:monospace}
 .live{font-size:12px;color:var(--g);font-weight:900}
-.btn{
-  width:100%;height:25px;
-  background:rgba(0,230,118,.08);
-  border:1px solid var(--g);
-  color:var(--g);
-  border-radius:4px;
-  font-weight:900;
-  font-size:10px;
-  cursor:pointer;
-}
+.btn{width:100%;height:25px;background:rgba(0,230,118,.08);border:1px solid var(--g);color:var(--g);border-radius:4px;font-weight:900;font-size:10px;cursor:pointer}
+.btn.off{background:#15151d;border-color:var(--gray);color:#aaa}
 
-/* PRICE BAR */
-#tvPriceBar{
-  height:46px;
-  overflow:hidden;
-  border:1px solid var(--ln);
-  background:#050509;
-  border-radius:4px;
-}
-#tvPriceBar iframe{
-  height:46px!important;
-  min-height:46px!important;
-  max-height:46px!important;
-}
+#tvPriceBar{height:46px;overflow:hidden;border:1px solid var(--ln);background:#050509;border-radius:4px}
+#tvPriceBar iframe{height:46px!important;min-height:46px!important;max-height:46px!important}
 
-/* 2段目 ticker */
-.flowLine{
-  height:30px;
-  position:relative;
-  overflow:hidden;
-  white-space:nowrap;
-  background:#050509;
-  border:1px solid var(--ln);
-  border-radius:4px;
-}
-.flowInner{
-  position:absolute;
-  white-space:nowrap;
-  animation:flow 95s linear infinite;
-  font-size:13px;
-  font-weight:900;
-  line-height:28px;
-}
-.flowInner a{
-  text-decoration:none;
-  margin:0 10px;
-}
-@keyframes flow{
-  from{transform:translateX(100vw)}
-  to{transform:translateX(-100%)}
-}
-.normalMsg{color:#fff}
-.warnMsg{color:var(--y);font-weight:900}
-.clickLive{
-  color:var(--r);
-  font-weight:900;
-  animation:redFlash .9s infinite;
-  text-shadow:0 0 10px rgba(255,23,68,.9);
-}
-.clickNews{
-  color:var(--c);
-  font-weight:900;
-  animation:blueFlash 1s infinite;
-}
-.clickRisk{
-  color:var(--o);
-  font-weight:900;
-  animation:orangeFlash 1s infinite;
-}
+.flowLine{height:30px;position:relative;overflow:hidden;white-space:nowrap;background:#050509;border:1px solid var(--ln);border-radius:4px}
+.flowInner{position:absolute;white-space:nowrap;animation:flow 95s linear infinite;font-size:13px;font-weight:900;line-height:28px}
+.flowInner a{text-decoration:none;margin:0 10px}
+@keyframes flow{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+.clickLive{color:var(--r);animation:redFlash .9s infinite;text-shadow:0 0 10px rgba(255,23,68,.9)}
+.clickNews{color:var(--c);animation:blueFlash 1s infinite}
+.clickRisk{color:var(--o);animation:orangeFlash 1s infinite}
+.warnMsg{color:var(--y)}
+.sessionAsia{color:var(--asia)}.sessionLondon{color:var(--london)}.sessionUS{color:var(--us)}
 @keyframes redFlash{0%,100%{opacity:1}50%{opacity:.25}}
 @keyframes blueFlash{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes orangeFlash{0%,100%{opacity:1}50%{opacity:.35}}
+.flashRed{animation:redFlash .55s infinite!important;color:var(--r)!important;text-shadow:0 0 10px rgba(255,23,68,.9)}
+.flashYellow{animation:orangeFlash .9s infinite!important;color:var(--y)!important}
 
-#main{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 600px;
-  gap:3px;
-  min-height:0;
-}
-#chart{
-  height:calc(100% - 24px);
-  background:#000;
-  min-height:0;
-}
-#tv_chart{
-  width:100%;
-  height:100%;
-}
+#main{display:grid;grid-template-columns:minmax(0,1fr) 600px;gap:3px;min-height:0}
+#chart{height:calc(100% - 24px);background:#000;min-height:0}
+#tv_chart{width:100%;height:100%}
+#right{display:grid;grid-template-rows:205px minmax(0,1fr);gap:3px;min-height:0}
 
-/* 右側：SESSION + LIVE NEWSのみ */
-#right{
-  display:grid;
-  grid-template-rows:205px minmax(0,1fr);
-  gap:3px;
-  min-height:0;
-}
+.sessionBody{height:calc(100% - 24px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:6px}
+.sBox{background:var(--p2);border:1px solid var(--ln);border-radius:4px;padding:8px;overflow:hidden}
+.sTitle{font-size:16px;font-weight:900;line-height:1}
+.sState{font-size:17px;font-weight:900;margin-top:8px}
+.sLine{font-size:10px;color:#ccc;font-weight:900;margin-top:5px}
+.sCount{font-size:22px;color:var(--y);font-family:monospace;font-weight:900;margin-top:4px}
+.openAsia{border-color:var(--asia);box-shadow:0 0 12px rgba(41,121,255,.45)}
+.openLondon{border-color:var(--london);box-shadow:0 0 12px rgba(255,145,0,.45)}
+.openUS{border-color:var(--us);box-shadow:0 0 12px rgba(156,39,176,.55)}
+.closedBox{border-color:var(--gray)}
 
-/* SESSION */
-.sessionBody{
-  height:calc(100% - 24px);
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:5px;
-  padding:6px;
-}
-.sBox{
-  background:var(--p2);
-  border:1px solid var(--ln);
-  border-radius:4px;
-  padding:8px;
-  overflow:hidden;
-}
-.sLabel{font-size:10px;color:var(--sub);font-weight:900}
-.sNow{font-size:24px;color:var(--g);font-weight:900;margin-top:5px}
-.sNext{font-size:23px;color:var(--o);font-weight:900;margin-top:5px}
-.sTime{font-size:11px;color:#fff;margin-top:4px;font-weight:900}
-.sSmall{font-size:9px;color:var(--sub);font-weight:900;margin-top:8px}
-.sBigClock{font-size:19px;color:var(--c);font-family:monospace;font-weight:900;margin-top:3px}
-.sCount{font-size:22px;color:var(--y);font-family:monospace;font-weight:900;margin-top:3px}
-.sStatus{font-size:21px;color:var(--g);font-weight:900;margin-top:10px}
-.sStatusClosed{
-  font-size:21px;
-  color:var(--r);
-  font-weight:900;
-  margin-top:10px;
-  animation:redFlash .8s infinite;
-}
-
-/* LIVE NEWS 拡大 */
-.liveNewsWrap{
-  height:calc(100% - 24px);
-  display:grid;
-  grid-template-rows:32px minmax(0,1fr);
-  gap:4px;
-  padding:4px;
-}
+.liveNewsWrap{height:calc(100% - 24px);display:grid;grid-template-rows:78px 32px minmax(0,1fr);gap:4px;padding:4px}
+.videoRow{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.videoBtn{background:#0b0b12;border:1px solid var(--r);border-radius:4px;color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;animation:redFlash 1s infinite}
 .newsTabs{display:flex;gap:4px}
-.newsTab{
-  flex:1;
-  background:#10101d;
-  color:#fff;
-  border:1px solid var(--ln);
-  border-radius:4px;
-  font-size:11px;
-  font-weight:900;
-  cursor:pointer;
-}
-.newsTab.active{
-  border-color:var(--y);
-  color:var(--y);
-}
-.newsList{
-  overflow-y:auto;
-  border:1px solid var(--ln);
-  border-radius:4px;
-}
-.newsItem{
-  display:block;
-  border-bottom:1px solid #1a1a2e;
-  padding:10px;
-  font-size:12px;
-  min-height:64px;
-  cursor:pointer;
-}
+.newsTab{flex:1;background:#10101d;color:#fff;border:1px solid var(--ln);border-radius:4px;font-size:11px;font-weight:900;cursor:pointer}
+.newsTab.active{border-color:var(--y);color:var(--y)}
+.newsList{overflow-y:auto;border:1px solid var(--ln);border-radius:4px}
+.newsItem{display:grid;grid-template-columns:50px 70px 1fr 18px;gap:5px;align-items:center;border-bottom:1px solid #1a1a2e;padding:7px;font-size:11px;min-height:43px;cursor:pointer}
 .newsItem:hover{background:#16162a}
-.liveGlow{
-  border:1px solid var(--r)!important;
-  box-shadow:0 0 10px rgba(255,23,68,.55);
-  animation:redFlash 1s infinite;
-}
-.src{color:var(--c);font-weight:900}
-.tag{
-  background:rgba(0,230,118,.18);
-  color:var(--g);
-  font-size:8px;
-  padding:1px 5px;
-  border-radius:3px;
-  margin-left:4px;
-}
-.ntitle{
-  font-size:12px;
-  font-weight:900;
-  margin-top:3px;
-  line-height:1.35;
-}
-.ntime{
-  font-size:9px;
-  color:var(--sub);
-  margin-top:3px;
-}
+.newsTime{color:var(--y);font-weight:900;font-family:monospace}
+.newsSrc{background:#06315f;color:#fff;border-radius:3px;padding:2px 4px;font-size:9px;text-align:center;font-weight:900}
+.newsTitle{font-weight:900;line-height:1.25}
+.newsArrow{font-size:18px;color:#fff}
+.loading{padding:12px;color:var(--c);font-weight:900}
 
-/* CALENDAR */
-#tvEconomicCalendar{
-  height:calc(100% - 24px);
-  width:100%;
-  overflow:hidden;
-}
-#tvEconomicCalendar iframe{
-  width:100%!important;
-  height:100%!important;
-}
-.footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  color:var(--sub);
-  font-size:10px;
-  padding:0 8px;
-}
+#tvEconomicCalendar{height:calc(100% - 24px);width:100%;overflow:hidden}
+#tvEconomicCalendar iframe{width:100%!important;height:100%!important}
+.footer{display:flex;justify-content:space-between;align-items:center;color:#9a9ab5;font-size:10px;padding:0 8px}
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-thumb{background:#3a3a5c;border-radius:4px}
 </style>
@@ -272,36 +85,13 @@ html,body{
 <div id="app">
 
 <div id="topbar">
-  <div class="box">
-    <div>
-      <div class="l1">NEXUS FX WAR ROOM</div>
-      <div class="l2">XAUUSD COMMAND CENTER</div>
-    </div>
-  </div>
-
-  <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center">
-    <div class="sub">JST TIME</div>
-    <div id="clock" class="clock">--:--:--</div>
-    <div id="date" class="sub">----</div>
-  </div>
-
-  <div class="box">
-    <div>
-      <div class="sub">STATUS</div>
-      <div class="live">LIVE</div>
-    </div>
-  </div>
-
-  <div class="box">
-    <button class="btn">ALERT ON</button>
-  </div>
-
-  <div class="box">
-    <div class="sub">PRICE / LIVE NEWS / SESSION / HIGH IMPACT</div>
-  </div>
+  <div class="box"><div><div class="l1">NEXUS FX WAR ROOM</div><div class="l2">XAUUSD COMMAND CENTER</div></div></div>
+  <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center"><div class="sub">JST TIME</div><div id="clock" class="clock">--:--:--</div><div id="date" class="sub">----</div></div>
+  <div class="box"><div><div class="sub">STATUS</div><div class="live">LIVE</div></div></div>
+  <div class="box"><button id="alertBtn" class="btn" onclick="toggleAlert()">ALERT ON</button></div>
+  <div class="box"><div class="sub">PRICE / LIVE NEWS / SESSION / HIGH IMPACT</div></div>
 </div>
 
-<!-- PRICE BAR -->
 <div id="tvPriceBar">
   <div class="tradingview-widget-container">
     <div class="tradingview-widget-container__widget"></div>
@@ -326,70 +116,46 @@ html,body{
   </div>
 </div>
 
-<!-- 2段目流れるバー -->
-<div class="flowLine">
-  <div id="megaTicker" class="flowInner"></div>
-</div>
+<div class="flowLine"><div id="megaTicker" class="flowInner"></div></div>
 
 <div id="main">
   <div class="card">
     <div class="hd">TRADINGVIEW - REALTIME CHART</div>
-    <div id="chart">
-      <div id="tv_chart"></div>
-    </div>
+    <div id="chart"><div id="tv_chart"></div></div>
   </div>
 
   <div id="right">
     <div class="card">
-      <div class="hd">SESSION CENTER <span id="sessionLevel">NORMAL</span></div>
+      <div class="hd">SESSION CENTER <span>ASIA / LONDON / US</span></div>
       <div class="sessionBody">
-        <div class="sBox">
-          <div class="sLabel">CURRENT SESSION</div>
-          <div id="currentSession" class="sNow">---</div>
-          <div id="sessionTime" class="sTime">--</div>
-          <div class="sSmall">CURRENT TIME</div>
-          <div id="currentTimeInSession" class="sBigClock">--:--:-- JST</div>
-          <div class="sSmall">SESSION CLOSE</div>
-          <div id="sessionClose" class="sCount">--:--:--</div>
-        </div>
-
-        <div class="sBox">
-          <div class="sLabel">NEXT SESSION</div>
-          <div id="nextSession" class="sNext">---</div>
-          <div id="nextTime" class="sTime">--</div>
-          <div class="sSmall">OPEN IN</div>
-          <div id="openIn" class="sCount">--:--:--</div>
-        </div>
-
-        <div class="sBox">
-          <div class="sLabel">MARKET STATUS</div>
-          <div id="marketStatus" class="sStatus">---</div>
-          <div class="sSmall" id="marketCountLabel">DAILY CLOSE</div>
-          <div id="marketCount" class="sCount">--:--:--</div>
-        </div>
+        <div id="asiaBox" class="sBox"><div class="sTitle sessionAsia">ASIA SESSION</div><div id="asiaState" class="sState">---</div><div id="asiaLabel" class="sLine">---</div><div id="asiaCount" class="sCount">--:--:--</div></div>
+        <div id="londonBox" class="sBox"><div class="sTitle sessionLondon">LONDON SESSION</div><div id="londonState" class="sState">---</div><div id="londonLabel" class="sLine">---</div><div id="londonCount" class="sCount">--:--:--</div></div>
+        <div id="usBox" class="sBox"><div class="sTitle sessionUS">US SESSION</div><div id="usState" class="sState">---</div><div id="usLabel" class="sLine">---</div><div id="usCount" class="sCount">--:--:--</div></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="hd">LIVE NEWS 日本語 <span>CLICKABLE / LIVE LINKS</span></div>
+      <div class="hd">LIVE NEWS 日本語 <span>RSS AUTO UPDATE / LIVE LINKS</span></div>
       <div class="liveNewsWrap">
-        <div class="newsTabs">
-          <button class="newsTab active" onclick="renderNews('xauusd',this)">XAUUSD</button>
-          <button class="newsTab" onclick="renderNews('japan',this)">日本</button>
-          <button class="newsTab" onclick="renderNews('geo',this)">地政学</button>
+        <div class="videoRow">
+          <div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=Bloomberg+TV+Live')">🔴 BLOOMBERG<br>LIVE</div>
+          <div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=CNBC+Live')">🔴 CNBC<br>LIVE</div>
+          <div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=Kitco+Gold+Live')">🔴 KITCO<br>LIVE</div>
+          <div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=XAUUSD+live+gold')">🔴 XAUUSD<br>LIVE</div>
         </div>
-        <div id="newsList" class="newsList"></div>
+        <div class="newsTabs">
+          <button class="newsTab active" onclick="setNewsTab('xauusd',this)">XAUUSD</button>
+          <button class="newsTab" onclick="setNewsTab('japan',this)">日本</button>
+          <button class="newsTab" onclick="setNewsTab('geo',this)">地政学</button>
+        </div>
+        <div id="newsList" class="newsList"><div class="loading">RSS LOADING...</div></div>
       </div>
     </div>
   </div>
 </div>
 
 <div id="bottom" class="card">
-  <div class="hd">
-    HIGH IMPACT NEWS
-    <span>TradingView Economic Calendar / USD・JPY / High Impact</span>
-  </div>
-
+  <div class="hd">HIGH IMPACT NEWS <span>TradingView Economic Calendar / USD・JPY / High Impact</span></div>
   <div id="tvEconomicCalendar">
     <div class="tradingview-widget-container" style="height:100%;width:100%">
       <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
@@ -408,215 +174,183 @@ html,body{
   </div>
 </div>
 
-<div class="footer">
-  <span>INFORMATION ONLY. NOT INVESTMENT ADVICE.</span>
-  <span id="footerTime">UPDATE: --</span>
-  <span>AUTO UPDATE ON</span>
-</div>
-
+<div class="footer"><span>INFORMATION ONLY. NOT INVESTMENT ADVICE.</span><span id="footerTime">UPDATE: --</span><span>AUTO UPDATE ON</span></div>
 </div>
 
 <script>
-const NEWS={
+let alertOn=true;
+let currentNewsTab="xauusd";
+let sessionAlertMemory={};
+
+const RSS={
   xauusd:[
-    ["LIVE動画","XAUUSD Live / Gold Live","https://www.youtube.com/results?search_query=XAUUSD+live+gold",true],
-    ["LIVE動画","Bloomberg TV Live","https://www.youtube.com/results?search_query=Bloomberg+TV+Live",true],
-    ["LIVE動画","CNBC Live","https://www.youtube.com/results?search_query=CNBC+Live",true],
-    ["LIVE動画","Kitco Gold Live","https://www.youtube.com/results?search_query=Kitco+Gold+Live",true],
-    ["Kitco","金・銀ニュース / Gold News","https://www.kitco.com/news/gold/",false],
-    ["TradingView","XAUUSD分析 / アイデア","https://www.tradingview.com/symbols/XAUUSD/ideas/",false],
-    ["Investing","金先物 / XAUUSD関連","https://www.investing.com/commodities/gold",false]
+    "https://www.fxstreet.com/rss/news",
+    "https://www.fxstreet.com/rss/analysis",
+    "https://news.google.com/rss/search?q=XAUUSD%20OR%20gold%20price%20OR%20Kitco&hl=en-US&gl=US&ceid=US:en"
   ],
   japan:[
-    ["日本関連","USDJPY / 日本円ニュース","https://www.tradingview.com/symbols/USDJPY/news/",false],
-    ["日銀","日本銀行ニュース","https://www.boj.or.jp/",false],
-    ["LIVE動画","為替ライブ / FX Live Japan","https://www.youtube.com/results?search_query=fx+live+market+japan",true],
-    ["DXY","ドルインデックス確認","https://www.tradingview.com/symbols/TVC-DXY/",false]
+    "https://news.google.com/rss/search?q=USDJPY%20OR%20BOJ%20OR%20Japan%20yen%20OR%20%E6%97%A5%E9%8A%80&hl=ja&gl=JP&ceid=JP:ja"
   ],
   geo:[
-    ["LIVE動画","中東ニュース LIVE","https://www.youtube.com/results?search_query=middle+east+news+live",true],
-    ["Reuters","中東・紅海リスク","https://www.reuters.com/world/middle-east/",false],
-    ["Reuters","ウクライナ情勢","https://www.reuters.com/world/europe/",false],
-    ["Bloomberg","マーケットニュース","https://www.bloomberg.com/markets",false],
-    ["FED","FOMC / FED WATCH","https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html",false]
+    "https://news.google.com/rss/search?q=Middle%20East%20OR%20Red%20Sea%20OR%20Israel%20Iran%20OR%20Ukraine&hl=en-US&gl=US&ceid=US:en"
   ]
 };
 
+function openUrl(u){window.open(u,"_blank")}
+function toggleAlert(){
+  alertOn=!alertOn;
+  const b=document.getElementById("alertBtn");
+  b.textContent=alertOn?"ALERT ON":"ALERT OFF";
+  b.className=alertOn?"btn":"btn off";
+}
+function beep(key){
+  if(!alertOn)return;
+  const now=Date.now();
+  if(sessionAlertMemory[key] && now-sessionAlertMemory[key]<60000)return;
+  sessionAlertMemory[key]=now;
+  try{
+    const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();
+    o.connect(g);g.connect(a.destination);
+    o.frequency.value=920;
+    g.gain.setValueAtTime(.14,a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.18);
+    o.start();o.stop(a.currentTime+.18);
+  }catch(e){}
+}
 function pad(n){return String(n).padStart(2,"0")}
 function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
 function hms(d){return pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds())}
-function cd(ms){
-  if(ms<=0)return"00:00:00";
-  let s=Math.floor(ms/1000);
-  let h=Math.floor(s/3600);
-  s%=3600;
-  let m=Math.floor(s/60);
-  s%=60;
-  return pad(h)+":"+pad(m)+":"+pad(s);
-}
-function todayAt(h,m){
-  const d=nowJST();
-  d.setHours(h,m,0,0);
+function cd(ms){if(ms<=0)return"00:00:00";let s=Math.floor(ms/1000),h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;return pad(h)+":"+pad(m)+":"+pad(s)}
+function makeJST(date,h,m){const d=new Date(date);d.setHours(h,m,0,0);return d}
+function nextOpen(h,m){
+  const n=nowJST(),d=makeJST(n,h,m);
+  if(d<=n)d.setDate(d.getDate()+1);
+  while((d.getDay()===6&&d.getHours()>=7)||d.getDay()===0||(d.getDay()===1&&d.getHours()<7))d.setDate(d.getDate()+1);
   return d;
 }
-function nextAt(h,m){
-  const d=nowJST();
-  d.setHours(h,m,0,0);
-  if(d<nowJST())d.setDate(d.getDate()+1);
-  return d;
+function isWeekendClosed(n){
+  const day=n.getDay(),min=n.getHours()*60+n.getMinutes();
+  return (day===6&&min>=420)||day===0||(day===1&&min<420);
 }
-function nextMondayAt(h,m){
-  const d=nowJST();
-  while(d.getDay()!==1)d.setDate(d.getDate()+1);
-  d.setHours(h,m,0,0);
-  return d;
-}
-
-function getSess(n){
-  const day=n.getDay();
-  const min=n.getHours()*60+n.getMinutes();
-
-  if((day===6&&min>=7*60)||day===0||(day===1&&min<7*60)){
-    return{
-      cur:"CLOSED",
-      next:"ASIA",
-      st:"MARKET CLOSED",
-      nextT:"MON 07:00 JST",
-      sessionClose:nextMondayAt(7,0),
-      openIn:nextMondayAt(7,0),
-      closed:true
-    };
-  }
-
-  if(min>=7*60&&min<15*60){
-    return{
-      cur:"ASIA",
-      next:"LONDON",
-      st:"07:00 - 15:00 JST",
-      nextT:"15:00 JST",
-      sessionClose:todayAt(15,0),
-      openIn:todayAt(15,0),
-      closed:false
-    };
-  }
-
-  if(min>=15*60&&min<21*60){
-    return{
-      cur:"LONDON",
-      next:"US",
-      st:"15:00 - 21:00 JST",
-      nextT:"21:00 JST",
-      sessionClose:todayAt(21,0),
-      openIn:todayAt(21,0),
-      closed:false
-    };
-  }
-
-  return{
-    cur:"US",
-    next:"ASIA",
-    st:"21:00 - 07:00 JST",
-    nextT:"07:00 JST",
-    sessionClose:nextAt(7,0),
-    openIn:nextAt(7,0),
-    closed:false
+function getSession(name){
+  const n=nowJST(),min=n.getHours()*60+n.getMinutes();
+  const closed=isWeekendClosed(n);
+  const map={
+    asia:{open:420,close:900,h:7,m:0,color:"asia",box:"asiaBox"},
+    london:{open:900,close:1260,h:15,m:0,color:"london",box:"londonBox"},
+    us:{open:1260,close:1860,h:21,m:0,color:"us",box:"usBox"}
   };
+  const s=map[name];
+  let open=false, closeTime;
+  if(!closed){
+    if(name==="us") open=(min>=1260||min<420);
+    else open=(min>=s.open&&min<s.close);
+  }
+  if(open){
+    closeTime=name==="us"?makeJST(n,7,0):makeJST(n,Math.floor(s.close/60),s.close%60);
+    if(name==="us"&&min>=1260)closeTime.setDate(closeTime.getDate()+1);
+    return{open:true,label:"CLOSE IN",time:closeTime,count:closeTime-n,soon:false,imminent:false};
+  }else{
+    const op=closed&&name==="asia"?nextOpen(7,0):nextOpen(s.h,s.m);
+    const left=op-n;
+    return{open:false,label:(closed&&name==="asia")?"MON OPEN 07:00 JST":`OPEN ${pad(s.h)}:${pad(s.m)} JST`,time:op,count:left,soon:left<=3600000,imminent:left<=900000};
+  }
 }
-
-function renderNews(type,btn){
+function updateSessionBox(name,title){
+  const d=getSession(name);
+  const box=document.getElementById(name+"Box");
+  const state=document.getElementById(name+"State");
+  const label=document.getElementById(name+"Label");
+  const count=document.getElementById(name+"Count");
+  box.className="sBox";
+  state.className="sState";
+  count.className="sCount";
+  if(d.open){
+    box.classList.add(name==="asia"?"openAsia":name==="london"?"openLondon":"openUS");
+    state.textContent="OPEN";
+    label.textContent="CLOSE IN";
+  }else{
+    box.classList.add("closedBox");
+    state.textContent="CLOSED";
+    label.textContent=d.label;
+    if(d.soon)count.classList.add("flashYellow");
+    if(d.imminent){count.classList.add("flashRed");beep(name+"_open_15m")}
+  }
+  count.textContent=cd(d.count);
+}
+async function fetchRSS(url){
+  const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url);
+  const r=await fetch(api);
+  const j=await r.json();
+  return (j.items||[]).map(x=>({
+    title:x.title||"",
+    link:x.link||"#",
+    date:new Date(x.pubDate||Date.now()),
+    src:(j.feed&&j.feed.title?j.feed.title:"NEWS").slice(0,14)
+  }));
+}
+async function loadNews(type=currentNewsTab){
+  const box=document.getElementById("newsList");
+  box.innerHTML='<div class="loading">RSS LOADING...</div>';
+  try{
+    const all=(await Promise.all(RSS[type].map(fetchRSS))).flat();
+    all.sort((a,b)=>b.date-a.date);
+    const items=all.slice(0,7);
+    box.innerHTML=items.map(it=>{
+      const t=it.date.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"});
+      return `<div class="newsItem" onclick="openUrl('${it.link.replace(/'/g,"")}')">
+        <div class="newsTime">${t}</div>
+        <div class="newsSrc">${it.src}</div>
+        <div class="newsTitle">${it.title}</div>
+        <div class="newsArrow">›</div>
+      </div>`;
+    }).join("") || '<div class="loading">NO NEWS</div>';
+  }catch(e){box.innerHTML='<div class="loading">RSS RETRYING...</div>'}
+}
+function setNewsTab(type,btn){
+  currentNewsTab=type;
   document.querySelectorAll(".newsTab").forEach(b=>b.classList.remove("active"));
-  if(btn)btn.classList.add("active");
-
-  const list=NEWS[type]||NEWS.xauusd;
-
-  document.getElementById("newsList").innerHTML=list.map(n=>`
-    <div class="newsItem ${n[3]?'liveGlow':''}" onclick="window.open('${n[2]}','_blank')">
-      <div>
-        <span class="src">${n[0]}</span>
-        <span class="tag">${n[3]?'LIVE':'INFO'}</span>
-      </div>
-      <div class="ntitle">${n[1]}</div>
-      <div class="ntime">${n[3]?'クリックでLIVE動画':'クリックで情報サイト'}</div>
-    </div>
-  `).join("");
+  btn.classList.add("active");
+  loadNews(type);
 }
-
 function update(){
   const n=nowJST();
-  const ss=getSess(n);
-
   document.getElementById("clock").textContent=hms(n);
   document.getElementById("date").textContent=n.getFullYear()+"/"+pad(n.getMonth()+1)+"/"+pad(n.getDate());
   document.getElementById("footerTime").textContent="UPDATE: "+hms(n)+" JST";
-
-  document.getElementById("currentSession").textContent=ss.cur;
-  document.getElementById("sessionTime").textContent=ss.st;
-  document.getElementById("currentTimeInSession").textContent=hms(n)+" JST";
-
-  document.getElementById("sessionClose").textContent=cd(ss.sessionClose-n);
-  document.getElementById("nextSession").textContent=ss.next;
-  document.getElementById("nextTime").textContent=ss.nextT;
-  document.getElementById("openIn").textContent=cd(ss.openIn-n);
-
-  if(ss.closed){
-    document.getElementById("marketStatus").textContent="MARKET CLOSED";
-    document.getElementById("marketStatus").className="sStatusClosed";
-    document.getElementById("marketCountLabel").textContent="MARKET OPEN";
-    document.getElementById("marketCount").textContent=cd(ss.openIn-n);
-    document.getElementById("sessionLevel").textContent="CLOSED";
-  }else{
-    document.getElementById("marketStatus").textContent="MARKET OPEN";
-    document.getElementById("marketStatus").className="sStatus";
-    document.getElementById("marketCountLabel").textContent="DAILY CLOSE";
-    document.getElementById("marketCount").textContent=cd(ss.sessionClose-n);
-    document.getElementById("sessionLevel").textContent="OPEN";
-  }
-
+  updateSessionBox("asia","ASIA");
+  updateSessionBox("london","LONDON");
+  updateSessionBox("us","US");
   document.getElementById("megaTicker").innerHTML=
-    `<span class="normalMsg">🟢 CURRENT SESSION : ${ss.cur}</span>`+
-    ` | <span class="normalMsg">🟠 NEXT SESSION : ${ss.next}</span>`+
-    ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=Bloomberg+TV+Live" target="_blank">🔴 LIVE BLOOMBERG TV</a>`+
-    ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=CNBC+Live" target="_blank">🔴 LIVE CNBC LIVE</a>`+
-    ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=Kitco+Gold+Live" target="_blank">🔴 LIVE KITCO GOLD</a>`+
-    ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=XAUUSD+live+gold" target="_blank">🔴 LIVE XAUUSD ANALYSIS</a>`+
-    ` | <a class="clickNews" href="https://www.kitco.com/news/gold/" target="_blank">📰 GOLD NEWS</a>`+
-    ` | <a class="clickNews" href="https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html" target="_blank">📰 FED NEWS</a>`+
-    ` | <a class="clickNews" href="https://www.tradingview.com/symbols/USDJPY/news/" target="_blank">📰 USDJPY NEWS</a>`+
-    ` | <a class="clickRisk" href="https://www.reuters.com/world/middle-east/" target="_blank">🟠 MIDDLE EAST RISK</a>`+
-    ` | <a class="clickRisk" href="https://www.reuters.com/world/middle-east/" target="_blank">🟠 RED SEA RISK</a>`+
-    ` | <a class="clickRisk" href="https://www.reuters.com/world/middle-east/" target="_blank">🟠 ISRAEL - IRAN NEWS</a>`+
-    ` | <a class="clickRisk" href="https://www.reuters.com/world/europe/" target="_blank">🟠 UKRAINE RISK</a>`+
-    ` | <span class="warnMsg">🟡 FED WATCH</span>`+
-    ` | <span class="warnMsg">🟡 DXY WATCH</span>`+
-    ` | <span class="warnMsg">🟡 US TREASURY WATCH</span>`+
-    ` | <span class="normalMsg">🟢 SAFE HAVEN FLOW</span>`;
+    `<span class="sessionAsia">ASIA ${document.getElementById("asiaState").textContent} ${document.getElementById("asiaCount").textContent}</span>`+
+    ` | <span class="sessionLondon">LONDON ${document.getElementById("londonState").textContent} ${document.getElementById("londonCount").textContent}</span>`+
+    ` | <span class="sessionUS">US ${document.getElementById("usState").textContent} ${document.getElementById("usCount").textContent}</span>`+
+    ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=Bloomberg+TV+Live" target="_blank">🔴 LIVE BLOOMBERG</a>`+
+    ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=CNBC+Live" target="_blank">🔴 LIVE CNBC</a>`+
+    ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=Kitco+Gold+Live" target="_blank">🔴 LIVE KITCO</a>`+
+    ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=XAUUSD+live+gold" target="_blank">🔴 LIVE XAUUSD</a>`+
+    ` | <a class="clickNews" href="javascript:setNewsTabFromTicker('xauusd')">🟡 XAUUSD NEWS</a>`+
+    ` | <a class="clickNews" href="javascript:setNewsTabFromTicker('xauusd')">🟡 FED NEWS</a>`+
+    ` | <a class="clickNews" href="javascript:setNewsTabFromTicker('japan')">🟢 DXY WATCH</a>`+
+    ` | <a class="clickNews" href="javascript:setNewsTabFromTicker('japan')">🔵 US TREASURY WATCH</a>`+
+    ` | <a class="clickRisk" href="javascript:setNewsTabFromTicker('geo')">🟠 MIDDLE EAST RISK</a>`+
+    ` | <a class="clickRisk" href="javascript:setNewsTabFromTicker('geo')">🟠 RED SEA RISK</a>`+
+    ` | <a class="clickRisk" href="javascript:setNewsTabFromTicker('geo')">🟠 ISRAEL - IRAN NEWS</a>`+
+    ` | <a class="clickRisk" href="javascript:setNewsTabFromTicker('geo')">🟠 UKRAINE RISK</a>`+
+    ` | <span class="warnMsg">🟢 SAFE HAVEN FLOW</span>`;
 }
-
+function setNewsTabFromTicker(type){
+  const btn=[...document.querySelectorAll(".newsTab")].find(b=>b.textContent.includes(type==="xauusd"?"XAUUSD":type==="japan"?"日本":"地政学"));
+  setNewsTab(type,btn);
+}
 function loadChart(){
   const s=document.createElement("script");
   s.src="https://s3.tradingview.com/tv.js";
-
   s.onload=function(){
     new TradingView.widget({
-      autosize:true,
-      symbol:"OANDA:XAUUSD",
-      interval:"15",
-      timezone:"Asia/Tokyo",
-      theme:"dark",
-      style:"1",
-      locale:"ja",
-      container_id:"tv_chart",
-      hide_top_toolbar:false,
-      hide_side_toolbar:false,
-      allow_symbol_change:true,
-      hide_volume:true,
-      withdateranges:true,
-      disabled_features:[
-        "volume_force_overlay",
-        "create_volume_indicator_by_default",
-        "header_compare",
-        "header_screenshot"
-      ],
+      autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",
+      hide_top_toolbar:false,hide_side_toolbar:false,allow_symbol_change:true,hide_volume:true,withdateranges:true,
+      disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],
       overrides:{
         "paneProperties.background":"#000000",
         "paneProperties.vertGridProperties.color":"rgba(255,255,255,0.03)",
@@ -632,15 +366,13 @@ function loadChart(){
       }
     });
   };
-
   document.body.appendChild(s);
 }
-
-renderNews("xauusd",document.querySelector(".newsTab"));
 update();
+loadNews();
 setInterval(update,1000);
+setInterval(()=>loadNews(currentNewsTab),60000);
 loadChart();
 </script>
-
 </body>
 </html>
