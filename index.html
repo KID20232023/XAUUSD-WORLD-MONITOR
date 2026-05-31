@@ -21,7 +21,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 
 #flowBox{display:grid;grid-template-rows:21px 21px;background:#050509;overflow:hidden}
 .flowLine{position:relative;overflow:hidden;white-space:nowrap}
-.flowInner{position:absolute;white-space:nowrap;animation:flow 100s linear infinite;font-size:13px;font-weight:900;line-height:21px}
+.flowInner{position:absolute;white-space:nowrap;animation:flow 95s linear infinite;font-size:13px;font-weight:900;line-height:21px}
 @keyframes flow{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
 .up{color:var(--g)}.down{color:var(--r)}.warn{color:var(--o)}.red{color:var(--r)}.yellow{color:var(--y)}.cyan{color:var(--c)}
 .flashText{animation:flashText .55s infinite}
@@ -79,6 +79,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 
 <div id="main">
   <div class="card"><div class="hd">TRADINGVIEW - REALTIME CHART</div><div id="chart"><div id="tv_chart"></div></div></div>
+
   <div id="right">
     <div class="card">
       <div class="hd">SESSION CENTER <span id="sessionLevel">NORMAL</span></div>
@@ -88,6 +89,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
         <div class="sBox"><div class="sLabel">TIME LEFT</div><div id="sessionCountdown" class="sCount">--:--:--</div><div id="sessionWarn" class="sWarn">NORMAL</div></div>
       </div>
     </div>
+
     <div class="card">
       <div class="hd">XAUUSD COMMAND</div>
       <div class="cmdScroll"><div class="cmdGrid">
@@ -97,10 +99,15 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
         <div class="panel"><div class="biasTitle sell">PRICE ACTION ALERT</div><div id="rapidMain" class="rapidMain">NORMAL</div><div id="rapidSub" class="rapidSub">MONITORING</div></div>
       </div></div>
     </div>
+
     <div class="card">
       <div class="hd">LIVE NEWS</div>
       <div class="liveNewsWrap">
-        <div class="newsTabs"><button class="newsTab active" onclick="renderNews('xauusd',this)">XAUUSD</button><button class="newsTab" onclick="renderNews('geo',this)">GEO</button><button class="newsTab" onclick="renderNews('fed',this)">FED</button></div>
+        <div class="newsTabs">
+          <button class="newsTab active" onclick="renderNews('xauusd',this)">XAUUSD</button>
+          <button class="newsTab" onclick="renderNews('geo',this)">GEO</button>
+          <button class="newsTab" onclick="renderNews('fed',this)">FED</button>
+        </div>
         <div id="newsList" class="newsList"></div>
       </div>
     </div>
@@ -126,7 +133,7 @@ const SYMBOLS=[
 {name:"GBPJPY",symbol:"GBP/JPY",dec:3,alert:0.50},
 {name:"BTCUSD",symbol:"BTC/USD",dec:0,alert:500},
 {name:"ETHUSD",symbol:"ETH/USD",dec:0,alert:80},
-{name:"NAS100",symbol:"IXIC",dec:2,alert:120}
+{name:"NAS100",symbol:"NDX",dec:2,alert:120}
 ];
 
 let EVENTS=[
@@ -143,11 +150,12 @@ let EVENTS=[
 ];
 
 const STATIC_NEWS={
-xauusd:[["Bloomberg","XAUUSD","Gold price holds near highs as USD weakens on Fed cut expectations","https://www.bloomberg.com/markets/commodities"],["Reuters","XAUUSD","XAUUSD climbs with safe haven demand and USD movement","https://www.reuters.com/markets/commodities/"],["Kitco","XAUUSD","Gold analysis: bullish momentum continues - key levels to watch","https://www.kitco.com/news/gold/"]],
+xauusd:[["Bloomberg","XAUUSD","Gold price holds near highs as USD weakens on Fed cut expectations","https://www.bloomberg.com/markets/commodities"],["Reuters","XAUUSD","XAUUSD climbs with safe haven demand and USD movement","https://www.reuters.com/markets/commodities/"],["Kitco","XAUUSD","Gold analysis bullish momentum continues - key levels to watch","https://www.kitco.com/news/gold/"]],
 geo:[["Reuters","GEO","Middle East risk supports safe haven demand","https://www.reuters.com/world/middle-east/"],["BBC","GEO","Red Sea shipping risk keeps commodity prices elevated","https://www.bbc.com/news/world/middle_east"]],
-fed:[["Bloomberg","FED","Powell speech preview - markets price rate cuts","https://www.bloomberg.com/economy"],["Reuters","FED","US CPI data is critical for FOMC path","https://www.reuters.com/markets/us/"]]
+fed:[["Bloomberg","FED","Powell speech preview markets price rate cuts","https://www.bloomberg.com/economy"],["Reuters","FED","US CPI data is critical for FOMC path","https://www.reuters.com/markets/us/"]]
 };
 
+function cleanText(t){return String(t||"").replace(/[^\x20-\x7E]/g,"").replace(/\s+/g," ").trim()}
 function pad(n){return String(n).padStart(2,"0")}
 function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
 function hms(d){return pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds())}
@@ -198,23 +206,33 @@ function detectRapid(){
 
 async function fetchEvents(){
  try{
-  const url="https://api.tradingeconomics.com/calendar/country/united%20states?c="+TE_CLIENT+":"+TE_SECRET+"&format=json";
+  const n=nowJST();
+  const from=new Date(n.getFullYear(),n.getMonth(),1).toISOString().slice(0,10);
+  const to=new Date(n.getFullYear(),n.getMonth()+1,0).toISOString().slice(0,10);
+  const url="https://api.tradingeconomics.com/calendar/country/united%20states/"+from+"/"+to+"?c="+TE_CLIENT+":"+TE_SECRET+"&importance=2&values=true&f=json";
   const r=await fetch(url),data=await r.json();
   const keys=["Payrolls","Inflation Rate","Core Inflation","Producer Price","JOLTS","ADP","Fed Interest","PCE","Retail Sales","ISM"];
   const mapped=data.filter(x=>keys.some(k=>(x.Event||"").toLowerCase().includes(k.toLowerCase()))).map(x=>{
    const dt=new Date(x.Date);
-   return{n:(x.Event||"US EVENT").toUpperCase().replace("NON FARM PAYROLLS","US NFP"),d:x.Event||"US Event",date:dt.toLocaleDateString("en-CA",{timeZone:"Asia/Tokyo"}),time:dt.toLocaleTimeString("en-GB",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"}),imp:"5/5",fc:x.Forecast||"CHECK",pv:x.Previous||"CHECK",res:x.Actual||"PENDING",effect:"HIGH"};
+   let name=String(x.Event||"US EVENT").toUpperCase();
+   if(name.includes("NON FARM"))name="US NFP";
+   if(name.includes("INFLATION RATE"))name="US CPI";
+   if(name.includes("CORE INFLATION"))name="CORE CPI";
+   if(name.includes("PRODUCER"))name="US PPI";
+   if(name.includes("FED INTEREST"))name="FOMC";
+   if(name.includes("PERSONAL CONSUMPTION"))name="PCE";
+   return{n:name,d:cleanText(x.Event||"US Event"),date:dt.toLocaleDateString("en-CA",{timeZone:"Asia/Tokyo"}),time:dt.toLocaleTimeString("en-GB",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"}),imp:String(x.Importance||"5")+"/5",fc:x.ForecastValue||x.Forecast||"CHECK",pv:x.PreviousValue||x.Previous||"CHECK",res:x.ActualValue||x.Actual||"PENDING",effect:"HIGH"};
   });
   if(mapped.length)EVENTS=mapped;
  }catch(e){}
 }
 
 async function fetchNews(type){
- const query=type==="xauusd"?"gold XAUUSD dollar safe haven":type==="geo"?"Middle East Red Sea Iran Israel oil gold":"Federal Reserve Powell CPI FOMC gold";
+ const query=type==="xauusd"?"gold XAUUSD dollar safe haven sourcelang:english":type==="geo"?"Middle East Red Sea Iran Israel oil gold sourcelang:english":"Federal Reserve Powell CPI FOMC gold sourcelang:english";
  try{
   const url="https://api.gdeltproject.org/api/v2/doc/doc?query="+encodeURIComponent(query)+"&mode=ArtList&format=json&maxrecords=20&sort=HybridRel";
   const r=await fetch(url),d=await r.json();
-  newsCache[type]=(d.articles||[]).map(a=>[a.sourceCommonName||"NEWS",type==="xauusd"?"XAUUSD":type==="geo"?"GEO":"FED",a.title,a.url]).slice(0,15);
+  newsCache[type]=(d.articles||[]).filter(a=>a.title&&/^[\x20-\x7E]+$/.test(a.title)).map(a=>[cleanText(a.sourceCommonName||"NEWS"),type==="xauusd"?"XAUUSD":type==="geo"?"GEO":"FED",cleanText(a.title),a.url]).slice(0,15);
   if(activeNews===type)renderNews(type,document.querySelector(".newsTab.active"));
  }catch(e){}
 }
@@ -233,8 +251,8 @@ function update(){
  else{document.getElementById("currentSession").className="sNow";document.getElementById("tradeState").textContent="MARKET OPEN";document.getElementById("tradeState").className="sWarn";document.getElementById("sessionWarn").textContent=sessionLeft<=900000?"OPEN IN 15M":"NORMAL";document.getElementById("sessionWarn").className=sessionLeft<=900000?"sWarn closed":"sWarn";document.getElementById("sessionLevel").textContent=sessionLeft<=900000?"WARNING":"NORMAL"}
 
  const upcoming=EVENTS.map(e=>({...e,dt:evDate(e)})).filter(e=>e.dt>n).sort((a,b)=>a.dt-b.dt);
- document.getElementById("eventList").innerHTML=upcoming.map(e=>{const l=e.dt-n,cls=l<=15*60000?"warn15":l<=60*60000?"warn60":l<=24*3600*1000?"warn24":"";return '<div class="evCard '+cls+'"><div class="evName">'+e.n+'</div><div class="evDesc">'+e.d+'</div><div class="evDate">'+e.date+" "+e.time+" JST</div><div class='evRow'><span>IMPACT</span><span>"+e.imp+"</span></div><div class='evRow'><span>FORECAST</span><span>"+e.fc+"</span></div><div class='evRow'><span>PREVIOUS</span><span>"+e.pv+"</span></div><div class='evRow'><span>ACTUAL</span><span>"+e.res+"</span></div><div class='evRow'><span>XAU IMPACT</span><span>"+e.effect+"</span></div><div class='count'>"+cd(l)+"</div></div>"}).join("");
- const evText=upcoming.map(e=>e.n+" LEFT "+cd(e.dt-n)+" FORECAST "+e.fc+" PREVIOUS "+e.pv).join(" | ");
+ document.getElementById("eventList").innerHTML=upcoming.map(e=>{const l=e.dt-n,cls=l<=15*60000?"warn15":l<=60*60000?"warn60":l<=24*3600*1000?"warn24":"";return '<div class="evCard '+cls+'"><div class="evName">'+cleanText(e.n)+'</div><div class="evDesc">'+cleanText(e.d)+'</div><div class="evDate">'+e.date+" "+e.time+" JST</div><div class='evRow'><span>IMPACT</span><span>"+e.imp+"</span></div><div class='evRow'><span>FORECAST</span><span>"+e.fc+"</span></div><div class='evRow'><span>PREVIOUS</span><span>"+e.pv+"</span></div><div class='evRow'><span>ACTUAL</span><span>"+e.res+"</span></div><div class='evRow'><span>XAU IMPACT</span><span>"+e.effect+"</span></div><div class='count'>"+cd(l)+"</div></div>"}).join("");
+ const evText=upcoming.map(e=>cleanText(e.n)+" LEFT "+cd(e.dt-n)+" FORECAST "+e.fc+" PREVIOUS "+e.pv).join(" | ");
  document.getElementById("marketText").innerHTML=priceFlow+" | XAUUSD PRICE ACTION WATCH | CURRENT SESSION "+ss.cur+" | NEXT SESSION "+ss.next+" | TIME LEFT "+cd(sessionLeft);
  document.getElementById("alertText").innerHTML=evText+" | MIDDLE EAST HIGH RISK | RED SEA WATCH | FED WATCH | LIVE NEWS UPDATE";
 }
@@ -245,7 +263,7 @@ renderNews("xauusd",document.querySelector(".newsTab"));
 fetchPrices();fetchEvents();fetchNews("xauusd");fetchNews("geo");fetchNews("fed");update();
 setInterval(update,1000);
 setInterval(fetchPrices,5000);
-setInterval(fetchEvents,60000);
+setInterval(fetchEvents,30000);
 setInterval(()=>{fetchNews("xauusd");fetchNews("geo");fetchNews("fed")},60000);
 </script>
 </body>
