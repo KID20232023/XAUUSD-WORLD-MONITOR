@@ -20,9 +20,8 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:Ari
 .btn{width:100%;height:25px;background:rgba(0,230,118,.08);border:1px solid var(--g);color:var(--g);border-radius:4px;font-weight:900;font-size:10px;cursor:pointer}
 .btn.off{background:#15151d;border-color:var(--gray);color:#aaa}
 
-#fixedPriceBar{height:46px;display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
-.qBox{background:#050509;border:1px solid var(--ln);border-radius:4px;overflow:hidden}
-.qBox iframe{width:100%!important;height:46px!important}
+#tvPriceBar{height:46px;overflow:hidden;border:1px solid var(--ln);background:#050509;border-radius:4px}
+#tvPriceBar iframe{height:46px!important;min-height:46px!important;max-height:46px!important}
 
 .flowLine{height:30px;position:relative;overflow:hidden;white-space:nowrap;background:#050509;border:1px solid var(--ln);border-radius:4px}
 .flowInner{position:absolute;white-space:nowrap;animation:flow 95s linear infinite;font-size:13px;font-weight:900;line-height:28px}
@@ -32,12 +31,17 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:Ari
 .clickNews{color:var(--c);animation:blueFlash 1s infinite}
 .clickRisk{color:var(--o);animation:orangeFlash 1s infinite}
 .warnMsg{color:var(--y)}
-.sessionAsia{color:var(--asia)}.sessionLondon{color:var(--london)}.sessionUS{color:var(--us)}
+.sessionAsia{color:var(--asia);text-shadow:0 0 8px rgba(41,121,255,.8)}
+.sessionLondon{color:var(--london);text-shadow:0 0 8px rgba(255,145,0,.8)}
+.sessionUS{color:var(--us);text-shadow:0 0 8px rgba(156,39,176,.9)}
+
 @keyframes redFlash{0%,100%{opacity:1}50%{opacity:.25}}
-@keyframes blueFlash{0%,100%{opacity:1}50%{opacity:.35}}
-@keyframes orangeFlash{0%,100%{opacity:1}50%{opacity:.35}}
-.flashRed{animation:redFlash .55s infinite!important;color:var(--r)!important;text-shadow:0 0 10px rgba(255,23,68,.9)}
-.flashYellow{animation:orangeFlash .9s infinite!important;color:var(--y)!important}
+@keyframes yellowFlash{0%,100%{opacity:1}50%{opacity:.35}}
+
+.flashRed{animation:redFlash .55s infinite!important;color:var(--r)!important;text-shadow:0 0 12px rgba(255,23,68,.95)}
+.flashYellow{animation:yellowFlash .9s infinite!important;color:var(--y)!important;text-shadow:0 0 10px rgba(255,214,0,.9)}
+.boxRed{border-color:var(--r)!important;box-shadow:0 0 15px rgba(255,23,68,.95)!important;animation:redFlash .55s infinite!important}
+.boxYellow{border-color:var(--y)!important;box-shadow:0 0 14px rgba(255,214,0,.85)!important;animation:yellowFlash .9s infinite!important}
 
 #main{display:grid;grid-template-columns:minmax(0,1fr) 600px;gap:3px;min-height:0}
 #chart{height:calc(100% - 24px);background:#000}
@@ -50,11 +54,12 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:Ari
 .sState{font-size:17px;font-weight:900;margin-top:8px}
 .sLine{font-size:22px;color:#ccc;font-weight:900;margin-top:5px;line-height:1}
 .sCount{font-size:22px;color:var(--y);font-family:monospace;font-weight:900;margin-top:5px;line-height:1}
-.openAsia{border-color:var(--asia);box-shadow:0 0 14px rgba(41,121,255,.65)}
-.openAsia .sState,.openAsia .sLine,.openAsia .sCount{color:var(--asia);text-shadow:0 0 10px rgba(41,121,255,.9)}
-.openLondon{border-color:var(--london);box-shadow:0 0 14px rgba(255,145,0,.65)}
-.openLondon .sState,.openLondon .sLine,.openLondon .sCount{color:var(--london);text-shadow:0 0 10px rgba(255,145,0,.9)}
-.openUS{border-color:var(--us);box-shadow:0 0 14px rgba(156,39,176,.75)}
+
+.openAsia{border-color:var(--asia);box-shadow:0 0 14px rgba(41,121,255,.75)}
+.openAsia .sState,.openAsia .sLine,.openAsia .sCount{color:var(--asia);text-shadow:0 0 10px rgba(41,121,255,.95)}
+.openLondon{border-color:var(--london);box-shadow:0 0 14px rgba(255,145,0,.75)}
+.openLondon .sState,.openLondon .sLine,.openLondon .sCount{color:var(--london);text-shadow:0 0 10px rgba(255,145,0,.95)}
+.openUS{border-color:var(--us);box-shadow:0 0 14px rgba(156,39,176,.85)}
 .openUS .sState,.openUS .sLine,.openUS .sCount{color:var(--us);text-shadow:0 0 10px rgba(156,39,176,.95)}
 .closedBox{border-color:var(--gray)}
 .closedBox .sState{color:#ccc}
@@ -90,16 +95,30 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:Ari
 <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center"><div class="sub">JST TIME</div><div id="clock" class="clock">--:--:--</div><div id="date" class="sub">----</div></div>
 <div class="box"><div><div class="sub">STATUS</div><div class="live">LIVE</div></div></div>
 <div class="box"><button id="alertBtn" class="btn" onclick="toggleAlert()">ALERT ON</button></div>
-<div class="box"><div class="sub">PRICE FIXED / LIVE NEWS / SESSION / HIGH IMPACT</div></div>
+<div class="box"><div class="sub">PRICE / LIVE NEWS / SESSION / HIGH IMPACT</div></div>
 </div>
 
-<div id="fixedPriceBar">
-<div class="qBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"OANDA:XAUUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div>
-<div class="qBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"FX:USDJPY","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div>
-<div class="qBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"FX:EURUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div>
-<div class="qBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"FX:GBPUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div>
-<div class="qBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"BINANCE:BTCUSDT","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div>
-<div class="qBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"BINANCE:ETHUSDT","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div>
+<div id="tvPriceBar">
+<div class="tradingview-widget-container">
+<div class="tradingview-widget-container__widget"></div>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{
+"symbols":[
+{"proName":"OANDA:XAUUSD","title":"XAUUSD"},
+{"proName":"FX:USDJPY","title":"USDJPY"},
+{"proName":"FX:EURUSD","title":"EURUSD"},
+{"proName":"FX:GBPUSD","title":"GBPUSD"},
+{"proName":"BINANCE:BTCUSDT","title":"BTCUSD"},
+{"proName":"BINANCE:ETHUSDT","title":"ETHUSD"}
+],
+"showSymbolLogo":false,
+"isTransparent":true,
+"displayMode":"regular",
+"colorTheme":"dark",
+"locale":"ja"
+}
+</script>
+</div>
 </div>
 
 <div class="flowLine"><div id="megaTicker" class="flowInner"></div></div>
@@ -198,20 +217,33 @@ const d=getSession(name),box=document.getElementById(name+"Box"),state=document.
 box.className="sBox";state.className="sState";label.className="sLine";count.className="sCount";
 if(d.open){
 box.classList.add(name==="asia"?"openAsia":name==="london"?"openLondon":"openUS");
-state.textContent="OPEN";label.textContent="CLOSE IN"
+state.textContent="OPEN";label.textContent="CLOSE IN";
 }else{
 box.classList.add("closedBox");
 state.textContent="CLOSED";label.textContent=d.label;
-if(d.soon){label.classList.add("flashYellow");count.classList.add("flashYellow")}
-if(d.imminent){label.classList.add("flashRed");count.classList.add("flashRed");beep(name+"_open_15m")}
+if(d.soon){box.classList.add("boxYellow");label.classList.add("flashYellow");count.classList.add("flashYellow")}
+if(d.imminent){box.classList.add("boxRed");label.classList.add("flashRed");count.classList.add("flashRed");beep(name+"_open_15m")}
 }
 count.textContent=cd(d.count)
 }
 
-async function fetchRSS(url){const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url);const r=await fetch(api);const j=await r.json();return(j.items||[]).map(x=>({title:x.title||"",link:x.link||"#",date:new Date(x.pubDate||Date.now()),src:(j.feed&&j.feed.title?j.feed.title:"NEWS").slice(0,14)}))}
+async function fetchRSS(url){
+const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url);
+const r=await fetch(api);
+const j=await r.json();
+return(j.items||[]).map(x=>({title:x.title||"",link:x.link||"#",date:new Date(x.pubDate||Date.now()),src:(j.feed&&j.feed.title?j.feed.title:"NEWS").slice(0,14)}))
+}
 async function loadNews(type=currentNewsTab){
 const box=document.getElementById("newsList");box.innerHTML='<div class="loading">RSS LOADING...</div>';
-try{const all=(await Promise.all(RSS[type].map(fetchRSS))).flat();all.sort((a,b)=>b.date-a.date);const items=all.slice(0,7);box.innerHTML=items.map(it=>{const t=it.date.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"});return`<div class="newsItem" onclick="openUrl('${it.link.replace(/'/g,"")}')"><div class="newsTime">${t}</div><div class="newsSrc">${it.src}</div><div class="newsTitle">${it.title}</div><div class="newsArrow">›</div></div>`}).join("")||'<div class="loading">NO NEWS</div>'}catch(e){box.innerHTML='<div class="loading">RSS RETRYING...</div>'}
+try{
+const all=(await Promise.all(RSS[type].map(fetchRSS))).flat();
+all.sort((a,b)=>b.date-a.date);
+const items=all.slice(0,7);
+box.innerHTML=items.map(it=>{
+const t=it.date.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"});
+return`<div class="newsItem" onclick="openUrl('${it.link.replace(/'/g,"")}')"><div class="newsTime">${t}</div><div class="newsSrc">${it.src}</div><div class="newsTitle">${it.title}</div><div class="newsArrow">›</div></div>`
+}).join("")||'<div class="loading">NO NEWS</div>'
+}catch(e){box.innerHTML='<div class="loading">RSS RETRYING...</div>'}
 }
 function setNewsTab(type,btn){currentNewsTab=type;document.querySelectorAll(".newsTab").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");loadNews(type)}
 function setNewsTabFromTicker(type){const text=type==="xauusd"?"XAUUSD":type==="japan"?"日本":"地政学";const btn=[...document.querySelectorAll(".newsTab")].find(b=>b.textContent.includes(text));setNewsTab(type,btn)}
@@ -222,10 +254,11 @@ document.getElementById("clock").textContent=hms(n);
 document.getElementById("date").textContent=n.getFullYear()+"/"+pad(n.getMonth()+1)+"/"+pad(n.getDate());
 document.getElementById("footerTime").textContent="UPDATE: "+hms(n)+" JST";
 updateSessionBox("asia");updateSessionBox("london");updateSessionBox("us");
+
 document.getElementById("megaTicker").innerHTML=
-`<span class="sessionAsia">ASIA ${document.getElementById("asiaState").textContent} ${document.getElementById("asiaCount").textContent}</span>`+
-` | <span class="sessionLondon">LONDON ${document.getElementById("londonState").textContent} ${document.getElementById("londonCount").textContent}</span>`+
-` | <span class="sessionUS">US ${document.getElementById("usState").textContent} ${document.getElementById("usCount").textContent}</span>`+
+`<span class="sessionAsia">ASIA SESSION OPEN 07:00 / CLOSE 15:00 / ${document.getElementById("asiaState").textContent} / ${document.getElementById("asiaCount").textContent}</span>`+
+` | <span class="sessionLondon">LONDON SESSION OPEN 15:00 / CLOSE 21:00 / ${document.getElementById("londonState").textContent} / ${document.getElementById("londonCount").textContent}</span>`+
+` | <span class="sessionUS">US SESSION OPEN 21:00 / CLOSE 07:00 / ${document.getElementById("usState").textContent} / ${document.getElementById("usCount").textContent}</span>`+
 ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=Bloomberg+TV+Live" target="_blank">🔴 LIVE BLOOMBERG</a>`+
 ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=CNBC+Live" target="_blank">🔴 LIVE CNBC</a>`+
 ` | <a class="clickLive" href="https://www.youtube.com/results?search_query=Kitco+Gold+Live" target="_blank">🔴 LIVE KITCO</a>`+
@@ -242,7 +275,26 @@ document.getElementById("megaTicker").innerHTML=
 
 function loadChart(){
 const s=document.createElement("script");s.src="https://s3.tradingview.com/tv.js";
-s.onload=function(){new TradingView.widget({autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",hide_top_toolbar:false,hide_side_toolbar:false,allow_symbol_change:true,hide_volume:true,withdateranges:true,disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],overrides:{"paneProperties.background":"#000000","paneProperties.vertGridProperties.color":"rgba(255,255,255,0.03)","paneProperties.horzGridProperties.color":"rgba(255,255,255,0.03)","mainSeriesProperties.candleStyle.upColor":"#4D6CFF","mainSeriesProperties.candleStyle.downColor":"#FF5A5A","mainSeriesProperties.candleStyle.borderUpColor":"#4D6CFF","mainSeriesProperties.candleStyle.borderDownColor":"#FF5A5A","mainSeriesProperties.candleStyle.wickUpColor":"#8C96A8","mainSeriesProperties.candleStyle.wickDownColor":"#8C96A8","mainSeriesProperties.priceLineColor":"#FF3B3B","scalesProperties.textColor":"#BFC2CC"}})};
+s.onload=function(){
+new TradingView.widget({
+autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",
+hide_top_toolbar:false,hide_side_toolbar:false,allow_symbol_change:true,hide_volume:true,withdateranges:true,
+disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],
+overrides:{
+"paneProperties.background":"#000000",
+"paneProperties.vertGridProperties.color":"rgba(255,255,255,0.03)",
+"paneProperties.horzGridProperties.color":"rgba(255,255,255,0.03)",
+"mainSeriesProperties.candleStyle.upColor":"#4D6CFF",
+"mainSeriesProperties.candleStyle.downColor":"#FF5A5A",
+"mainSeriesProperties.candleStyle.borderUpColor":"#4D6CFF",
+"mainSeriesProperties.candleStyle.borderDownColor":"#FF5A5A",
+"mainSeriesProperties.candleStyle.wickUpColor":"#8C96A8",
+"mainSeriesProperties.candleStyle.wickDownColor":"#8C96A8",
+"mainSeriesProperties.priceLineColor":"#FF3B3B",
+"scalesProperties.textColor":"#BFC2CC"
+}
+})
+};
 document.body.appendChild(s)
 }
 
