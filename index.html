@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>NEXUS FX WAR ROOM</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -17,13 +18,14 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 #topbar{display:grid;grid-template-columns:260px 150px 120px 120px 1fr;gap:4px}
 .box{background:var(--p);border:1px solid var(--ln);border-radius:5px;padding:6px 9px;display:flex;align-items:center;overflow:hidden}
 .logoImg{width:36px;height:36px;border-radius:50%;object-fit:cover;filter:drop-shadow(0 0 8px #ffd600);animation:logoPulse 3s infinite}
-@keyframes logoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.06)}}
+@keyframes logoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.65;transform:scale(1.06)}}
 .logoMain{font-size:15px;font-weight:900;color:var(--yellow);letter-spacing:1px}
 .logoSub{font-size:9px;font-weight:900;color:var(--sub);letter-spacing:1px}
 .clock{font-size:18px;font-weight:900;color:var(--green);font-family:monospace}
 .sub{font-size:9px;color:var(--sub)}
 .live{font-size:13px;font-weight:900;color:var(--green)}
 .btn{height:28px;width:100%;border:1px solid var(--green);background:rgba(0,230,118,.08);color:var(--green);border-radius:4px;font-size:11px;font-weight:900;cursor:pointer}
+.btn.off{border-color:var(--sub);color:var(--sub);background:transparent}
 
 #flowBox{background:#050509;overflow:hidden;display:grid;grid-template-rows:17px 17px;border:none;box-shadow:none}
 .flowLine{position:relative;overflow:hidden;white-space:nowrap}
@@ -51,14 +53,16 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 .sWarn{font-size:15px;font-weight:900;margin-top:10px;color:var(--green)}
 .closed{color:var(--red)!important;animation:blink .55s infinite}
 
-.cmdBody{height:calc(100% - 26px);display:grid;grid-template-columns:72px 1fr 122px 145px;gap:5px;padding:6px;overflow:hidden}
+.cmdScroll{height:calc(100% - 26px);overflow-y:auto;padding:6px}
+.cmdScroll::-webkit-scrollbar,.impactGrid::-webkit-scrollbar,.newsList::-webkit-scrollbar{width:5px}
+.cmdScroll::-webkit-scrollbar-thumb,.impactGrid::-webkit-scrollbar-thumb,.newsList::-webkit-scrollbar-thumb{background:#3a3a5c;border-radius:4px}
+.cmdGrid{display:grid;grid-template-columns:72px 1fr 122px 145px;gap:5px;min-height:220px}
 .panel{background:var(--p2);border:1px solid var(--ln);border-radius:5px;padding:7px;overflow:hidden}
 .trend{font-size:16px;font-weight:900;text-align:center;border:1px solid var(--ln);border-radius:4px;padding:5px 2px;margin-bottom:6px}
 .buy{color:var(--green)}.sell{color:var(--red)}
 .biasTitle{font-size:11px;color:var(--yellow);font-weight:900}
 .biasMain{font-size:16px;color:var(--green);font-weight:900;margin:6px 0}
 .info{display:flex;justify-content:space-between;border-bottom:1px solid #1b1b30;padding:4px 0;font-size:12px}
-.zoneTitle{font-size:11px;font-weight:900;margin-bottom:4px}
 .priceBox{font-size:17px;font-weight:900;text-align:center;border:1px solid;border-radius:4px;padding:5px;margin-bottom:5px}
 .priceBuy{border-color:var(--green);background:rgba(0,230,118,.12)}
 .priceSell{border-color:var(--red);background:rgba(255,23,68,.12)}
@@ -67,31 +71,30 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 .rapidMain{font-size:22px;color:var(--red);font-weight:900;text-align:center;margin-top:15px}
 .rapidSub{font-size:16px;color:#fff;font-weight:900;text-align:center;margin-top:10px}
 
-.liveNewsWrap{height:calc(100% - 26px);display:grid;grid-template-rows:1fr 130px;gap:4px;padding:5px}
-.newsList{overflow-y:auto;border:1px solid var(--ln);border-radius:4px}
-.newsItem{display:grid;grid-template-columns:78px 54px 1fr;gap:7px;border-bottom:1px solid #1a1a2e;padding:8px;font-size:12px;cursor:pointer;min-height:54px}
+.liveNewsWrap{height:calc(100% - 26px);display:grid;grid-template-rows:32px 1fr 130px;gap:4px;padding:5px}
+.newsTabs{display:flex;gap:4px}
+.newsTab{flex:1;border:1px solid var(--ln);border-radius:4px;background:#10101d;color:#fff;font-size:11px;font-weight:900;cursor:pointer}
+.newsTab.active{border-color:var(--red);color:var(--red)}
+.newsList{overflow-y:auto;border:1px solid var(--ln);border-radius:5px}
+.newsItem{display:grid;grid-template-columns:82px 52px 1fr;gap:7px;border-bottom:1px solid #1a1a2e;padding:8px;font-size:12px;cursor:pointer;min-height:54px}
 .newsItem:hover{background:#121225}
 .src{color:var(--cyan);font-weight:900}
 .time{color:var(--sub)}
-.tag{font-size:9px;color:#fff;background:rgba(0,230,118,.22);padding:1px 4px;border-radius:3px;margin-left:3px}
 #newsPlayer{border:1px solid var(--ln);border-radius:5px;overflow:hidden;background:#000}
 #newsFrame{width:100%;height:100%;border:none}
 
 #bottom{min-height:0}
-.impactGrid{height:calc(100% - 26px);overflow-y:auto;padding:5px;display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:5px}
-.impactGrid::-webkit-scrollbar,.newsList::-webkit-scrollbar{width:5px}
-.impactGrid::-webkit-scrollbar-thumb,.newsList::-webkit-scrollbar-thumb{background:#3a3a5c;border-radius:4px}
-.evCard{background:#121225;border:1px solid #35355a;border-radius:5px;padding:8px;min-height:150px}
-.evCard.warn24{border-color:var(--yellow);box-shadow:0 0 8px rgba(255,214,0,.35)}
+.impactGrid{height:calc(100% - 26px);overflow-y:auto;padding:4px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.evCard{background:#121225;border:1px solid #35355a;border-radius:5px;padding:6px 7px;min-height:128px;overflow:hidden}
+.evCard.warn24{border-color:var(--yellow)}
 .evCard.warn60{border-color:var(--orange);animation:blink .8s infinite}
 .evCard.warn15{border-color:var(--red);animation:blink .45s infinite}
-.evName{font-size:17px;font-weight:900;color:var(--red)}
-.evDesc{font-size:10px;color:#c9c9dc;margin:2px 0 5px}
-.evDate{font-size:11px;color:var(--yellow);font-weight:900;margin-bottom:5px}
-.evRow{display:flex;justify-content:space-between;border-bottom:1px solid #292945;padding:3px 0;font-size:11px}
+.evName{font-size:14px;font-weight:900;color:var(--red);line-height:1.1}
+.evDesc{font-size:9px;color:#d5d5e8;margin:2px 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.evDate{font-size:10px;color:var(--yellow);font-weight:900;margin-bottom:3px;white-space:nowrap}
+.evRow{display:flex;justify-content:space-between;border-bottom:1px solid #292945;padding:2px 0;font-size:10px;line-height:1.15}
 .stars{color:var(--red);font-weight:900}
-.count{font-size:18px;color:var(--cyan);font-weight:900;font-family:monospace;margin-top:6px}
-.resultBox{margin-top:5px;border:1px solid var(--red);background:rgba(255,23,68,.12);border-radius:4px;padding:4px;font-size:11px;font-weight:900;text-align:center;color:#fff}
+.count{display:block;font-size:18px;color:var(--cyan);font-weight:900;font-family:monospace;margin-top:4px;line-height:1.1;white-space:nowrap}
 .footer{display:flex;justify-content:space-between;align-items:center;color:var(--sub);font-size:11px;padding:0 8px}
 </style>
 </head>
@@ -132,67 +135,33 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
     <div class="card">
       <div class="hd">SESSION CENTER <span id="sessionLevel">NORMAL</span></div>
       <div class="sessionBody">
-        <div class="sBox">
-          <div class="sLabel">現在のセッション</div>
-          <div id="currentSession" class="sNow">---</div>
-          <div id="sessionTime" class="sText">--:-- - --:-- JST</div>
-          <div id="tradeState" class="sWarn">取引中</div>
-        </div>
-        <div class="sBox">
-          <div class="sLabel">次のセッション</div>
-          <div id="nextSession" class="sNext">---</div>
-          <div id="nextTime" class="sText">--:-- JST</div>
-        </div>
-        <div class="sBox">
-          <div class="sLabel">開始まで</div>
-          <div id="sessionCountdown" class="sCount">--:--:--</div>
-          <div id="sessionWarn" class="sWarn">通常</div>
+        <div class="sBox"><div class="sLabel">現在のセッション</div><div id="currentSession" class="sNow">---</div><div id="sessionTime" class="sText">--</div><div id="tradeState" class="sWarn">取引中</div></div>
+        <div class="sBox"><div class="sLabel">次のセッション</div><div id="nextSession" class="sNext">---</div><div id="nextTime" class="sText">--</div></div>
+        <div class="sBox"><div class="sLabel">開始まで</div><div id="sessionCountdown" class="sCount">--:--:--</div><div id="sessionWarn" class="sWarn">通常</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hd">XAUUSD COMMAND <span>SCROLL / REALTIME</span></div>
+      <div class="cmdScroll">
+        <div class="cmdGrid">
+          <div class="panel"><div class="trend buy">LONG<br>BUY</div><div class="trend buy">MID<br>BUY</div><div class="trend sell">SHORT<br>SELL</div></div>
+          <div class="panel"><div class="biasTitle">BIAS</div><div class="biasMain">押し目買い優勢</div><div class="info"><span>TREND</span><span>上昇</span></div><div class="info"><span>VOLATILITY</span><span>高</span></div><div class="info"><span>CONDITION</span><span>安定</span></div><div class="info"><span>FED WATCH</span><span>警戒</span></div></div>
+          <div class="panel"><div class="buy">BUY ZONE</div><div class="priceBox priceBuy">4540.00</div><div class="priceBox priceBuy">4530.00</div><div class="sell">SELL ZONE</div><div class="priceBox priceSell">4560.00</div><div class="priceBox priceSell">4575.00</div></div>
+          <div id="rapidBox" class="panel rapid"><div class="rapidTitle">PRICE ACTION ALERT</div><div id="rapidMain" class="rapidMain">NORMAL</div><div id="rapidSub" class="rapidSub">通常監視</div></div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="hd">XAUUSD COMMAND <span>PRICE ACTION / SIGNAL CONTROL</span></div>
-      <div class="cmdBody">
-        <div class="panel">
-          <div class="trend buy">LONG<br>BUY</div>
-          <div class="trend buy">MID<br>BUY</div>
-          <div class="trend sell">SHORT<br>SELL</div>
-        </div>
-        <div class="panel">
-          <div class="biasTitle">BIAS</div>
-          <div class="biasMain">押し目買い優勢</div>
-          <div class="info"><span>TREND</span><span>上昇</span></div>
-          <div class="info"><span>VOLATILITY</span><span>高</span></div>
-          <div class="info"><span>CONDITION</span><span>安定</span></div>
-        </div>
-        <div class="panel">
-          <div class="zoneTitle buy">BUY ZONE</div>
-          <div class="priceBox priceBuy">4540.00</div>
-          <div class="priceBox priceBuy">4530.00</div>
-          <div class="zoneTitle sell">SELL ZONE</div>
-          <div class="priceBox priceSell">4560.00</div>
-          <div class="priceBox priceSell">4575.00</div>
-        </div>
-        <div id="rapidBox" class="panel rapid">
-          <div class="rapidTitle">PRICE ACTION ALERT</div>
-          <div id="rapidMain" class="rapidMain">NORMAL</div>
-          <div id="rapidSub" class="rapidSub">通常監視</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="hd">LIVE NEWS <span>クリックで動画表示</span></div>
+      <div class="hd">LIVE NEWS <span>クリックで動画・ニュース表示</span></div>
       <div class="liveNewsWrap">
-        <div class="newsList">
-          <div class="newsItem" onclick="playNews('https://www.youtube.com/embed/dp8PhLsUcFE')"><div class="src">Bloomberg<span class="tag">GOLD</span></div><div class="time">LIVE</div><div>Bloomberg Markets Live</div></div>
-          <div class="newsItem" onclick="playNews('https://www.youtube.com/embed/_yA2VT_sMeQ')"><div class="src">CNBC<span class="tag">FED</span></div><div class="time">LIVE</div><div>CNBC Business News Live</div></div>
-          <div class="newsItem" onclick="playNews('https://www.youtube.com/embed?listType=search&list=Kitco%20Gold%20Live')"><div class="src">Kitco<span class="tag">GOLD</span></div><div class="time">LIVE</div><div>Kitco Gold / Silver News</div></div>
-          <div class="newsItem" onclick="playNews('https://www.youtube.com/embed?listType=search&list=XAUUSD%20live%20analysis')"><div class="src">XAUUSD<span class="tag">LIVE</span></div><div class="time">LIVE</div><div>XAUUSD Live Analysis</div></div>
-          <div class="newsItem" onclick="open('https://www.reuters.com/markets/commodities/','_blank')"><div class="src">Reuters<span class="tag">GOLD</span></div><div class="time">NEWS</div><div>Gold / Oil / Dollar Market Headlines</div></div>
-          <div class="newsItem" onclick="open('https://www.investing.com/commodities/gold','_blank')"><div class="src">Investing<span class="tag">XAU</span></div><div class="time">NEWS</div><div>XAUUSD Price and Market News</div></div>
+        <div class="newsTabs">
+          <button class="newsTab active" onclick="renderNews('gold',this)">GOLD</button>
+          <button class="newsTab" onclick="renderNews('geo',this)">地政学</button>
+          <button class="newsTab" onclick="renderNews('fed',this)">FED</button>
         </div>
+        <div id="newsList" class="newsList"></div>
         <div id="newsPlayer"><iframe id="newsFrame" src="https://www.youtube.com/embed/dp8PhLsUcFE" allowfullscreen></iframe></div>
       </div>
     </div>
@@ -200,130 +169,156 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 </div>
 
 <div id="bottom" class="card">
-  <div class="hd">HIGH IMPACT NEWS <span>月内全件 / 発表前・発表中・結果表示 / 縦スクロール</span></div>
+  <div class="hd">HIGH IMPACT NEWS <span>月内全件 / カウントダウン / 縦スクロール</span></div>
   <div id="eventList" class="impactGrid"></div>
 </div>
 
 <div class="footer">
   <span>本データは情報提供のみを目的としており、投資助言ではありません。</span>
   <span id="footerTime">データ更新: --:--:-- JST</span>
-  <span>自動更新: 60秒</span>
+  <span>自動更新: ON</span>
 </div>
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-const EVENTS=[
-{n:"US ISM PMI",d:"米ISM製造業景況指数",date:"2026-06-03",time:"23:00",imp:"★★★★★",fc:"52.7",pv:"53.0",result:"未発表",effect:"強い"},
-{n:"JOLTS",d:"米求人件数",date:"2026-06-04",time:"23:00",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"中〜強"},
-{n:"US ADP",d:"米ADP雇用者数",date:"2026-06-05",time:"21:15",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"強い"},
-{n:"US NFP",d:"米雇用統計",date:"2026-06-05",time:"21:30",imp:"★★★★★",fc:"185K",pv:"175K",result:"未発表",effect:"非常に強い"},
-{n:"US CPI",d:"米消費者物価指数",date:"2026-06-10",time:"21:30",imp:"★★★★★",fc:"3.4%",pv:"3.5%",result:"未発表",effect:"非常に強い"},
-{n:"CORE CPI",d:"米コアCPI",date:"2026-06-10",time:"21:30",imp:"★★★★★",fc:"要確認",pv:"要確認",result:"未発表",effect:"非常に強い"},
-{n:"US PPI",d:"米生産者物価指数",date:"2026-06-11",time:"21:30",imp:"★★★★☆",fc:"2.6%",pv:"2.4%",result:"未発表",effect:"強い"},
-{n:"CORE PPI",d:"米コアPPI",date:"2026-06-11",time:"21:30",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"強い"},
-{n:"RETAIL SALES",d:"米小売売上高",date:"2026-06-17",time:"21:30",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"強い"},
-{n:"FOMC",d:"米政策金利発表",date:"2026-06-18",time:"03:00",imp:"★★★★★",fc:"5.50%",pv:"5.50%",result:"未発表",effect:"最重要"},
-{n:"POWELL",d:"パウエル発言",date:"2026-06-18",time:"03:30",imp:"★★★★★",fc:"-",pv:"-",result:"未発表",effect:"最重要"},
-{n:"FOMC MINUTES",d:"FOMC議事要旨",date:"2026-06-25",time:"03:00",imp:"★★★★☆",fc:"-",pv:"-",result:"未発表",effect:"強い"},
-{n:"US GDP",d:"米GDP",date:"2026-06-26",time:"21:30",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"強い"},
-{n:"CORE PCE",d:"米コアPCE",date:"2026-06-27",time:"21:30",imp:"★★★★★",fc:"要確認",pv:"要確認",result:"未発表",effect:"非常に強い"},
-{n:"ECB",d:"ECB政策金利",date:"2026-06-12",time:"21:15",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"中〜強"},
-{n:"BOJ",d:"日銀政策金利",date:"2026-06-19",time:"12:00",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"円主導"}
+const API_KEY="YOUR_TWELVEDATA_API_KEY";
+let notifyOn=true,lastPrices={};
+
+const SYMBOLS=[
+{name:"XAUUSD",symbol:"XAU/USD",dec:2},
+{name:"USDJPY",symbol:"USD/JPY",dec:3},
+{name:"BTCUSD",symbol:"BTC/USD",dec:0},
+{name:"EURUSD",symbol:"EUR/USD",dec:5},
+{name:"GBPJPY",symbol:"GBP/JPY",dec:3},
+{name:"NAS100",symbol:"IXIC",dec:2}
 ];
 
-let notifyOn=true;
-function toggleNotify(){notifyOn=!notifyOn;document.getElementById("notifyBtn").textContent=notifyOn?"通知 ON":"通知 OFF"}
-function playNews(url){document.getElementById("newsFrame").src=url}
+const EVENTS=[
+{n:"US ISM PMI",d:"米ISM製造業景況指数",date:"2026-06-03",time:"23:00",imp:"★★★★★",fc:"52.7",pv:"53.0",effect:"強い"},
+{n:"JOLTS",d:"米求人件数",date:"2026-06-04",time:"23:00",imp:"★★★★☆",fc:"要確認",pv:"要確認",effect:"中〜強"},
+{n:"US ADP",d:"米ADP雇用者数",date:"2026-06-05",time:"21:15",imp:"★★★★☆",fc:"要確認",pv:"要確認",effect:"強い"},
+{n:"US NFP",d:"米雇用統計",date:"2026-06-05",time:"21:30",imp:"★★★★★",fc:"185K",pv:"175K",effect:"非常に強い"},
+{n:"US CPI",d:"米消費者物価指数",date:"2026-06-10",time:"21:30",imp:"★★★★★",fc:"3.4%",pv:"3.5%",effect:"非常に強い"},
+{n:"CORE CPI",d:"米コアCPI",date:"2026-06-10",time:"21:30",imp:"★★★★★",fc:"要確認",pv:"要確認",effect:"非常に強い"},
+{n:"US PPI",d:"米生産者物価指数",date:"2026-06-11",time:"21:30",imp:"★★★★☆",fc:"2.6%",pv:"2.4%",effect:"強い"},
+{n:"CORE PPI",d:"米コアPPI",date:"2026-06-11",time:"21:30",imp:"★★★★☆",fc:"要確認",pv:"要確認",effect:"強い"},
+{n:"FOMC",d:"米政策金利発表",date:"2026-06-18",time:"03:00",imp:"★★★★★",fc:"5.50%",pv:"5.50%",effect:"最重要"},
+{n:"POWELL",d:"パウエル発言",date:"2026-06-18",time:"03:30",imp:"★★★★★",fc:"-",pv:"-",effect:"最重要"},
+{n:"CORE PCE",d:"米コアPCE",date:"2026-06-27",time:"21:30",imp:"★★★★★",fc:"要確認",pv:"要確認",effect:"非常に強い"},
+{n:"BOJ",d:"日銀政策金利",date:"2026-06-19",time:"12:00",imp:"★★★★☆",fc:"要確認",pv:"要確認",effect:"円主導"}
+];
+
+const NEWS={
+gold:[
+["Bloomberg","LIVE","Bloomberg Markets Live","https://www.youtube.com/embed/dp8PhLsUcFE"],
+["Reuters","NEWS","Gold / Oil / Dollar Market Headlines","https://www.reuters.com/markets/commodities/"],
+["Kitco","LIVE","Kitco Gold Live","https://www.youtube.com/embed?listType=search&list=Kitco%20Gold%20Live"],
+["Investing","NEWS","XAUUSD Gold Price News","https://www.investing.com/commodities/gold"]
+],
+geo:[
+["Al Jazeera","NEWS","Middle East market risk","https://www.aljazeera.com/economy"],
+["Reuters","NEWS","Middle East / Iran / Oil headlines","https://www.reuters.com/world/middle-east/"],
+["BBC","NEWS","Red Sea and global risk","https://www.bbc.com/news/world/middle_east"]
+],
+fed:[
+["CNBC","LIVE","CNBC Business News Live","https://www.youtube.com/embed/_yA2VT_sMeQ"],
+["Reuters","NEWS","US CPI and Fed path","https://www.reuters.com/markets/us/"],
+["Bloomberg","NEWS","Powell / Fed news","https://www.bloomberg.com/economy"]
+]
+};
+
 function pad(n){return String(n).padStart(2,"0")}
 function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
 function hms(d){return`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`}
 function cd(ms){if(ms<=0)return"00:00:00";let s=Math.floor(ms/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;return d>0?`${d}日 ${pad(h)}:${pad(m)}:${pad(s)}`:`${pad(h)}:${pad(m)}:${pad(s)}`}
+function evDate(e){return new Date(`${e.date}T${e.time}:00+09:00`)}
 function todayAt(h,m){const d=nowJST();d.setHours(h,m,0,0);return d}
 function nextAt(h,m){const d=nowJST();d.setHours(h,m,0,0);if(d<nowJST())d.setDate(d.getDate()+1);return d}
 function nextMondayAt(h,m){const d=nowJST();while(d.getDay()!==1)d.setDate(d.getDate()+1);d.setHours(h,m,0,0);return d}
-function evDate(e){return new Date(`${e.date}T${e.time}:00+09:00`)}
+function toggleNotify(){notifyOn=!notifyOn;const b=document.getElementById("notifyBtn");b.textContent=notifyOn?"通知 ON":"通知 OFF";b.className=notifyOn?"btn":"btn off"}
+function playNews(url){document.getElementById("newsFrame").src=url}
+function openNews(url){url.includes("youtube.com/embed")?playNews(url):window.open(url,"_blank")}
+function renderNews(type,btn){document.querySelectorAll(".newsTab").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");document.getElementById("newsList").innerHTML=NEWS[type].map(n=>`<div class="newsItem" onclick="openNews('${n[3]}')"><div class="src">${n[0]}</div><div class="time">${n[1]}</div><div>${n[2]}</div></div>`).join("")}
 
 function getSess(n){
- const day=n.getDay(),min=n.getHours()*60+n.getMinutes();
- if((day===6&&min>=7*60)||day===0||(day===1&&min<7*60)){
-  return{cur:"CLOSED",next:"ASIA",st:"MARKET CLOSED",nextT:"月曜 07:00 JST",start:nextMondayAt(7,0),closed:true};
- }
- if(min>=7*60&&min<15*60)return{cur:"ASIA",next:"LONDON",st:"07:00 - 15:00 JST",nextT:"15:00 JST",start:todayAt(15,0)};
- if(min>=15*60&&min<21*60)return{cur:"LONDON",next:"US",st:"15:00 - 21:00 JST",nextT:"21:00 JST",start:todayAt(21,0)};
- return{cur:"US",next:"ASIA",st:"21:00 - 07:00 JST",nextT:"07:00 JST",start:nextAt(7,0)};
+const day=n.getDay(),min=n.getHours()*60+n.getMinutes();
+if((day===6&&min>=7*60)||day===0||(day===1&&min<7*60))return{cur:"CLOSED",next:"ASIA",st:"MARKET CLOSED",nextT:"月曜 07:00 JST",start:nextMondayAt(7,0),closed:true};
+if(min>=7*60&&min<15*60)return{cur:"ASIA",next:"LONDON",st:"07:00 - 15:00 JST",nextT:"15:00 JST",start:todayAt(15,0)};
+if(min>=15*60&&min<21*60)return{cur:"LONDON",next:"US",st:"15:00 - 21:00 JST",nextT:"21:00 JST",start:todayAt(21,0)};
+return{cur:"US",next:"ASIA",st:"21:00 - 07:00 JST",nextT:"07:00 JST",start:nextAt(7,0)};
+}
+
+async function fetchPrices(){
+if(API_KEY==="YOUR_TWELVEDATA_API_KEY"){
+document.getElementById("marketText").innerHTML=`<span class="warn">APIキー未設定</span> ｜ TwelveData APIキーを設定すると価格がリアルタイム更新されます`;
+return;
+}
+try{
+const url=`https://api.twelvedata.com/quote?symbol=${encodeURIComponent(SYMBOLS.map(s=>s.symbol).join(","))}&apikey=${API_KEY}`;
+const res=await fetch(url);const data=await res.json();const parts=[];
+SYMBOLS.forEach(s=>{const q=data[s.symbol]||data;if(!q||!q.close)return;const price=Number(q.close);const prev=lastPrices[s.name]||price;const diff=price-prev;lastPrices[s.name]=price;const up=diff>=0;parts.push(`<span class="${up?'up':'down'}">${s.name} ${price.toFixed(s.dec)} ${up?'▲':'▼'} ${diff.toFixed(s.dec)}</span>`)});
+window.priceFlow=parts.join(" ｜ ");
+}catch(e){window.priceFlow=`<span class="danger">価格APIエラー</span>`}
 }
 
 function update(){
- const n=nowJST();
- document.getElementById("clock").textContent=hms(n);
- document.getElementById("date").textContent=`${n.getFullYear()}/${pad(n.getMonth()+1)}/${pad(n.getDate())}`;
- document.getElementById("footerTime").textContent=`データ更新: ${hms(n)} JST`;
+const n=nowJST();
+document.getElementById("clock").textContent=hms(n);
+document.getElementById("date").textContent=`${n.getFullYear()}/${pad(n.getMonth()+1)}/${pad(n.getDate())}`;
+document.getElementById("footerTime").textContent=`データ更新: ${hms(n)} JST`;
 
- const ss=getSess(n),diff=ss.start-n;
- document.getElementById("currentSession").textContent=ss.cur;
- document.getElementById("nextSession").textContent=ss.next;
- document.getElementById("sessionTime").textContent=ss.st;
- document.getElementById("nextTime").textContent=ss.nextT;
- document.getElementById("sessionCountdown").textContent=cd(diff);
+const ss=getSess(n),diff=ss.start-n;
+document.getElementById("currentSession").textContent=ss.cur;
+document.getElementById("nextSession").textContent=ss.next;
+document.getElementById("sessionTime").textContent=ss.st;
+document.getElementById("nextTime").textContent=ss.nextT;
+document.getElementById("sessionCountdown").textContent=cd(diff);
 
- if(ss.closed){
-  document.getElementById("currentSession").className="sNow closed";
-  document.getElementById("tradeState").textContent="市場クローズ";
-  document.getElementById("tradeState").className="sWarn closed";
-  document.getElementById("sessionWarn").textContent="週末クローズ";
-  document.getElementById("sessionWarn").className="sWarn closed";
-  document.getElementById("sessionLevel").textContent="CLOSED";
- }else{
-  document.getElementById("currentSession").className="sNow";
-  document.getElementById("tradeState").textContent="取引中";
-  document.getElementById("tradeState").className="sWarn";
-  document.getElementById("sessionWarn").textContent=diff<=900000?"開始15分前":"通常";
-  document.getElementById("sessionWarn").className=diff<=900000?"sWarn closed":"sWarn";
-  document.getElementById("sessionLevel").textContent=diff<=900000?"WARNING":"NORMAL";
- }
+if(ss.closed){
+document.getElementById("currentSession").className="sNow closed";
+document.getElementById("tradeState").textContent="市場クローズ";
+document.getElementById("tradeState").className="sWarn closed";
+document.getElementById("sessionWarn").textContent="週末クローズ";
+document.getElementById("sessionWarn").className="sWarn closed";
+document.getElementById("sessionLevel").textContent="CLOSED";
+}else{
+document.getElementById("currentSession").className="sNow";
+document.getElementById("tradeState").textContent="取引中";
+document.getElementById("tradeState").className="sWarn";
+document.getElementById("sessionWarn").textContent=diff<=900000?"開始15分前":"通常";
+document.getElementById("sessionWarn").className=diff<=900000?"sWarn closed":"sWarn";
+document.getElementById("sessionLevel").textContent=diff<=900000?"WARNING":"NORMAL";
+}
 
- const upcoming=EVENTS.map(e=>({...e,dt:evDate(e)})).filter(e=>e.dt>n).sort((a,b)=>a.dt-b.dt);
- document.getElementById("eventList").innerHTML=upcoming.map(e=>{
-  const left=e.dt-n;
-  const cls=left<=15*60000?"warn15":left<=60*60000?"warn60":left<=24*3600*1000?"warn24":"";
-  const live=left<=0?"LIVE":"";
-  return`
-  <div class="evCard ${cls}">
-    <div class="evName">${e.n}</div>
-    <div class="evDesc">${e.d}</div>
-    <div class="evDate">発表 ${e.date} ${e.time} JST ${live}</div>
-    <div class="evRow"><span>重要度</span><span class="stars">${e.imp}</span></div>
-    <div class="evRow"><span>予想</span><span>${e.fc}</span></div>
-    <div class="evRow"><span>前回</span><span>${e.pv}</span></div>
-    <div class="evRow"><span>結果</span><span>${e.result}</span></div>
-    <div class="evRow"><span>XAU影響</span><span class="stars">${e.effect}</span></div>
-    <div class="count">${cd(left)}</div>
-    <div class="resultBox">${e.result==="未発表"?"結果待機中":"XAUUSD 判定表示"}</div>
-  </div>`}).join("");
+const upcoming=EVENTS.map(e=>({...e,dt:evDate(e)})).filter(e=>e.dt>n).sort((a,b)=>a.dt-b.dt);
+document.getElementById("eventList").innerHTML=upcoming.map(e=>{
+const left=e.dt-n;const cls=left<=15*60000?"warn15":left<=60*60000?"warn60":left<=24*3600*1000?"warn24":"";
+return`<div class="evCard ${cls}"><div class="evName">${e.n}</div><div class="evDesc">${e.d}</div><div class="evDate">${e.date} ${e.time} JST</div><div class="evRow"><span>重要度</span><span class="stars">${e.imp}</span></div><div class="evRow"><span>予想</span><span>${e.fc}</span></div><div class="evRow"><span>前回</span><span>${e.pv}</span></div><div class="evRow"><span>XAU影響</span><span class="stars">${e.effect}</span></div><div class="count">${cd(left)}</div></div>`}).join("");
 
- document.getElementById("marketText").innerHTML=
- `<span class="up">XAUUSD 4539.43 ▲2.59</span> ｜ <span class="up">USDJPY 156.925 ▲0.093</span> ｜ <span class="up">BTCUSD 108917 ▲91</span> ｜ <span class="down">EURUSD 1.05930 ▼0.00052</span> ｜ <span class="up">NAS100 23370 ▲3.51</span> ｜ SESSION ${ss.cur} ｜ NEXT ${ss.next} 残り ${cd(diff)}`;
-
- document.getElementById("alertText").innerHTML=
- upcoming.slice(0,6).map(e=>`重要指標 ${e.n} 残り ${cd(e.dt-n)}`).join(" ｜ ")+" ｜ MIDDLE EAST HIGH RISK ｜ LIVE NEWS 更新中";
+if(window.priceFlow)document.getElementById("marketText").innerHTML=window.priceFlow+` ｜ SESSION ${ss.cur} ｜ NEXT ${ss.next} 残り ${cd(diff)}`;
+document.getElementById("alertText").innerHTML=upcoming.slice(0,6).map(e=>`重要指標 ${e.n} 残り ${cd(e.dt-n)}`).join(" ｜ ")+" ｜ LIVE NEWS 更新中";
 }
 
 new TradingView.widget({
- autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",
- hide_top_toolbar:false,hide_side_toolbar:false,hide_legend:false,allow_symbol_change:true,hide_volume:true,save_image:false,withdateranges:true,studies:[],
- disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],
- enabled_features:["study_templates","side_toolbar_in_fullscreen_mode","save_chart_properties_to_local_storage"],
- overrides:{
- "paneProperties.background":"#000","paneProperties.backgroundType":"solid",
- "mainSeriesProperties.candleStyle.upColor":"#2962FF","mainSeriesProperties.candleStyle.downColor":"#F23645",
- "mainSeriesProperties.candleStyle.borderUpColor":"#6E7380","mainSeriesProperties.candleStyle.borderDownColor":"#6E7380",
- "mainSeriesProperties.candleStyle.wickUpColor":"#6E7380","mainSeriesProperties.candleStyle.wickDownColor":"#6E7380",
- "scalesProperties.textColor":"#9CA3AF"
- }
+autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",
+hide_top_toolbar:false,hide_side_toolbar:false,hide_legend:false,allow_symbol_change:true,hide_volume:true,save_image:false,withdateranges:true,studies:[],
+disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],
+enabled_features:["study_templates","side_toolbar_in_fullscreen_mode","save_chart_properties_to_local_storage"],
+overrides:{
+"paneProperties.background":"#000","paneProperties.backgroundType":"solid",
+"mainSeriesProperties.candleStyle.upColor":"#2962FF","mainSeriesProperties.candleStyle.downColor":"#F23645",
+"mainSeriesProperties.candleStyle.borderUpColor":"#6E7380","mainSeriesProperties.candleStyle.borderDownColor":"#6E7380",
+"mainSeriesProperties.candleStyle.wickUpColor":"#6E7380","mainSeriesProperties.candleStyle.wickDownColor":"#6E7380",
+"scalesProperties.textColor":"#9CA3AF"
+}
 });
-setInterval(update,1000);
+
+renderNews("gold",document.querySelector(".newsTab"));
+fetchPrices();
 update();
+setInterval(fetchPrices,5000);
+setInterval(update,1000);
 </script>
 </body>
 </html>
