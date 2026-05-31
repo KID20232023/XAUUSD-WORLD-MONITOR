@@ -34,6 +34,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 #chart{height:calc(100% - 24px);background:#000}
 #tv_chart{width:100%;height:100%}
 #right{display:grid;grid-template-rows:170px 155px 1fr;gap:3px;min-height:0}
+
 .sessionBody{height:calc(100% - 24px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:6px}
 .sBox{background:var(--p2);border:1px solid var(--ln);border-radius:4px;padding:8px;overflow:hidden}
 .sLabel{font-size:10px;color:var(--sub);font-weight:900}
@@ -90,9 +91,20 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 
 <body>
 <div id="app">
+
 <div id="topbar">
-  <div class="box"><img class="logoImg" src="B0A7EDCD-672C-4209-99F7-917932FC8367.jpeg" onerror="this.style.display='none'"><div><div class="l1">NEXUS FX WAR ROOM</div><div class="l2">XAUUSD COMMAND CENTER</div></div></div>
-  <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center"><div class="sub">JST TIME</div><div id="clock" class="clock">--:--:--</div><div id="date" class="sub">----</div></div>
+  <div class="box">
+    <img class="logoImg" src="B0A7EDCD-672C-4209-99F7-917932FC8367.jpeg" onerror="this.style.display='none'">
+    <div>
+      <div class="l1">NEXUS FX WAR ROOM</div>
+      <div class="l2">XAUUSD COMMAND CENTER</div>
+    </div>
+  </div>
+  <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center">
+    <div class="sub">JST TIME</div>
+    <div id="clock" class="clock">--:--:--</div>
+    <div id="date" class="sub">----</div>
+  </div>
   <div class="box"><div><div class="sub">STATUS</div><div class="live">LIVE</div></div></div>
   <div class="box"><button id="notifyBtn" class="btn" onclick="toggleNotify()">ALERT ON</button></div>
   <div class="box"><div class="sub">REALTIME PRICE / SESSION / NEWS / HIGH IMPACT</div></div>
@@ -104,25 +116,62 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 </div>
 
 <div id="main">
-  <div class="card"><div class="hd">TRADINGVIEW - REALTIME CHART</div><div id="chart"><div id="tv_chart"></div></div></div>
+  <div class="card">
+    <div class="hd">TRADINGVIEW - REALTIME CHART</div>
+    <div id="chart"><div id="tv_chart"></div></div>
+  </div>
 
   <div id="right">
     <div class="card">
       <div class="hd">SESSION CENTER <span id="sessionLevel">NORMAL</span></div>
       <div class="sessionBody">
-        <div class="sBox"><div class="sLabel">CURRENT SESSION</div><div id="currentSession" class="sNow">---</div><div id="sessionTime" class="sText">--</div><div id="tradeState" class="sWarn">OPEN</div></div>
-        <div class="sBox"><div class="sLabel">NEXT SESSION</div><div id="nextSession" class="sNext">---</div><div id="nextTime" class="sText">--</div></div>
-        <div class="sBox"><div class="sLabel">TIME LEFT</div><div id="sessionCountdown" class="sCount">--:--:--</div><div id="sessionWarn" class="sWarn">NORMAL</div></div>
+        <div class="sBox">
+          <div class="sLabel">CURRENT SESSION</div>
+          <div id="currentSession" class="sNow">---</div>
+          <div id="sessionTime" class="sText">--</div>
+          <div id="tradeState" class="sWarn">OPEN</div>
+        </div>
+        <div class="sBox">
+          <div class="sLabel">NEXT SESSION</div>
+          <div id="nextSession" class="sNext">---</div>
+          <div id="nextTime" class="sText">--</div>
+        </div>
+        <div class="sBox">
+          <div class="sLabel">TIME LEFT</div>
+          <div id="sessionCountdown" class="sCount">--:--:--</div>
+          <div id="sessionWarn" class="sWarn">NORMAL</div>
+        </div>
       </div>
     </div>
 
     <div class="card">
       <div class="hd">XAUUSD COMMAND</div>
       <div class="cmdScroll"><div class="cmdGrid">
-        <div class="panel"><div class="trend buy">LONG<br>BUY</div><div class="trend buy">MID<br>BUY</div><div class="trend sell">SHORT<br>SELL</div></div>
-        <div class="panel"><div class="biasTitle">BIAS</div><div class="biasMain">BUY DIP BIAS</div><div class="info"><span>TREND</span><span>UP</span></div><div class="info"><span>VOLATILITY</span><span>HIGH</span></div><div class="info"><span>FED</span><span>WATCH</span></div></div>
-        <div class="panel"><div class="buy">BUY ZONE</div><div class="priceBox priceBuy">4540.00</div><div class="priceBox priceBuy">4530.00</div><div class="sell">SELL ZONE</div><div class="priceBox priceSell">4560.00</div><div class="priceBox priceSell">4575.00</div></div>
-        <div class="panel"><div class="biasTitle sell">PRICE ACTION ALERT</div><div id="rapidMain" class="rapidMain">NORMAL</div><div id="rapidSub" class="rapidSub">MONITORING</div></div>
+        <div class="panel">
+          <div class="trend buy">LONG<br>BUY</div>
+          <div class="trend buy">MID<br>BUY</div>
+          <div class="trend sell">SHORT<br>SELL</div>
+        </div>
+        <div class="panel">
+          <div class="biasTitle">BIAS</div>
+          <div class="biasMain">BUY DIP BIAS</div>
+          <div class="info"><span>TREND</span><span>UP</span></div>
+          <div class="info"><span>VOLATILITY</span><span>HIGH</span></div>
+          <div class="info"><span>FED</span><span>WATCH</span></div>
+        </div>
+        <div class="panel">
+          <div class="buy">BUY ZONE</div>
+          <div class="priceBox priceBuy">4540.00</div>
+          <div class="priceBox priceBuy">4530.00</div>
+          <div class="sell">SELL ZONE</div>
+          <div class="priceBox priceSell">4560.00</div>
+          <div class="priceBox priceSell">4575.00</div>
+        </div>
+        <div class="panel">
+          <div class="biasTitle sell">PRICE ACTION ALERT</div>
+          <div id="rapidMain" class="rapidMain">NORMAL</div>
+          <div id="rapidSub" class="rapidSub">MONITORING</div>
+        </div>
       </div></div>
     </div>
 
@@ -152,7 +201,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 </div>
 </div>
 
-<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
 const TWELVE_KEY="885967facd734407b8f15fbdb27ef911";
 const TE_CLIENT="guest";
@@ -168,7 +216,8 @@ const SYMBOLS=[
 {name:"EURUSD",symbol:"EUR/USD",dec:5,alert:.003},
 {name:"GBPJPY",symbol:"GBP/JPY",dec:3,alert:.50},
 {name:"BTCUSD",symbol:"BTC/USD",dec:0,alert:500},
-{name:"ETHUSD",symbol:"ETH/USD",dec:0,alert:80}
+{name:"ETHUSD",symbol:"ETH/USD",dec:0,alert:80},
+{name:"NAS100",symbol:"NDX",dec:2,alert:120}
 ];
 
 const FALLBACK_EVENTS=[
@@ -185,9 +234,19 @@ const FALLBACK_EVENTS=[
 ];
 
 const STATIC_NEWS={
-xauusd:[["Bloomberg","XAUUSD","Gold price holds near highs as USD weakens on Fed cut expectations","https://www.bloomberg.com/markets/commodities"],["Reuters","XAUUSD","XAUUSD moves with safe haven demand and USD direction","https://www.reuters.com/markets/commodities/"],["Kitco","XAUUSD","Gold analysis - key levels and market momentum to watch","https://www.kitco.com/news/gold/"]],
-geo:[["Reuters","GEO","Middle East risk supports safe haven demand","https://www.reuters.com/world/middle-east/"],["BBC","GEO","Red Sea shipping risk keeps commodity prices elevated","https://www.bbc.com/news/world/middle_east"]],
-fed:[["Bloomberg","FED","Fed outlook remains key driver for gold and USD","https://www.bloomberg.com/economy"],["Reuters","FED","US CPI and Fed expectations remain critical for XAUUSD","https://www.reuters.com/markets/us/"]]
+xauusd:[
+["Bloomberg","XAUUSD","Gold price holds near highs as USD weakens on Fed cut expectations","https://www.bloomberg.com/markets/commodities"],
+["Reuters","XAUUSD","XAUUSD moves with safe haven demand and USD direction","https://www.reuters.com/markets/commodities/"],
+["Kitco","XAUUSD","Gold analysis - key levels and market momentum to watch","https://www.kitco.com/news/gold/"]
+],
+geo:[
+["Reuters","GEO","Middle East risk supports safe haven demand","https://www.reuters.com/world/middle-east/"],
+["BBC","GEO","Red Sea shipping risk keeps commodity prices elevated","https://www.bbc.com/news/world/middle_east"]
+],
+fed:[
+["Bloomberg","FED","Fed outlook remains key driver for gold and USD","https://www.bloomberg.com/economy"],
+["Reuters","FED","US CPI and Fed expectations remain critical for XAUUSD","https://www.reuters.com/markets/us/"]
+]
 };
 
 function cleanText(t){return String(t||"").replace(/[^\x20-\x7E]/g,"").replace(/\s+/g," ").trim()}
@@ -226,8 +285,8 @@ async function fetchPrices(){
    lastPrices[s.name]=p;
    arr.push('<span class="'+cls+'">'+s.name+" "+p.toFixed(s.dec)+" "+(diff>=0?"UP ":"DOWN ")+Math.abs(diff).toFixed(s.dec)+" "+(pct>=0?"+":"")+pct.toFixed(2)+"%</span>");
   }
-  priceText=arr.length?arr.join(" | "):"XAUUSD / USDJPY / EURUSD / GBPJPY / BTCUSD / ETHUSD PRICE WAITING";
- }catch(e){priceText="XAUUSD / USDJPY / EURUSD / GBPJPY / BTCUSD / ETHUSD API RETRYING"}
+  priceText=arr.length?arr.join(" | "):"XAUUSD / USDJPY / EURUSD / GBPJPY / BTCUSD / ETHUSD / NAS100 PRICE WAITING";
+ }catch(e){priceText="PRICE API RETRYING"}
 }
 
 async function fetchEvents(){
@@ -240,6 +299,7 @@ async function fetchEvents(){
   const r=await fetch(url);
   const data=await r.json();
   const keys=["Payrolls","Non Farm","CPI","Inflation","Core Inflation","Consumer Price","Producer Price","PPI","JOLTS","ADP","Fed Interest","FOMC","PCE","Retail Sales","ISM","Jobless"];
+
   const mapped=data.filter(x=>keys.some(k=>String(x.Event||"").toLowerCase().includes(k.toLowerCase()))).map(x=>{
    const dt=new Date(x.Date);
    let name=String(x.Event||"US EVENT").toUpperCase();
@@ -316,48 +376,87 @@ function update(){
 
  const upcoming=renderEvents();
  const evText=upcoming.slice(0,8).map(e=>e.n+" LEFT "+cd(e.dt-n)).join(" | ");
- document.getElementById("marketText").innerHTML=priceText+" | CURRENT SESSION "+ss.cur+" | NEXT SESSION "+ss.next+" | TIME LEFT "+cd(sessionLeft);
- document.getElementById("alertText").innerHTML=evText+" | MIDDLE EAST HIGH RISK | RED SEA WATCH | FED WATCH | LIVE NEWS UPDATE";
+
+ document.getElementById("marketText").innerHTML=
+  priceText+
+  " | CURRENT SESSION "+ss.cur+
+  " | NEXT SESSION "+ss.next+
+  " | TIME LEFT "+cd(sessionLeft);
+
+ document.getElementById("alertText").innerHTML=
+  evText+
+  " | MIDDLE EAST HIGH RISK"+
+  " | RED SEA WATCH"+
+  " | FED WATCH"+
+  " | LIVE NEWS UPDATE";
 }
 
-new TradingView.widget({
- autosize:true,
- symbol:"OANDA:XAUUSD",
- interval:"15",
- timezone:"Asia/Tokyo",
- theme:"dark",
- style:"1",
- locale:"en",
- container_id:"tv_chart",
- hide_top_toolbar:false,
- hide_side_toolbar:false,
- hide_legend:false,
- allow_symbol_change:true,
- hide_volume:true,
- save_image:false,
- withdateranges:true,
- studies:[],
- disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],
- enabled_features:["study_templates","side_toolbar_in_fullscreen_mode","save_chart_properties_to_local_storage"],
- overrides:{
-  "paneProperties.background":"#000",
-  "paneProperties.backgroundType":"solid",
-  "mainSeriesProperties.candleStyle.upColor":"#2962FF",
-  "mainSeriesProperties.candleStyle.downColor":"#F23645",
-  "mainSeriesProperties.candleStyle.borderUpColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.borderDownColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.wickUpColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.wickDownColor":"#6E7380",
-  "scalesProperties.textColor":"#9CA3AF"
- }
-});
+function startApp(){
+ renderNews("xauusd",document.querySelector(".newsTab"));
+ fetchEvents();
+ fetchPrices();
+ fetchNews("xauusd");
+ fetchNews("geo");
+ fetchNews("fed");
+ update();
 
-renderNews("xauusd",document.querySelector(".newsTab"));
-fetchEvents();fetchPrices();fetchNews("xauusd");fetchNews("geo");fetchNews("fed");update();
-setInterval(update,1000);
-setInterval(fetchPrices,5000);
-setInterval(fetchEvents,30000);
-setInterval(()=>{fetchNews("xauusd");fetchNews("geo");fetchNews("fed")},60000);
+ setInterval(update,1000);
+ setInterval(fetchPrices,5000);
+ setInterval(fetchEvents,30000);
+ setInterval(()=>{fetchNews("xauusd");fetchNews("geo");fetchNews("fed")},60000);
+}
+
+function loadTradingViewScript(){
+ return new Promise((resolve,reject)=>{
+  if(window.TradingView){resolve();return}
+  const s=document.createElement("script");
+  s.src="https://s3.tradingview.com/tv.js";
+  s.onload=resolve;
+  s.onerror=reject;
+  document.body.appendChild(s);
+ });
+}
+
+async function loadChart(){
+ try{
+  await loadTradingViewScript();
+  new TradingView.widget({
+   autosize:true,
+   symbol:"OANDA:XAUUSD",
+   interval:"15",
+   timezone:"Asia/Tokyo",
+   theme:"dark",
+   style:"1",
+   locale:"en",
+   container_id:"tv_chart",
+   hide_top_toolbar:false,
+   hide_side_toolbar:false,
+   hide_legend:false,
+   allow_symbol_change:true,
+   hide_volume:true,
+   save_image:false,
+   withdateranges:true,
+   disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],
+   enabled_features:["study_templates","side_toolbar_in_fullscreen_mode","save_chart_properties_to_local_storage"],
+   overrides:{
+    "paneProperties.background":"#000",
+    "paneProperties.backgroundType":"solid",
+    "mainSeriesProperties.candleStyle.upColor":"#2962FF",
+    "mainSeriesProperties.candleStyle.downColor":"#F23645",
+    "mainSeriesProperties.candleStyle.borderUpColor":"#6E7380",
+    "mainSeriesProperties.candleStyle.borderDownColor":"#6E7380",
+    "mainSeriesProperties.candleStyle.wickUpColor":"#6E7380",
+    "mainSeriesProperties.candleStyle.wickDownColor":"#6E7380",
+    "scalesProperties.textColor":"#9CA3AF"
+   }
+  });
+ }catch(e){
+  document.getElementById("tv_chart").innerHTML='<div style="padding:20px;color:#ff1744;font-weight:900">TRADINGVIEW LOAD ERROR</div>';
+ }
+}
+
+startApp();
+loadChart();
 </script>
 </body>
 </html>
