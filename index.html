@@ -1,180 +1,406 @@
-//@version=5
-indicator("NEM INDICATOR", overlay=true, max_lines_count=500, max_boxes_count=500, max_labels_count=500)
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>XAUUSD WAR ROOM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#03030a;--panel:#08080f;--panel2:#0e0e1a;--line:#1e1e2e;--line2:#2a2a3e;
+  --text:#e8e8f0;--sub:#6a6a8a;--buy:#00d4ff;--sell:#ff3355;
+  --green:#00ff88;--red:#ff3355;--orange:#ff8c00;--yellow:#ffd700;
+  --cyan:#00d4ff;
+}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:Arial,"Hiragino Sans",sans-serif;overflow:hidden}
+#app{display:grid;grid-template-rows:52px 1fr;height:100vh;gap:3px;padding:3px}
+#topbar{display:grid;grid-template-columns:200px 140px 160px 1fr;gap:3px}
+.t-card{background:var(--panel);border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;padding:0 10px;gap:8px}
+.logo-txt{font-size:15px;font-weight:900;letter-spacing:1px;color:var(--yellow)}
+.logo-sub{font-size:10px;color:var(--sub)}
+.clk{font-size:18px;font-weight:900;font-family:monospace;color:var(--green)}
+.clk-sub{font-size:10px;color:var(--sub)}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse .9s infinite}
+.btn-notify{height:32px;padding:0 14px;border-radius:5px;font-size:12px;font-weight:900;cursor:pointer;border:1px solid;transition:all .2s}
+.btn-notify.off{border-color:var(--sub);color:var(--sub);background:transparent}
+.btn-notify.on{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.08)}
+#ticker-wrap{flex:1;overflow:hidden;border-left:1px solid var(--line);padding-left:10px}
+#ticker{font-size:12px;white-space:nowrap;display:inline-block;animation:scroll 40s linear infinite}
+@keyframes scroll{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-// ============================================================
-// NEM INDICATOR
-// 機能:
-//   1. 水平サポート・レジスタンスゾーン（赤/ピンク帯）
-//   2. 自動トレンドライン（黄色点線）
-//   3. 三角形パターン検出
-//   4. Buy / Sell シグナル
-//   5. エントリーボックス（緑/青）
-// ============================================================
+#main{display:grid;grid-template-columns:58% 1fr;gap:3px;min-height:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.hd{height:28px;min-height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;border-bottom:1px solid var(--line);background:#06060e;font-size:12px;font-weight:900;letter-spacing:.5px}
+.hd span{font-size:10px}
+.bd{flex:1;overflow:hidden;min-height:0}
+.scroll-y{overflow-y:auto;height:100%;padding:6px}
+.scroll-y::-webkit-scrollbar{width:4px}
+.scroll-y::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
 
-// ══════════════════════════════════════════════
-// 設定
-// ══════════════════════════════════════════════
-grp1 = "▶ サポート・レジスタンスゾーン"
-sr_lookback   = input.int(50,  "ピボット検索期間",       group=grp1)
-sr_zone_pct   = input.float(0.2,"ゾーン幅 (%)",         group=grp1, step=0.05)
-sr_max_zones  = input.int(5,   "最大ゾーン数",           group=grp1)
+#left-col{display:grid;grid-template-rows:1fr 220px;gap:3px;min-height:0}
+#chart-card{min-height:0}
+#tv_chart{width:100%;height:100%}
 
-grp2 = "▶ トレンドライン"
-tl_left       = input.int(10,  "左ピボット本数",         group=grp2)
-tl_right      = input.int(10,  "右ピボット本数",         group=grp2)
+#right-col{display:grid;grid-template-rows:130px 1fr 160px;gap:3px;min-height:0}
 
-grp3 = "▶ シグナル"
-sig_vol_filter = input.bool(true, "出来高フィルター使用", group=grp3)
-sig_vol_mult   = input.float(1.5, "出来高倍率",          group=grp3, step=0.1)
+.session-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:5px}
+.s-item{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:4px 7px}
+.s-label{font-size:9px;color:var(--sub)}
+.s-val{font-size:12px;font-weight:900}
+.countdown{font-size:15px;font-weight:900;font-family:monospace;color:var(--green);padding:3px 8px}
+.sess-times{padding:2px 8px;font-size:9px;color:var(--sub)}
 
-grp4 = "▶ 表示"
-show_sr       = input.bool(true,  "S/Rゾーン表示",       group=grp4)
-show_tl       = input.bool(true,  "トレンドライン表示",   group=grp4)
-show_triangle = input.bool(true,  "三角形パターン表示",   group=grp4)
-show_signal   = input.bool(true,  "シグナル表示",         group=grp4)
-show_box      = input.bool(true,  "エントリーボックス表示", group=grp4)
+.alert-item{border:1px solid var(--line);border-radius:4px;padding:4px 7px;margin-bottom:3px;font-size:11px;background:#09090f}
+.al-INFO{border-color:#1a2a1a;color:var(--sub)}
+.al-WATCH{border-color:var(--yellow);color:var(--yellow)}
+.al-ALERT{border-color:var(--orange);color:var(--orange);animation:glowO 1.3s infinite}
+.al-WARNING{border-color:var(--red);color:var(--red);animation:glowR 1s infinite}
+.al-CRITICAL{border-color:var(--red);color:var(--red);animation:critbg .45s infinite}
+@keyframes glowO{50%{box-shadow:0 0 8px rgba(255,140,0,.4)}}
+@keyframes glowR{50%{box-shadow:0 0 10px rgba(255,51,85,.5)}}
+@keyframes critbg{50%{background:#200a0a}}
 
-// ══════════════════════════════════════════════
-// カラー定義
-// ══════════════════════════════════════════════
-COL_SR_BEAR  = color.new(color.red,    70)
-COL_SR_BULL  = color.new(color.red,    70)
-COL_TL_UP    = color.new(color.yellow,  0)
-COL_TL_DOWN  = color.new(color.yellow,  0)
-COL_TRI      = color.new(color.yellow,  0)
-COL_BUY_BOX  = color.new(color.green,  75)
-COL_SELL_BOX = color.new(color.blue,   75)
-COL_BUY_LBL  = color.new(color.white,   0)
-COL_SELL_LBL = color.new(color.white,   0)
+.cmd-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:5px;height:calc(100% - 28px)}
+.cmd-box{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:6px}
+.cmd-lbl{font-size:9px;color:var(--sub);font-weight:900;margin-bottom:3px;letter-spacing:.5px}
+.cmd-row{display:flex;justify-content:space-between;font-size:11px;border-bottom:1px solid #12122a;padding:2px 0}
 
-// ══════════════════════════════════════════════
-// ユーティリティ
-// ══════════════════════════════════════════════
-atr     = ta.atr(14)
-vol_avg = ta.sma(volume, 20)
+.ev-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;height:calc(100% - 28px);overflow-y:auto}
+.ev-grid::-webkit-scrollbar{width:4px}
+.ev-grid::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
+.ev-box{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:7px;font-size:10px}
+.ev-title{font-size:12px;font-weight:900;margin-bottom:3px;color:var(--red)}
+.ev-row{display:flex;justify-content:space-between;border-bottom:1px solid #1a1a2e;padding:2px 0}
+.ev-cd{font-size:14px;font-weight:900;font-family:monospace;margin-top:3px;color:var(--cyan)}
+.watch{border-color:var(--yellow);animation:glowY 2s infinite}
+.alert-box{border-color:var(--orange);animation:glowO 1.3s infinite}
+.warning-box{border-color:var(--red);animation:glowR 1s infinite}
+.critical-box{border-color:var(--red);animation:critbg .45s infinite}
+@keyframes glowY{50%{box-shadow:0 0 10px rgba(255,215,0,.35)}}
 
-// ══════════════════════════════════════════════
-// 1. サポート・レジスタンスゾーン
-// ══════════════════════════════════════════════
-ph = ta.pivothigh(high, sr_lookback, sr_lookback)
-pl = ta.pivotlow(low,   sr_lookback, sr_lookback)
+.map-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;padding:5px;height:calc(100% - 28px)}
+.map-mini{border:1px solid var(--line2);border-radius:5px;padding:5px 7px;background:var(--panel2);cursor:pointer;transition:border-color .15s}
+.map-mini:hover{border-color:var(--yellow)}
+.map-t{font-size:11px;font-weight:900}
+.map-v{font-size:10px;margin-top:1px}
+.map-risk{font-size:9px;margin-top:1px;font-weight:900;color:var(--sub)}
 
-zone_width(price) =>
-    price * sr_zone_pct / 100
+.r{color:var(--red)}.g{color:var(--green)}.o{color:var(--orange)}.y{color:var(--yellow)}
+.c{color:var(--cyan)}.gr{color:var(--sub)}.buy{color:var(--buy)}.sell{color:var(--sell)}
 
-if show_sr
-    if not na(ph)
-        w = zone_width(ph)
-        box.new(bar_index - sr_lookback, ph + w, bar_index + 20, ph - w, border_color=COL_SR_BEAR, bgcolor=COL_SR_BEAR, extend=extend.right)
-    if not na(pl)
-        w = zone_width(pl)
-        box.new(bar_index - sr_lookback, pl + w, bar_index + 20, pl - w, border_color=COL_SR_BULL, bgcolor=COL_SR_BULL, extend=extend.right)
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:999;align-items:center;justify-content:center}
+#modal.open{display:flex}
+.modal-box{background:#0d0d1a;border:1px solid #3a3a5e;border-radius:10px;padding:20px;max-width:400px;width:90%}
+.modal-title{font-size:17px;font-weight:900;margin-bottom:10px}
+.modal-body{font-size:13px;line-height:1.8;white-space:pre-line;color:var(--sub)}
+.modal-close{margin-top:14px;width:100%;height:34px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:6px;font-size:13px;font-weight:900;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="app">
 
-// ══════════════════════════════════════════════
-// 2. 自動トレンドライン（黄色点線）
-// ══════════════════════════════════════════════
-ph2 = ta.pivothigh(high, tl_left, tl_right)
-pl2 = ta.pivotlow(low,   tl_left, tl_right)
+  <div id="topbar">
+    <div class="t-card" style="flex-direction:column;align-items:flex-start;gap:1px">
+      <div class="logo-txt">XAUUSD WAR ROOM</div>
+      <div class="logo-sub">GOLD COMMAND CENTER</div>
+    </div>
 
-var float ph2_prev = na
-var int   ph2_bar  = na
-var float ph2_cur  = na
-var int   ph2_cbar = na
+    <div class="t-card" style="flex-direction:column;align-items:flex-start;gap:0">
+      <div class="clk-sub">日本時間 JST</div>
+      <div id="jstClock" class="clk">--:--:--</div>
+      <div id="jstDate" class="clk-sub">----/--/--</div>
+    </div>
 
-var float pl2_prev = na
-var int   pl2_bar  = na
-var float pl2_cur  = na
-var int   pl2_cbar = na
+    <div class="t-card" style="gap:8px">
+      <div class="live-dot"></div>
+      <div style="flex:1">
+        <div class="clk-sub">状態</div>
+        <div id="liveLabel" class="s-val g" style="font-size:13px;font-weight:900">LIVE</div>
+      </div>
+      <button id="notifyBtn" class="btn-notify off" onclick="toggleNotify()">🔔 通知 OFF</button>
+    </div>
 
-if not na(ph2)
-    ph2_prev  := ph2_cur
-    ph2_bar   := ph2_cbar
-    ph2_cur   := ph2
-    ph2_cbar  := bar_index - tl_right
+    <div class="t-card">
+      <div id="ticker-wrap"><span id="ticker">Loading...</span></div>
+    </div>
+  </div>
 
-if not na(pl2)
-    pl2_prev  := pl2_cur
-    pl2_bar   := pl2_cbar
-    pl2_cur   := pl2
-    pl2_cbar  := bar_index - tl_right
+  <div id="main">
+    <div id="left-col">
+      <div class="card" id="chart-card">
+        <div id="tv_chart"></div>
+      </div>
 
-if show_tl
-    if not na(ph2_prev) and not na(ph2_cur) and ph2_bar != ph2_cbar
-        line.new(ph2_bar, ph2_prev, ph2_cbar, ph2_cur, color=COL_TL_DOWN, style=line.style_dotted, width=2, extend=extend.right)
-    if not na(pl2_prev) and not na(pl2_cur) and pl2_bar != pl2_cbar
-        line.new(pl2_bar, pl2_prev, pl2_cbar, pl2_cur, color=COL_TL_UP, style=line.style_dotted, width=2, extend=extend.right)
+      <div class="card">
+        <div class="hd">HIGH IMPACT NEWS <span class="r">AUTO COUNTDOWN</span><span class="g">LIVE</span></div>
+        <div class="ev-grid" id="evList"></div>
+      </div>
+    </div>
 
-// ══════════════════════════════════════════════
-// 3. 三角形パターン検出（収束型）
-// ══════════════════════════════════════════════
-var float tri_high1 = na
-var int   tri_hbar1 = na
-var float tri_high2 = na
-var int   tri_hbar2 = na
-var float tri_low1  = na
-var int   tri_lbar1 = na
-var float tri_low2  = na
-var int   tri_lbar2 = na
+    <div id="right-col">
+      <div class="card">
+        <div class="hd">SESSION <span id="sessStatus" class="g">---</span></div>
+        <div class="bd">
+          <div class="session-grid">
+            <div class="s-item"><div class="s-label">現在</div><div id="sessionNow" class="s-val g">---</div></div>
+            <div class="s-item"><div class="s-label">次</div><div id="nextSess" class="s-val o">---</div></div>
+            <div class="s-item"><div class="s-label">開始</div><div id="nextStart" class="s-val" style="font-size:10px">---</div></div>
+            <div class="s-item"><div class="s-label">終了</div><div id="nextEnd" class="s-val" style="font-size:10px">---</div></div>
+          </div>
+          <div class="countdown">残り <span id="sessCD">--:--:--</span></div>
+          <div class="sess-times">ASIA 09:00〜16:00 ｜ LONDON 16:00〜21:30 ｜ NY 21:30〜06:00</div>
+        </div>
+      </div>
 
-if not na(ph2)
-    tri_high2 := tri_high1
-    tri_hbar2 := tri_hbar1
-    tri_high1 := ph2
-    tri_hbar1 := bar_index - tl_right
+      <div class="card">
+        <div class="hd">MARKET ALERT LOG <span class="g">LIVE</span></div>
+        <div class="bd">
+          <div class="scroll-y" id="alertLog"></div>
+        </div>
+      </div>
 
-if not na(pl2)
-    tri_low2  := tri_low1
-    tri_lbar2 := tri_lbar1
-    tri_low1  := pl2
-    tri_lbar1 := bar_index - tl_right
+      <div class="card">
+        <div class="hd">XAUUSD COMMAND <span class="c">ANALYSIS</span></div>
+        <div class="cmd-grid">
+          <div class="cmd-box">
+            <div class="cmd-lbl">TREND</div>
+            <div class="cmd-row"><span>短期</span><span class="sell">SELL</span></div>
+            <div class="cmd-row"><span>中期</span><span class="buy">BUY</span></div>
+            <div class="cmd-row"><span>長期</span><span class="buy">BUY</span></div>
+          </div>
+          <div class="cmd-box">
+            <div class="cmd-lbl">BIAS</div>
+            <div style="font-size:13px;font-weight:900;color:var(--buy)">押し目買い優勢</div>
+            <div style="font-size:10px;color:var(--sub);margin-top:2px">上昇トレンド継続中</div>
+          </div>
+          <div class="cmd-box">
+            <div class="cmd-lbl">TARGET ↑</div>
+            <div style="font-size:11px;color:var(--buy);line-height:1.8">4,550<br>4,565<br>4,580</div>
+          </div>
+          <div class="cmd-box">
+            <div class="cmd-lbl">TARGET ↓</div>
+            <div style="font-size:11px;color:var(--sell);line-height:1.8">4,530<br>4,515<br>4,500</div>
+          </div>
+          <div class="cmd-box" style="grid-column:1/3">
+            <div class="cmd-lbl">CAUTION</div>
+            <div style="display:flex;gap:10px;font-size:10px;flex-wrap:wrap">
+              <span>NY OPEN <span class="o">注意</span></span>
+              <span>US指標 <span class="o">警戒</span></span>
+              <span>中東 <span class="r">高リスク</span></span>
+              <span>FOMC <span class="r">警戒</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-is_triangle = not na(tri_high1) and not na(tri_high2) and
-              not na(tri_low1)  and not na(tri_low2)  and
-              tri_high1 < tri_high2 and tri_low1 > tri_low2
+</div>
 
-if show_triangle and is_triangle and not na(ph2)
-    line.new(tri_hbar2, tri_high2, tri_hbar1, tri_high1, color=COL_TRI, style=line.style_dotted, width=2)
-    line.new(tri_lbar2, tri_low2,  tri_lbar1, tri_low1,  color=COL_TRI, style=line.style_dotted, width=2)
+<div id="modal">
+  <div class="modal-box">
+    <div id="modalTitle" class="modal-title"></div>
+    <div id="modalBody" class="modal-body"></div>
+    <button class="modal-close" onclick="closeModal()">閉じる</button>
+  </div>
+</div>
 
-// ══════════════════════════════════════════════
-// 4. Buy / Sell シグナル + エントリーボックス
-// ══════════════════════════════════════════════
-ema_fast   = ta.ema(close, 21)
-ema_slow   = ta.ema(close, 55)
-trend_up   = ema_fast > ema_slow
-trend_down = ema_fast < ema_slow
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+let notifyOn=false,sentAlerts={},lastSession="";
 
-vol_ok_buy  = sig_vol_filter ? volume > vol_avg * sig_vol_mult : true
-vol_ok_sell = sig_vol_filter ? volume > vol_avg * sig_vol_mult : true
+function toggleNotify(){
+  notifyOn=!notifyOn;
+  const b=document.getElementById("notifyBtn");
+  if(notifyOn){
+    b.className="btn-notify on";b.textContent="🔔 通知 ON";
+    if(Notification.permission!=="granted")Notification.requestPermission();
+    addAlert("通知システム有効","INFO");
+  } else {
+    b.className="btn-notify off";b.textContent="🔔 通知 OFF";
+    addAlert("通知システム無効","INFO");
+  }
+}
 
-buy_signal  = show_signal and trend_up   and not na(pl2) and close > open and vol_ok_buy  and low  <= pl2_cur * 1.002
-sell_signal = show_signal and trend_down and not na(ph2) and close < open and vol_ok_sell and high >= ph2_cur * 0.998
+function openModal(t,b){
+  document.getElementById("modalTitle").textContent=t;
+  document.getElementById("modalBody").textContent=b;
+  document.getElementById("modal").className="open";
+}
+function closeModal(){document.getElementById("modal").className=""}
 
-if buy_signal
-    label.new(bar_index, low - atr * 0.5, "Buy", style=label.style_label_up, color=color.new(color.teal, 0), textcolor=COL_BUY_LBL, size=size.small)
+function beep(n){
+  for(let i=0;i<n;i++) setTimeout(()=>{
+    try{
+      const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();
+      o.connect(g);g.connect(a.destination);
+      o.frequency.value=960;
+      g.gain.setValueAtTime(.25,a.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.12);
+      o.start();o.stop(a.currentTime+.12);
+    }catch(e){}
+  },i*280);
+}
 
-if sell_signal
-    label.new(bar_index, high + atr * 0.5, "Sell", style=label.style_label_down, color=color.new(color.red, 0), textcolor=COL_SELL_LBL, size=size.small)
+function notify(msg,n,lv){
+  if(notifyOn&&Notification.permission==="granted")new Notification("WAR ROOM: "+msg);
+  if(notifyOn&&lv!=="INFO")beep(n);
+  addAlert(msg,lv);
+}
 
-box_height = atr * 2
+function addAlert(text,lv="INFO"){
+  const n=nowJST(),t=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  const el=document.getElementById("alertLog");
+  const d=document.createElement("div");
+  d.className="alert-item al-"+lv;
+  d.innerHTML=`<span style="font-family:monospace;font-size:10px">${t}</span> <b>${lv}</b><br>${text}`;
+  el.insertBefore(d,el.firstChild);
+  if(el.children.length>80)el.removeChild(el.lastChild);
+}
 
-if show_box and buy_signal
-    b1_l   = bar_index
-    b1_r   = bar_index + 10
-    b1_top = low + box_height
-    b1_bot = low
-    box.new(b1_l, b1_top, b1_r, b1_bot, border_color=color.new(color.green, 0), bgcolor=COL_BUY_BOX)
+function pad(n){return String(n).padStart(2,"0")}
+function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
+function jpDate(d){return `${d.getMonth()+1}/${pad(d.getDate())}(${["日","月","火","水","木","金","土"][d.getDay()]})`}
+function hhmm(d){return `${pad(d.getHours())}:${pad(d.getMinutes())}`}
+function hhmmss(d){return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`}
+function cd(ms){
+  let s=Math.max(0,Math.floor(ms/1000));
+  const h=Math.floor(s/3600);s%=3600;const m=Math.floor(s/60);s%=60;
+  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
 
-if show_box and sell_signal
-    b2_l   = bar_index
-    b2_r   = bar_index + 10
-    b2_top = high
-    b2_bot = high - box_height
-    box.new(b2_l, b2_top, b2_r, b2_bot, border_color=color.new(color.blue, 0), bgcolor=COL_SELL_BOX)
+function todayAt(b,h,m){const d=new Date(b);d.setHours(h,m,0,0);return d}
+function tomorrowAt(b,h,m){const d=new Date(b);d.setDate(d.getDate()+1);d.setHours(h,m,0,0);return d}
+function nextMon(b){const d=new Date(b);while(d.getDay()!==1)d.setDate(d.getDate()+1);d.setHours(9,0,0,0);return d}
 
-// ══════════════════════════════════════════════
-// 5. アラート
-// ══════════════════════════════════════════════
-alertcondition(buy_signal,  "NEM Buy Signal",  "NEM INDICATOR: Buy シグナル検出")
-alertcondition(sell_signal, "NEM Sell Signal", "NEM INDICATOR: Sell シグナル検出")
-alertcondition(not na(ph2) or not na(pl2), "New Trendline Detected", "NEM INDICATOR: New Trendline Detected")
+function getSessions(now){
+  const day=now.getDay(),min=now.getHours()*60+now.getMinutes();
+  if((day===6&&min>=6*60)||day===0||(day===1&&min<7*60))
+    return{cur:"CLOSED",next:"ASIA",start:day===1?todayAt(now,9,0):nextMon(now),end:null};
+  if(min>=9*60&&min<16*60)return{cur:"ASIA",next:"LONDON",start:todayAt(now,16,0),end:todayAt(now,21,30)};
+  if(min>=16*60&&min<21*60+30)return{cur:"LONDON",next:"NEW YORK",start:todayAt(now,21,30),end:tomorrowAt(now,6,0)};
+  return{cur:"NEW YORK",next:"ASIA",start:min>=21*60+30?tomorrowAt(now,9,0):todayAt(now,9,0),end:null};
+}
+
+const EVENTS=[
+  {name:"US ISM PMI",desc:"米ISM製造業景況指数",date:"2026-06-03",time:"23:00",imp:"★★★★★",fcast:"52.7",prev:"53.0",xau:"強い"},
+  {name:"JOLTS",desc:"米求人件数",date:"2026-06-04",time:"23:00",imp:"★★★★",fcast:"要確認",prev:"要確認",xau:"中〜強"},
+  {name:"US ADP",desc:"米ADP雇用者数",date:"2026-06-05",time:"21:15",imp:"★★★★",fcast:"要確認",prev:"要確認",xau:"強い"},
+  {name:"US NFP",desc:"米雇用統計",date:"2026-06-05",time:"21:30",imp:"★★★★★",fcast:"要確認",prev:"要確認",xau:"非常に強い"},
+  {name:"US CPI",desc:"米消費者物価指数",date:"2026-06-10",time:"21:30",imp:"★★★★★",fcast:"要確認",prev:"要確認",xau:"非常に強い"},
+  {name:"US PPI",desc:"米生産者物価指数",date:"2026-06-11",time:"21:30",imp:"★★★★",fcast:"要確認",prev:"要確認",xau:"強い"},
+  {name:"FOMC",desc:"米政策金利/パウエル発言",date:"2026-06-18",time:"03:00",imp:"★★★★★",fcast:"要確認",prev:"要確認",xau:"非常に強い"}
+];
+
+function evDate(e){return new Date(`${e.date}T${e.time}:00+09:00`)}
+function alertLevel(diff){
+  if(diff<=5*60000)return["CRITICAL",4,5,"critical-box"];
+  if(diff<=15*60000)return["WARNING",3,15,"warning-box"];
+  if(diff<=30*60000)return["ALERT",2,30,"alert-box"];
+  if(diff<=60*60000)return["WATCH",1,60,"watch"];
+  return["","",0,""];
+}
+
+const MAPS=[
+  {n:"中東",c:"r",v:"金↑↑",risk:"高リスク",d:"イスラエル/イラン/ガザ\n安全資産買い材料\nXAUUSD：強い上昇圧力"},
+  {n:"ウクライナ",c:"o",v:"金↑",risk:"警戒",d:"ロシア/ウクライナ\n停戦不透明\nXAUUSD：買い材料"},
+  {n:"台湾",c:"y",v:"監視",risk:"注意",d:"中国/台湾\n軍事演習・米中発言監視\nXAUUSD：リスク回避"},
+  {n:"イラン",c:"r",v:"警戒",risk:"高",d:"軍事/原油\n原油急騰・地政学リスク\nXAUUSD：強気材料"},
+  {n:"中国",c:"gr",v:"中立",risk:"注意",d:"景気/人民元\n景気不安・人民元安\nXAUUSD：中立〜買い"},
+  {n:"紅海",c:"o",v:"注意",risk:"注意",d:"海運/物流\n航路リスク・原油価格\nXAUUSD：リスク回避"}
+];
+
+function renderMap(){
+  const left=document.getElementById("left-col");
+  if(document.getElementById("map-card"))return;
+  const mc=document.createElement("div");
+  mc.id="map-card";
+  mc.className="card";
+  mc.style.cssText="position:absolute;top:3px;left:3px;width:200px;z-index:8;background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden";
+  mc.innerHTML=`<div class="hd">GOLD WAR MAP <span style="cursor:pointer;color:var(--sub)" onclick="this.closest('#map-card').style.display='none'">✕</span></div>
+  <div class="map-grid">${MAPS.map(m=>`<div class="map-mini" onclick="openModal('${m.n}','${m.d}')"><div class="map-t ${m.c}">${m.n}</div><div class="map-v ${m.c}">${m.v}</div><div class="map-risk">${m.risk}</div></div>`).join("")}</div>`;
+  const main=document.getElementById("main");
+  main.style.position="relative";
+  main.appendChild(mc);
+}
+
+new TradingView.widget({
+  autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",
+  theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",
+  hide_top_toolbar:false,hide_side_toolbar:false,hide_legend:false,
+  hide_volume:false,allow_symbol_change:true,
+  disabled_features:["use_localstorage_for_settings"],
+  enabled_features:["study_templates","create_volume_indicator_by_default"],
+  overrides:{
+    "paneProperties.background":"#03030a","paneProperties.backgroundType":"solid",
+    "paneProperties.vertGridProperties.color":"rgba(255,255,255,0.03)",
+    "paneProperties.horzGridProperties.color":"rgba(255,255,255,0.03)",
+    "mainSeriesProperties.candleStyle.upColor":"#00d4ff",
+    "mainSeriesProperties.candleStyle.downColor":"#ff3355",
+    "mainSeriesProperties.candleStyle.borderUpColor":"#00d4ff",
+    "mainSeriesProperties.candleStyle.borderDownColor":"#ff3355",
+    "mainSeriesProperties.candleStyle.wickUpColor":"#446677",
+    "mainSeriesProperties.candleStyle.wickDownColor":"#664455",
+    "scalesProperties.textColor":"#888899"
+  }
+});
+
+function update(){
+  const n=nowJST();
+  document.getElementById("jstClock").textContent=hhmmss(n);
+  document.getElementById("jstDate").textContent=`${n.getFullYear()}/${pad(n.getMonth()+1)}/${pad(n.getDate())}`;
+
+  const ss=getSessions(n);
+  document.getElementById("sessionNow").textContent=ss.cur;
+  document.getElementById("nextSess").textContent=ss.next;
+  document.getElementById("nextStart").textContent=hhmm(ss.start)+" "+jpDate(ss.start);
+  document.getElementById("nextEnd").textContent=ss.end?hhmm(ss.end)+" "+jpDate(ss.end):"-";
+  const cdiff=ss.start-n;
+  document.getElementById("sessCD").textContent=cd(cdiff);
+  document.getElementById("sessStatus").textContent=ss.cur;
+
+  const[sl,sn,sm]=alertLevel(cdiff);
+  if(sl){const k=`sess-${ss.next}-${sm}`;if(!sentAlerts[k]){notify(`${ss.next} ${sm}分前`,sn,sl);sentAlerts[k]=true}}
+  if(ss.cur!==lastSession&&ss.cur!=="CLOSED"){notify(`${ss.cur} 開始`,2,"INFO");lastSession=ss.cur}
+
+  const upcoming=EVENTS.map(e=>({...e,dt:evDate(e)})).filter(e=>e.dt>n).sort((a,b)=>a.dt-b.dt);
+  if(upcoming[0]){
+    const diff=upcoming[0].dt-n;const[el,en,em]=alertLevel(diff);
+    if(el){const k=`ev-${upcoming[0].name}-${em}`;if(!sentAlerts[k]){notify(`${upcoming[0].name} ${em}分前`,en,el);sentAlerts[k]=true}}
+  }
+
+  document.getElementById("ticker").textContent=
+    `JST ${hhmmss(n)}　｜　${ss.cur}　｜　次: ${ss.next} 残り ${cd(cdiff)}　｜　`+
+    upcoming.slice(0,4).map(e=>`${e.name} ${cd(e.dt-n)}`).join("　｜　")+
+    `　｜　中東高リスク監視中　｜　XAUUSD / USDJPY / BTCUSD 監視中`;
+
+  document.getElementById("evList").innerHTML=upcoming.slice(0,8).map(ev=>{
+    const diff=ev.dt-n;
+    const[lv,,,cls]=alertLevel(diff);
+    return `<div class="ev-box ${cls}">
+      <div class="ev-title">${ev.name}</div>
+      <div style="color:var(--sub)">${ev.desc}</div>
+      <div class="ev-row"><span>${jpDate(ev.dt)}</span><span class="y">${hhmm(ev.dt)} JST</span></div>
+      <div class="ev-row"><span>重要度</span><span class="r">${ev.imp}</span></div>
+      <div class="ev-row"><span>予想</span><span class="y">${ev.fcast}</span></div>
+      <div class="ev-row"><span>前回</span><span class="gr">${ev.prev}</span></div>
+      <div class="ev-row"><span>XAUUSD影響</span><span class="r">${ev.xau}</span></div>
+      <div class="ev-cd">${cd(diff)}</div>
+    </div>`;
+  }).join("");
+}
+
+function init(){
+  renderMap();
+  addAlert("WAR ROOM 起動完了","INFO");
+  addAlert("XAUUSD / USDJPY 監視開始","INFO");
+  addAlert("中東リスク 高リスク監視中","WARNING");
+  addAlert("HIGH IMPACT NEWS 自動監視 ON","INFO");
+  setInterval(update,1000);
+  update();
+}
+init();
+</script>
+</body>
+</html>
