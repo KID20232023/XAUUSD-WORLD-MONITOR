@@ -6,31 +6,62 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#020208;--p:#07070f;--p2:#111124;--ln:#2d2d50;--tx:#fff;--sub:#9a9ab5;--g:#00e676;--r:#ff1744;--o:#ff9100;--y:#ffd600;--c:#00e5ff}
-html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-family:Arial,Meiryo,sans-serif;overflow:hidden}
-#app{height:100vh;display:grid;grid-template-rows:50px 42px 1fr 320px 20px;gap:3px;padding:3px}
+:root{
+  --bg:#020208;--p:#07070f;--p2:#111124;--ln:#2d2d50;
+  --tx:#fff;--sub:#9a9ab5;--g:#00e676;--r:#ff1744;
+  --o:#ff9100;--y:#ffd600;--c:#00e5ff
+}
+html,body{
+  width:100%;height:100%;background:var(--bg);color:var(--tx);
+  font-family:Arial,Meiryo,sans-serif;overflow:hidden
+}
+#app{
+  height:100vh;display:grid;
+  grid-template-rows:50px 42px 1fr 315px 20px;
+  gap:3px;padding:3px
+}
 .card,.box{background:var(--p);border:1px solid var(--ln);border-radius:4px;overflow:hidden}
-.hd{height:24px;padding:0 8px;border-bottom:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between;background:#04040b;color:var(--y);font-size:11px;font-weight:900}
+.hd{
+  height:24px;padding:0 8px;border-bottom:1px solid var(--ln);
+  display:flex;align-items:center;justify-content:space-between;
+  background:#04040b;color:var(--y);font-size:11px;font-weight:900
+}
 #topbar{display:grid;grid-template-columns:245px 135px 110px 115px 1fr;gap:3px}
 .box{padding:5px 8px;display:flex;align-items:center}
-.logoImg{width:33px;height:33px;border-radius:50%;object-fit:cover;margin-right:8px;filter:drop-shadow(0 0 8px var(--y));animation:pulse 2.5s infinite}
+.logoImg{
+  width:33px;height:33px;border-radius:50%;object-fit:cover;margin-right:8px;
+  filter:drop-shadow(0 0 8px var(--y));animation:pulse 2.5s infinite
+}
 @keyframes pulse{50%{opacity:.55;transform:scale(1.06)}}
 .l1{font-size:13px;font-weight:900;color:var(--y)}
 .l2,.sub{font-size:8px;color:var(--sub);font-weight:900}
 .clock{font-size:17px;color:var(--g);font-weight:900;font-family:monospace}
 .live{font-size:12px;color:var(--g);font-weight:900}
-.btn{width:100%;height:25px;background:rgba(0,230,118,.08);border:1px solid var(--g);color:var(--g);border-radius:4px;font-weight:900;font-size:10px}
+.btn{
+  width:100%;height:25px;background:rgba(0,230,118,.08);
+  border:1px solid var(--g);color:var(--g);border-radius:4px;
+  font-weight:900;font-size:10px
+}
 .btn.off{border-color:var(--sub);color:var(--sub);background:transparent}
+
 #flowBox{display:grid;grid-template-rows:21px 21px;background:#050509;overflow:hidden}
 .flowLine{position:relative;overflow:hidden;white-space:nowrap}
-.flowInner{position:absolute;white-space:nowrap;animation:flow 90s linear infinite;font-size:13px;font-weight:900;line-height:21px}
+.flowInner{
+  position:absolute;white-space:nowrap;animation:flow 80s linear infinite;
+  font-size:13px;font-weight:900;line-height:21px
+}
 @keyframes flow{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
-.up{color:var(--g)}.down{color:var(--r)}.red{color:var(--r)}.yellow{color:var(--y)}.cyan{color:var(--c)}
+.up{color:var(--g)}.down{color:var(--r)}
 .flashText{animation:flashText .55s infinite}
-@keyframes flashText{0%,100%{opacity:1;color:var(--r);text-shadow:0 0 8px rgba(255,23,68,.9)}50%{opacity:.35;color:#fff;text-shadow:none}}
+@keyframes flashText{
+  0%,100%{opacity:1;color:var(--r);text-shadow:0 0 8px rgba(255,23,68,.9)}
+  50%{opacity:.35;color:#fff;text-shadow:none}
+}
+
 #main{display:grid;grid-template-columns:minmax(0,1fr) 600px;gap:3px;min-height:0}
 #chart{height:calc(100% - 24px);background:#000}
-#tv_chart{width:100%;height:100%}
+#chart iframe{width:100%;height:100%;border:0}
+
 #right{display:grid;grid-template-rows:170px 155px 1fr;gap:3px;min-height:0}
 .sessionBody{height:calc(100% - 24px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:6px}
 .sBox{background:var(--p2);border:1px solid var(--ln);border-radius:4px;padding:8px;overflow:hidden}
@@ -41,6 +72,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 .sText{font-size:12px;margin-top:6px}
 .sWarn{font-size:13px;margin-top:7px;color:var(--g);font-weight:900}
 .closed{color:var(--r)!important;animation:flashText .7s infinite}
+
 .cmdScroll{height:calc(100% - 24px);overflow-y:auto;padding:5px}
 .cmdGrid{display:grid;grid-template-columns:66px 1fr 115px 125px;gap:4px;min-height:180px}
 .panel{background:var(--p2);border:1px solid var(--ln);border-radius:4px;padding:5px}
@@ -54,6 +86,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 .priceSell{border-color:var(--r);background:rgba(255,23,68,.12)}
 .rapidMain{font-size:19px;color:var(--r);font-weight:900;text-align:center;margin-top:10px}
 .rapidSub{text-align:center;font-size:12px;font-weight:900;margin-top:7px}
+
 .liveNewsWrap{height:calc(100% - 24px);display:grid;grid-template-rows:28px 1fr;gap:4px;padding:4px}
 .newsTabs{display:flex;gap:4px}
 .newsTab{flex:1;background:#10101d;color:#fff;border:1px solid var(--ln);border-radius:4px;font-size:10px;font-weight:900;cursor:pointer}
@@ -65,9 +98,12 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 .tag{background:rgba(0,230,118,.18);color:var(--g);font-size:8px;padding:1px 5px;border-radius:3px;margin-left:4px}
 .ntitle{font-size:11px;font-weight:900;margin-top:2px;line-height:1.3}
 .ntime{font-size:9px;color:var(--sub);margin-top:2px}
-#bottom{min-height:0}
-.impactGrid{height:calc(100% - 24px);overflow-y:auto;overflow-x:hidden;padding:5px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;align-content:start}
-.evCard{background:#121225;border:1px solid #35355a;border-radius:4px;padding:7px 8px;min-height:188px;overflow:hidden}
+
+.impactGrid{
+  height:calc(100% - 24px);overflow-y:auto;overflow-x:hidden;
+  padding:5px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;align-content:start
+}
+.evCard{background:#121225;border:1px solid #35355a;border-radius:4px;padding:7px 8px;min-height:178px;overflow:hidden}
 .evCard.warn24{border-color:var(--y)}
 .evCard.warn60{border-color:var(--o)}
 .evCard.warn15{border-color:var(--r);animation:flashText .75s infinite}
@@ -85,9 +121,20 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 
 <body>
 <div id="app">
+
 <div id="topbar">
-  <div class="box"><img class="logoImg" src="B0A7EDCD-672C-4209-99F7-917932FC8367.jpeg" onerror="this.style.display='none'"><div><div class="l1">NEXUS FX WAR ROOM</div><div class="l2">XAUUSD COMMAND CENTER</div></div></div>
-  <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center"><div class="sub">JST TIME</div><div id="clock" class="clock">--:--:--</div><div id="date" class="sub">----</div></div>
+  <div class="box">
+    <img class="logoImg" src="B0A7EDCD-672C-4209-99F7-917932FC8367.jpeg" onerror="this.style.display='none'">
+    <div>
+      <div class="l1">NEXUS FX WAR ROOM</div>
+      <div class="l2">XAUUSD COMMAND CENTER</div>
+    </div>
+  </div>
+  <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center">
+    <div class="sub">JST TIME</div>
+    <div id="clock" class="clock">--:--:--</div>
+    <div id="date" class="sub">----</div>
+  </div>
   <div class="box"><div><div class="sub">STATUS</div><div class="live">LIVE</div></div></div>
   <div class="box"><button id="notifyBtn" class="btn" onclick="toggleNotify()">ALERT ON</button></div>
   <div class="box"><div class="sub">REALTIME PRICE / SESSION / NEWS / HIGH IMPACT</div></div>
@@ -99,7 +146,12 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 </div>
 
 <div id="main">
-  <div class="card"><div class="hd">TRADINGVIEW - REALTIME CHART</div><div id="chart"><div id="tv_chart"></div></div></div>
+  <div class="card">
+    <div class="hd">TRADINGVIEW - REALTIME CHART</div>
+    <div id="chart">
+      <iframe src="https://s.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=15&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=000000&studies=[]&theme=dark&style=1&timezone=Asia%2FTokyo&withdateranges=1&hideideas=1&locale=en"></iframe>
+    </div>
+  </div>
 
   <div id="right">
     <div class="card">
@@ -113,12 +165,14 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 
     <div class="card">
       <div class="hd">XAUUSD COMMAND</div>
-      <div class="cmdScroll"><div class="cmdGrid">
-        <div class="panel"><div class="trend buy">LONG<br>BUY</div><div class="trend buy">MID<br>BUY</div><div class="trend sell">SHORT<br>SELL</div></div>
-        <div class="panel"><div class="biasTitle">BIAS</div><div class="biasMain">BUY DIP BIAS</div><div class="info"><span>TREND</span><span>UP</span></div><div class="info"><span>VOLATILITY</span><span>HIGH</span></div><div class="info"><span>FED</span><span>WATCH</span></div></div>
-        <div class="panel"><div class="buy">BUY ZONE</div><div class="priceBox priceBuy">4540.00</div><div class="priceBox priceBuy">4530.00</div><div class="sell">SELL ZONE</div><div class="priceBox priceSell">4560.00</div><div class="priceBox priceSell">4575.00</div></div>
-        <div class="panel"><div class="biasTitle sell">PRICE ACTION ALERT</div><div id="rapidMain" class="rapidMain">NORMAL</div><div id="rapidSub" class="rapidSub">MONITORING</div></div>
-      </div></div>
+      <div class="cmdScroll">
+        <div class="cmdGrid">
+          <div class="panel"><div class="trend buy">LONG<br>BUY</div><div class="trend buy">MID<br>BUY</div><div class="trend sell">SHORT<br>SELL</div></div>
+          <div class="panel"><div class="biasTitle">BIAS</div><div class="biasMain">BUY DIP BIAS</div><div class="info"><span>TREND</span><span>UP</span></div><div class="info"><span>VOLATILITY</span><span>HIGH</span></div><div class="info"><span>FED</span><span>WATCH</span></div></div>
+          <div class="panel"><div class="buy">BUY ZONE</div><div class="priceBox priceBuy">4540.00</div><div class="priceBox priceBuy">4530.00</div><div class="sell">SELL ZONE</div><div class="priceBox priceSell">4560.00</div><div class="priceBox priceSell">4575.00</div></div>
+          <div class="panel"><div class="biasTitle sell">PRICE ACTION ALERT</div><div id="rapidMain" class="rapidMain">NORMAL</div><div id="rapidSub" class="rapidSub">MONITORING</div></div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -145,9 +199,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
   <span id="footerTime">UPDATE: --</span>
   <span>AUTO UPDATE ON</span>
 </div>
+
 </div>
 
-<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
 const TWELVE_KEY="885967facd734407b8f15fbdb27ef911";
 const TE_CLIENT="guest";
@@ -161,258 +215,330 @@ let priceText="PRICE LOADING...";
 let EVENTS=[];
 
 const SYMBOLS=[
-{name:"XAUUSD",symbol:"XAU/USD",dec:2,alert:10},
-{name:"USDJPY",symbol:"USD/JPY",dec:3,alert:0.30},
-{name:"EURUSD",symbol:"EUR/USD",dec:5,alert:0.003},
-{name:"GBPJPY",symbol:"GBP/JPY",dec:3,alert:0.50},
-{name:"BTCUSD",symbol:"BTC/USD",dec:0,alert:500},
-{name:"ETHUSD",symbol:"ETH/USD",dec:0,alert:80}
+  {name:"XAUUSD",symbol:"XAU/USD",dec:2,alert:10},
+  {name:"USDJPY",symbol:"USD/JPY",dec:3,alert:.30},
+  {name:"EURUSD",symbol:"EUR/USD",dec:5,alert:.003},
+  {name:"GBPJPY",symbol:"GBP/JPY",dec:3,alert:.50},
+  {name:"BTCUSD",symbol:"BTC/USD",dec:0,alert:500},
+  {name:"ETHUSD",symbol:"ETH/USD",dec:0,alert:80},
+  {name:"NAS100",symbol:"NDX",dec:2,alert:120}
 ];
 
 const FALLBACK_EVENTS=[
-{n:"US ISM PMI",d:"ISM Manufacturing PMI",date:"2026-06-01",time:"23:00",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
-{n:"JOLTS",d:"Job Openings",date:"2026-06-03",time:"23:00",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
-{n:"ADP",d:"ADP Employment Change",date:"2026-06-04",time:"21:15",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
-{n:"US NFP",d:"Non Farm Payrolls",date:"2026-06-05",time:"21:30",imp:"VERY HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
-{n:"US CPI",d:"Consumer Price Index",date:"2026-06-10",time:"21:30",imp:"VERY HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
-{n:"CORE CPI",d:"Core CPI",date:"2026-06-10",time:"21:30",imp:"VERY HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
-{n:"US PPI",d:"Producer Price Index",date:"2026-06-11",time:"21:30",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
-{n:"CORE PPI",d:"Core PPI",date:"2026-06-11",time:"21:30",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
-{n:"FOMC",d:"Fed Rate Decision",date:"2026-06-18",time:"03:00",imp:"CRITICAL",fc:"CHECK",pv:"CHECK",res:"PENDING"},
-{n:"PCE",d:"PCE Price Index",date:"2026-06-27",time:"21:30",imp:"VERY HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"}
+  {n:"US ISM PMI",d:"ISM Manufacturing PMI",date:"2026-06-01",time:"23:00",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
+  {n:"JOLTS",d:"Job Openings",date:"2026-06-03",time:"23:00",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
+  {n:"ADP",d:"ADP Employment Change",date:"2026-06-04",time:"21:15",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
+  {n:"US NFP",d:"Non Farm Payrolls",date:"2026-06-05",time:"21:30",imp:"VERY HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
+  {n:"US CPI",d:"Consumer Price Index",date:"2026-06-10",time:"21:30",imp:"VERY HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
+  {n:"CORE CPI",d:"Core CPI",date:"2026-06-10",time:"21:30",imp:"VERY HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
+  {n:"US PPI",d:"Producer Price Index",date:"2026-06-11",time:"21:30",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
+  {n:"CORE PPI",d:"Core PPI",date:"2026-06-11",time:"21:30",imp:"HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"},
+  {n:"FOMC",d:"Fed Rate Decision",date:"2026-06-18",time:"03:00",imp:"CRITICAL",fc:"CHECK",pv:"CHECK",res:"PENDING"},
+  {n:"PCE",d:"PCE Price Index",date:"2026-06-27",time:"21:30",imp:"VERY HIGH",fc:"CHECK",pv:"CHECK",res:"PENDING"}
 ];
 
 const STATIC_NEWS={
-xauusd:[
-["Bloomberg","XAUUSD","Gold price holds near highs as USD weakens on Fed cut expectations","https://www.bloomberg.com/markets/commodities"],
-["Reuters","XAUUSD","XAUUSD moves with safe haven demand and USD direction","https://www.reuters.com/markets/commodities/"],
-["Kitco","XAUUSD","Gold analysis - key levels and market momentum to watch","https://www.kitco.com/news/gold/"]
-],
-geo:[
-["Reuters","GEO","Middle East risk supports safe haven demand","https://www.reuters.com/world/middle-east/"],
-["BBC","GEO","Red Sea shipping risk keeps commodity prices elevated","https://www.bbc.com/news/world/middle_east"]
-],
-fed:[
-["Bloomberg","FED","Fed outlook remains key driver for gold and USD","https://www.bloomberg.com/economy"],
-["Reuters","FED","US CPI and Fed expectations remain critical for XAUUSD","https://www.reuters.com/markets/us/"]
-]
+  xauusd:[
+    ["Bloomberg","XAUUSD","Gold price holds near highs as USD weakens on Fed cut expectations","https://www.bloomberg.com/markets/commodities"],
+    ["Reuters","XAUUSD","XAUUSD moves with safe haven demand and USD direction","https://www.reuters.com/markets/commodities/"],
+    ["Kitco","XAUUSD","Gold analysis - key levels and market momentum to watch","https://www.kitco.com/news/gold/"]
+  ],
+  geo:[
+    ["Reuters","GEO","Middle East risk supports safe haven demand","https://www.reuters.com/world/middle-east/"],
+    ["BBC","GEO","Red Sea shipping risk keeps commodity prices elevated","https://www.bbc.com/news/world/middle_east"]
+  ],
+  fed:[
+    ["Bloomberg","FED","Fed outlook remains key driver for gold and USD","https://www.bloomberg.com/economy"],
+    ["Reuters","FED","US CPI and Fed expectations remain critical for XAUUSD","https://www.reuters.com/markets/us/"]
+  ]
 };
 
-function cleanText(t){return String(t||"").replace(/[^\x20-\x7E]/g,"").replace(/\s+/g," ").trim()}
 function pad(n){return String(n).padStart(2,"0")}
+function cleanText(t){return String(t||"").replace(/[^\x20-\x7E]/g,"").replace(/\s+/g," ").trim()}
 function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
 function hms(d){return pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds())}
-function ymdJST(d){const j=new Date(d.toLocaleString("en-US",{timeZone:"Asia/Tokyo"}));return j.getFullYear()+"-"+pad(j.getMonth()+1)+"-"+pad(j.getDate())}
-function hmJST(d){const j=new Date(d.toLocaleString("en-US",{timeZone:"Asia/Tokyo"}));return pad(j.getHours())+":"+pad(j.getMinutes())}
+
+function ymdJST(d){
+  const j=new Date(d.toLocaleString("en-US",{timeZone:"Asia/Tokyo"}));
+  return j.getFullYear()+"-"+pad(j.getMonth()+1)+"-"+pad(j.getDate());
+}
+function hmJST(d){
+  const j=new Date(d.toLocaleString("en-US",{timeZone:"Asia/Tokyo"}));
+  return pad(j.getHours())+":"+pad(j.getMinutes());
+}
 function cd(ms){
- if(ms<=0)return"00:00:00";
- let s=Math.floor(ms/1000);
- const d=Math.floor(s/86400);s%=86400;
- const h=Math.floor(s/3600);s%=3600;
- const m=Math.floor(s/60);s%=60;
- return d>0?d+"D "+pad(h)+":"+pad(m)+":"+pad(s):pad(h)+":"+pad(m)+":"+pad(s);
+  if(ms<=0)return"00:00:00";
+  let s=Math.floor(ms/1000);
+  const d=Math.floor(s/86400);s%=86400;
+  const h=Math.floor(s/3600);s%=3600;
+  const m=Math.floor(s/60);s%=60;
+  return d>0?d+"D "+pad(h)+":"+pad(m)+":"+pad(s):pad(h)+":"+pad(m)+":"+pad(s);
 }
 function evDate(e){return new Date(e.date+"T"+e.time+":00+09:00")}
 function todayAt(h,m){const d=nowJST();d.setHours(h,m,0,0);return d}
 function nextAt(h,m){const d=nowJST();d.setHours(h,m,0,0);if(d<nowJST())d.setDate(d.getDate()+1);return d}
 function nextMondayAt(h,m){const d=nowJST();while(d.getDay()!==1)d.setDate(d.getDate()+1);d.setHours(h,m,0,0);return d}
-function toggleNotify(){notifyOn=!notifyOn;const b=document.getElementById("notifyBtn");b.textContent=notifyOn?"ALERT ON":"ALERT OFF";b.className=notifyOn?"btn":"btn off"}
+
+function toggleNotify(){
+  notifyOn=!notifyOn;
+  const b=document.getElementById("notifyBtn");
+  b.textContent=notifyOn?"ALERT ON":"ALERT OFF";
+  b.className=notifyOn?"btn":"btn off";
+}
 
 function getSess(n){
- const day=n.getDay(),min=n.getHours()*60+n.getMinutes();
- if((day===6&&min>=7*60)||day===0||(day===1&&min<7*60))return{cur:"CLOSED",next:"ASIA",st:"MARKET CLOSED",nextT:"MON 07:00 JST",start:nextMondayAt(7,0),closed:true};
- if(min>=7*60&&min<15*60)return{cur:"ASIA",next:"LONDON",st:"07:00 - 15:00 JST",nextT:"15:00 JST",start:todayAt(15,0),closed:false};
- if(min>=15*60&&min<21*60)return{cur:"LONDON",next:"US",st:"15:00 - 21:00 JST",nextT:"21:00 JST",start:todayAt(21,0),closed:false};
- return{cur:"US",next:"ASIA",st:"21:00 - 07:00 JST",nextT:"07:00 JST",start:nextAt(7,0),closed:false};
+  const day=n.getDay();
+  const min=n.getHours()*60+n.getMinutes();
+
+  if((day===6&&min>=7*60)||day===0||(day===1&&min<7*60)){
+    return{cur:"CLOSED",next:"ASIA",st:"MARKET CLOSED",nextT:"MON 07:00 JST",start:nextMondayAt(7,0),closed:true};
+  }
+  if(min>=7*60&&min<15*60){
+    return{cur:"ASIA",next:"LONDON",st:"07:00 - 15:00 JST",nextT:"15:00 JST",start:todayAt(15,0),closed:false};
+  }
+  if(min>=15*60&&min<21*60){
+    return{cur:"LONDON",next:"US",st:"15:00 - 21:00 JST",nextT:"21:00 JST",start:todayAt(21,0),closed:false};
+  }
+  return{cur:"US",next:"ASIA",st:"21:00 - 07:00 JST",nextT:"07:00 JST",start:nextAt(7,0),closed:false};
 }
 
 async function fetchPrices(){
- try{
-  const arr=[];
-  for(const s of SYMBOLS){
-   const url="https://api.twelvedata.com/quote?symbol="+encodeURIComponent(s.symbol)+"&apikey="+TWELVE_KEY;
-   const r=await fetch(url);
-   const q=await r.json();
-   const p=Number(q.close||q.price||q.previous_close);
-   if(!p)continue;
-   const prev=Number(q.previous_close)||lastPrices[s.name]||p;
-   const diff=p-prev;
-   const pct=prev?diff/prev*100:0;
-   const cls=(diff>=0?"up":"down")+(Math.abs(diff)>=s.alert?" flashText":"");
-   lastPrices[s.name]=p;
-   arr.push('<span class="'+cls+'">'+s.name+" "+p.toFixed(s.dec)+" "+(diff>=0?"UP ":"DOWN ")+Math.abs(diff).toFixed(s.dec)+" "+(pct>=0?"+":"")+pct.toFixed(2)+"%</span>");
+  try{
+    const arr=[];
+    for(const s of SYMBOLS){
+      const url="https://api.twelvedata.com/quote?symbol="+encodeURIComponent(s.symbol)+"&apikey="+TWELVE_KEY;
+      const r=await fetch(url);
+      const q=await r.json();
+      const p=Number(q.close||q.price||q.previous_close);
+
+      if(!p)continue;
+
+      const prev=Number(q.previous_close)||lastPrices[s.name]||p;
+      const diff=p-prev;
+      const pct=prev?diff/prev*100:0;
+      const cls=(diff>=0?"up":"down")+(Math.abs(diff)>=s.alert?" flashText":"");
+
+      lastPrices[s.name]=p;
+
+      arr.push(
+        '<span class="'+cls+'">'+
+        s.name+" "+p.toFixed(s.dec)+" "+
+        (diff>=0?"UP ":"DOWN ")+
+        Math.abs(diff).toFixed(s.dec)+" "+
+        (pct>=0?"+":"")+pct.toFixed(2)+"%"+
+        "</span>"
+      );
+    }
+
+    priceText=arr.length
+      ? arr.join(" | ")
+      : "XAUUSD / USDJPY / EURUSD / GBPJPY / BTCUSD / ETHUSD / NAS100 PRICE WAITING";
+  }catch(e){
+    priceText="PRICE API RETRYING";
   }
-  priceText=arr.length?arr.join(" | "):"PRICE WAITING | XAUUSD | USDJPY | EURUSD | GBPJPY | BTCUSD | ETHUSD";
- }catch(e){
-  priceText="PRICE WAITING | API RETRYING";
- }
 }
 
 async function fetchEvents(){
- try{
-  const n=nowJST();
-  const from=n.getFullYear()+"-"+pad(n.getMonth()+1)+"-01";
-  const last=new Date(n.getFullYear(),n.getMonth()+1,0);
-  const to=last.getFullYear()+"-"+pad(last.getMonth()+1)+"-"+pad(last.getDate());
+  try{
+    const n=nowJST();
+    const from=n.getFullYear()+"-"+pad(n.getMonth()+1)+"-01";
+    const last=new Date(n.getFullYear(),n.getMonth()+1,0);
+    const to=last.getFullYear()+"-"+pad(last.getMonth()+1)+"-"+pad(last.getDate());
 
-  const url="https://api.tradingeconomics.com/calendar/country/united%20states/"+from+"/"+to+"?c="+TE_CLIENT+":"+TE_SECRET+"&importance=2&values=true&f=json";
-  const r=await fetch(url);
-  const data=await r.json();
+    const url=
+      "https://api.tradingeconomics.com/calendar/country/united%20states/"+
+      from+"/"+to+
+      "?c="+TE_CLIENT+":"+TE_SECRET+
+      "&importance=2&values=true&f=json";
 
-  const keys=["Payrolls","Non Farm","CPI","Inflation","Core Inflation","Consumer Price","Producer Price","PPI","JOLTS","ADP","Fed Interest","FOMC","PCE","Retail Sales","ISM","Jobless"];
+    const r=await fetch(url);
+    const data=await r.json();
 
-  const mapped=data.filter(x=>keys.some(k=>String(x.Event||"").toLowerCase().includes(k.toLowerCase()))).map(x=>{
-   const dt=new Date(x.Date);
-   let name=String(x.Event||"US EVENT").toUpperCase();
+    const keys=[
+      "Payrolls","Non Farm","CPI","Inflation","Core Inflation",
+      "Consumer Price","Producer Price","PPI","JOLTS","ADP",
+      "Fed Interest","FOMC","PCE","Retail Sales","ISM","Jobless"
+    ];
 
-   if(name.includes("NON FARM"))name="US NFP";
-   if(name.includes("CONSUMER PRICE")||name.includes("INFLATION RATE"))name="US CPI";
-   if(name.includes("CORE INFLATION"))name="CORE CPI";
-   if(name.includes("PRODUCER PRICE"))name="US PPI";
-   if(name.includes("CORE PRODUCER"))name="CORE PPI";
-   if(name.includes("FED INTEREST"))name="FOMC";
-   if(name.includes("PERSONAL CONSUMPTION"))name="PCE";
+    const mapped=Array.isArray(data)?data
+      .filter(x=>keys.some(k=>String(x.Event||"").toLowerCase().includes(k.toLowerCase())))
+      .map(x=>{
+        const dt=new Date(x.Date);
+        let name=String(x.Event||"US EVENT").toUpperCase();
 
-   return{
-    n:cleanText(name),
-    d:cleanText(x.Event||"US Event"),
-    date:ymdJST(dt),
-    time:hmJST(dt),
-    imp:x.Importance||"HIGH",
-    fc:x.ForecastValue||x.Forecast||"CHECK",
-    pv:x.PreviousValue||x.Previous||"CHECK",
-    res:x.ActualValue||x.Actual||"PENDING"
-   };
-  });
+        if(name.includes("NON FARM"))name="US NFP";
+        if(name.includes("CONSUMER PRICE")||name.includes("INFLATION RATE"))name="US CPI";
+        if(name.includes("CORE INFLATION"))name="CORE CPI";
+        if(name.includes("PRODUCER PRICE"))name="US PPI";
+        if(name.includes("CORE PRODUCER"))name="CORE PPI";
+        if(name.includes("FED INTEREST"))name="FOMC";
+        if(name.includes("PERSONAL CONSUMPTION"))name="PCE";
 
-  EVENTS=mapped.length?mapped:FALLBACK_EVENTS;
- }catch(e){
-  EVENTS=FALLBACK_EVENTS;
- }
+        return{
+          n:cleanText(name),
+          d:cleanText(x.Event||"US Event"),
+          date:ymdJST(dt),
+          time:hmJST(dt),
+          imp:x.Importance||"HIGH",
+          fc:x.ForecastValue||x.Forecast||"CHECK",
+          pv:x.PreviousValue||x.Previous||"CHECK",
+          res:x.ActualValue||x.Actual||"PENDING"
+        };
+      }):[];
+
+    EVENTS=mapped.length?mapped:FALLBACK_EVENTS;
+  }catch(e){
+    EVENTS=FALLBACK_EVENTS;
+  }
 }
 
 async function fetchNews(type){
- const query=type==="xauusd"?"gold XAUUSD dollar safe haven sourcelang:english":type==="geo"?"Middle East Red Sea Iran Israel oil gold sourcelang:english":"Federal Reserve Powell CPI FOMC gold sourcelang:english";
- try{
-  const url="https://api.gdeltproject.org/api/v2/doc/doc?query="+encodeURIComponent(query)+"&mode=ArtList&format=json&maxrecords=20&sort=HybridRel";
-  const r=await fetch(url),d=await r.json();
-  newsCache[type]=(d.articles||[]).filter(a=>a.title&&/^[\x20-\x7E]+$/.test(a.title)).map(a=>[cleanText(a.sourceCommonName||"NEWS"),type==="xauusd"?"XAUUSD":type==="geo"?"GEO":"FED",cleanText(a.title),a.url]).slice(0,15);
-  if(activeNews===type)renderNews(type,document.querySelector(".newsTab.active"));
- }catch(e){}
+  const query =
+    type==="xauusd"
+    ? "gold XAUUSD dollar safe haven sourcelang:english"
+    : type==="geo"
+    ? "Middle East Red Sea Iran Israel oil gold sourcelang:english"
+    : "Federal Reserve Powell CPI FOMC gold sourcelang:english";
+
+  try{
+    const url=
+      "https://api.gdeltproject.org/api/v2/doc/doc?query="+
+      encodeURIComponent(query)+
+      "&mode=ArtList&format=json&maxrecords=20&sort=HybridRel";
+
+    const r=await fetch(url);
+    const d=await r.json();
+
+    newsCache[type]=(d.articles||[])
+      .filter(a=>a.title&&/^[\x20-\x7E]+$/.test(a.title))
+      .map(a=>[
+        cleanText(a.sourceCommonName||"NEWS"),
+        type==="xauusd"?"XAUUSD":type==="geo"?"GEO":"FED",
+        cleanText(a.title),
+        a.url
+      ])
+      .slice(0,15);
+
+    if(activeNews===type){
+      renderNews(type,document.querySelector(".newsTab.active"));
+    }
+  }catch(e){}
 }
 
 function renderNews(type,btn){
- activeNews=type;
- document.querySelectorAll(".newsTab").forEach(b=>b.classList.remove("active"));
- if(btn)btn.classList.add("active");
- const list=newsCache[type]&&newsCache[type].length?newsCache[type]:STATIC_NEWS[type];
- document.getElementById("newsList").innerHTML=list.map(n=>'<div class="newsItem" onclick="window.open(\''+n[3]+'\',\'_blank\')"><div><span class="src">'+n[0]+'</span><span class="tag">'+n[1]+'</span></div><div class="ntitle">'+n[2]+'</div><div class="ntime">LIVE UPDATE</div></div>').join("");
+  activeNews=type;
+  document.querySelectorAll(".newsTab").forEach(b=>b.classList.remove("active"));
+  if(btn)btn.classList.add("active");
+
+  const list=newsCache[type]&&newsCache[type].length?newsCache[type]:STATIC_NEWS[type];
+
+  document.getElementById("newsList").innerHTML=list.map(n=>
+    '<div class="newsItem" onclick="window.open(\''+n[3]+'\',\'_blank\')">'+
+    '<div><span class="src">'+n[0]+'</span><span class="tag">'+n[1]+'</span></div>'+
+    '<div class="ntitle">'+n[2]+'</div>'+
+    '<div class="ntime">LIVE UPDATE</div>'+
+    '</div>'
+  ).join("");
 }
 
 function renderEvents(){
- const n=nowJST();
- const upcoming=EVENTS.map(e=>({...e,dt:evDate(e)})).filter(e=>e.dt>n).sort((a,b)=>a.dt-b.dt);
+  const n=nowJST();
 
- document.getElementById("eventList").innerHTML=upcoming.map(e=>{
-  const left=e.dt-n;
-  const cls=left<=15*60000?"warn15":left<=60*60000?"warn60":left<=24*3600*1000?"warn24":"";
-  return '<div class="evCard '+cls+'"><div class="evName">'+e.n+'</div><div class="evDesc">'+e.d+'</div><div class="evDate">'+e.date+" "+e.time+" JST</div><div class='evRow'><span>IMPACT</span><span>"+e.imp+"</span></div><div class='evRow'><span>FORECAST</span><span>"+e.fc+"</span></div><div class='evRow'><span>PREVIOUS</span><span>"+e.pv+"</span></div><div class='evRow'><span>ACTUAL</span><span>"+e.res+"</span></div><div class='evRow'><span>XAU IMPACT</span><span>HIGH</span></div><div class='count'>"+cd(left)+"</div></div>";
- }).join("");
+  const upcoming=EVENTS
+    .map(e=>({...e,dt:evDate(e)}))
+    .filter(e=>e.dt>n)
+    .sort((a,b)=>a.dt-b.dt);
 
- return upcoming;
+  document.getElementById("eventList").innerHTML=upcoming.map(e=>{
+    const left=e.dt-n;
+    const cls=left<=15*60000?"warn15":left<=60*60000?"warn60":left<=24*3600*1000?"warn24":"";
+
+    return `
+      <div class="evCard ${cls}">
+        <div class="evName">${e.n}</div>
+        <div class="evDesc">${e.d}</div>
+        <div class="evDate">${e.date} ${e.time} JST</div>
+        <div class="evRow"><span>IMPACT</span><span>${e.imp}</span></div>
+        <div class="evRow"><span>FORECAST</span><span>${e.fc}</span></div>
+        <div class="evRow"><span>PREVIOUS</span><span>${e.pv}</span></div>
+        <div class="evRow"><span>ACTUAL</span><span>${e.res}</span></div>
+        <div class="evRow"><span>XAU IMPACT</span><span>HIGH</span></div>
+        <div class="count">${cd(left)}</div>
+      </div>
+    `;
+  }).join("");
+
+  return upcoming;
 }
 
 function update(){
- const n=nowJST();
- document.getElementById("clock").textContent=hms(n);
- document.getElementById("date").textContent=n.getFullYear()+"/"+pad(n.getMonth()+1)+"/"+pad(n.getDate());
- document.getElementById("footerTime").textContent="UPDATE: "+hms(n)+" JST";
+  const n=nowJST();
 
- const ss=getSess(n),sessionLeft=ss.start-n;
+  document.getElementById("clock").textContent=hms(n);
+  document.getElementById("date").textContent=n.getFullYear()+"/"+pad(n.getMonth()+1)+"/"+pad(n.getDate());
+  document.getElementById("footerTime").textContent="UPDATE: "+hms(n)+" JST";
 
- document.getElementById("currentSession").textContent=ss.cur;
- document.getElementById("nextSession").textContent=ss.next;
- document.getElementById("sessionTime").textContent=ss.st;
- document.getElementById("nextTime").textContent=ss.nextT;
- document.getElementById("sessionCountdown").textContent=cd(sessionLeft);
+  const ss=getSess(n);
+  const sessionLeft=ss.start-n;
 
- if(ss.closed){
-  document.getElementById("currentSession").className="sNow closed";
-  document.getElementById("tradeState").textContent="MARKET CLOSED";
-  document.getElementById("tradeState").className="sWarn closed";
-  document.getElementById("sessionWarn").textContent="WEEKEND CLOSE";
-  document.getElementById("sessionWarn").className="sWarn closed";
-  document.getElementById("sessionLevel").textContent="CLOSED";
- }else{
-  document.getElementById("currentSession").className="sNow";
-  document.getElementById("tradeState").textContent="MARKET OPEN";
-  document.getElementById("tradeState").className="sWarn";
-  document.getElementById("sessionWarn").textContent=sessionLeft<=900000?"OPEN IN 15M":"NORMAL";
-  document.getElementById("sessionWarn").className=sessionLeft<=900000?"sWarn closed":"sWarn";
-  document.getElementById("sessionLevel").textContent=sessionLeft<=900000?"WARNING":"NORMAL";
- }
+  document.getElementById("currentSession").textContent=ss.cur;
+  document.getElementById("nextSession").textContent=ss.next;
+  document.getElementById("sessionTime").textContent=ss.st;
+  document.getElementById("nextTime").textContent=ss.nextT;
+  document.getElementById("sessionCountdown").textContent=cd(sessionLeft);
 
- const upcoming=renderEvents();
- const evText=upcoming.slice(0,8).map(e=>e.n+" LEFT "+cd(e.dt-n)).join(" | ");
+  if(ss.closed){
+    document.getElementById("currentSession").className="sNow closed";
+    document.getElementById("tradeState").textContent="MARKET CLOSED";
+    document.getElementById("tradeState").className="sWarn closed";
+    document.getElementById("sessionWarn").textContent="WEEKEND CLOSE";
+    document.getElementById("sessionWarn").className="sWarn closed";
+    document.getElementById("sessionLevel").textContent="CLOSED";
+  }else{
+    document.getElementById("currentSession").className="sNow";
+    document.getElementById("tradeState").textContent="MARKET OPEN";
+    document.getElementById("tradeState").className="sWarn";
+    document.getElementById("sessionWarn").textContent=sessionLeft<=900000?"OPEN IN 15M":"NORMAL";
+    document.getElementById("sessionWarn").className=sessionLeft<=900000?"sWarn closed":"sWarn";
+    document.getElementById("sessionLevel").textContent=sessionLeft<=900000?"WARNING":"NORMAL";
+  }
 
- document.getElementById("marketText").innerHTML=
-  priceText+
-  " | CURRENT SESSION "+ss.cur+
-  " | NEXT SESSION "+ss.next+
-  " | TIME LEFT "+cd(sessionLeft);
+  const upcoming=renderEvents();
+  const evText=upcoming.slice(0,8).map(e=>e.n+" LEFT "+cd(e.dt-n)).join(" | ");
 
- document.getElementById("alertText").innerHTML=
-  evText+
-  " | MIDDLE EAST HIGH RISK"+
-  " | RED SEA WATCH"+
-  " | FED WATCH"+
-  " | LIVE NEWS UPDATE";
+  document.getElementById("marketText").innerHTML=
+    priceText+
+    " | CURRENT SESSION "+ss.cur+
+    " | NEXT SESSION "+ss.next+
+    " | TIME LEFT "+cd(sessionLeft);
+
+  document.getElementById("alertText").innerHTML=
+    evText+
+    " | MIDDLE EAST HIGH RISK"+
+    " | RED SEA WATCH"+
+    " | FED WATCH"+
+    " | LIVE NEWS UPDATE";
 }
 
-new TradingView.widget({
- autosize:true,
- symbol:"OANDA:XAUUSD",
- interval:"15",
- timezone:"Asia/Tokyo",
- theme:"dark",
- style:"1",
- locale:"en",
- container_id:"tv_chart",
- hide_top_toolbar:false,
- hide_side_toolbar:false,
- hide_legend:false,
- allow_symbol_change:true,
- hide_volume:true,
- save_image:false,
- withdateranges:true,
- studies:[],
- disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],
- enabled_features:["study_templates","side_toolbar_in_fullscreen_mode","save_chart_properties_to_local_storage"],
- overrides:{
-  "paneProperties.background":"#000",
-  "paneProperties.backgroundType":"solid",
-  "mainSeriesProperties.candleStyle.upColor":"#2962FF",
-  "mainSeriesProperties.candleStyle.downColor":"#F23645",
-  "mainSeriesProperties.candleStyle.borderUpColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.borderDownColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.wickUpColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.wickDownColor":"#6E7380",
-  "scalesProperties.textColor":"#9CA3AF"
- }
-});
+function startApp(){
+  EVENTS=FALLBACK_EVENTS;
 
-renderNews("xauusd",document.querySelector(".newsTab"));
-fetchEvents();
-fetchPrices();
-fetchNews("xauusd");
-fetchNews("geo");
-fetchNews("fed");
-update();
+  renderNews("xauusd",document.querySelector(".newsTab"));
+  update();
 
-setInterval(update,1000);
-setInterval(fetchPrices,5000);
-setInterval(fetchEvents,30000);
-setInterval(()=>{fetchNews("xauusd");fetchNews("geo");fetchNews("fed")},60000);
+  fetchEvents().then(update);
+  fetchPrices().then(update);
+  fetchNews("xauusd");
+  fetchNews("geo");
+  fetchNews("fed");
+
+  setInterval(update,1000);
+  setInterval(()=>fetchPrices().then(update),5000);
+  setInterval(()=>fetchEvents().then(update),30000);
+  setInterval(()=>{fetchNews("xauusd");fetchNews("geo");fetchNews("fed")},60000);
+}
+
+startApp();
 </script>
 </body>
 </html>
