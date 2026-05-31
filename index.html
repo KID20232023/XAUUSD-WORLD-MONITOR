@@ -6,58 +6,97 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#020208;--p:#07070f;--p2:#111124;--ln:#2d2d50;--tx:#fff;--sub:#9a9ab5;--g:#00e676;--r:#ff1744;--o:#ff9100;--y:#ffd600;--c:#00e5ff}
-html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-family:Arial,"Hiragino Sans",Meiryo,sans-serif;overflow:hidden}
-#app{height:100vh;display:grid;grid-template-rows:50px 40px 30px 1fr 310px 20px;gap:3px;padding:3px}
+:root{
+  --bg:#020208;--p:#07070f;--p2:#111124;--ln:#2d2d50;
+  --tx:#fff;--sub:#9a9ab5;--g:#00e676;--r:#ff1744;
+  --o:#ff9100;--y:#ffd600;--c:#00e5ff
+}
+html,body{
+  width:100%;height:100%;background:var(--bg);color:var(--tx);
+  font-family:Arial,"Hiragino Sans",Meiryo,sans-serif;overflow:hidden
+}
+#app{
+  height:100vh;
+  display:grid;
+  grid-template-rows:50px 40px 30px minmax(0,1fr) 310px 20px;
+  gap:3px;
+  padding:3px;
+}
 .card,.box{background:var(--p);border:1px solid var(--ln);border-radius:4px;overflow:hidden}
-.hd{height:24px;padding:0 8px;border-bottom:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between;background:#04040b;color:var(--y);font-size:11px;font-weight:900}
+.hd{
+  height:24px;padding:0 8px;border-bottom:1px solid var(--ln);
+  display:flex;align-items:center;justify-content:space-between;
+  background:#04040b;color:var(--y);font-size:11px;font-weight:900
+}
 #topbar{display:grid;grid-template-columns:245px 135px 100px 115px 1fr;gap:3px}
 .box{padding:5px 8px;display:flex;align-items:center}
 .l1{font-size:13px;font-weight:900;color:var(--y)}
 .l2,.sub{font-size:8px;color:var(--sub);font-weight:900}
 .clock{font-size:17px;color:var(--g);font-weight:900;font-family:monospace}
 .live{font-size:12px;color:var(--g);font-weight:900}
-.btn{width:100%;height:25px;background:rgba(0,230,118,.08);border:1px solid var(--g);color:var(--g);border-radius:4px;font-weight:900;font-size:10px;cursor:pointer}
+.btn{
+  width:100%;height:25px;background:rgba(0,230,118,.08);
+  border:1px solid var(--g);color:var(--g);border-radius:4px;
+  font-weight:900;font-size:10px;cursor:pointer
+}
 
-#tvPriceBar{height:40px;overflow:hidden;border:1px solid var(--ln);background:#050509;border-radius:4px}
+/* PRICE BAR */
+#tvPriceBar{
+  height:40px;min-height:40px;overflow:hidden;
+  border:1px solid var(--ln);background:#050509;border-radius:4px
+}
 #tvPriceBar iframe{height:40px!important;min-height:40px!important;max-height:40px!important}
 
-.flowLine{height:30px;position:relative;overflow:hidden;white-space:nowrap;background:#050509;border:1px solid var(--ln);border-radius:4px}
-.flowInner{position:absolute;white-space:nowrap;animation:flow 95s linear infinite;font-size:13px;font-weight:900;line-height:28px}
+/* LIVE TICKER */
+.flowLine{
+  height:30px;min-height:30px;position:relative;overflow:hidden;white-space:nowrap;
+  background:#050509;border:1px solid var(--ln);border-radius:4px
+}
+.flowInner{
+  position:absolute;white-space:nowrap;animation:flow 95s linear infinite;
+  font-size:13px;font-weight:900;line-height:28px
+}
 @keyframes flow{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
-.normalMsg{color:#fff}.warnMsg{color:var(--y);font-weight:900}.alertMsg{color:var(--r);font-weight:900;animation:redFlash .65s infinite;text-shadow:0 0 10px rgba(255,23,68,.9)}.liveMsg{color:var(--r);font-weight:900;animation:redFlash .9s infinite;text-shadow:0 0 10px rgba(255,23,68,.9)}
+.normalMsg{color:#fff}
+.warnMsg{color:var(--y);font-weight:900}
+.riskMsg{color:var(--o);font-weight:900}
+.alertMsg{color:var(--r);font-weight:900;animation:redFlash .65s infinite;text-shadow:0 0 10px rgba(255,23,68,.9)}
+.liveMsg{color:var(--r);font-weight:900;animation:redFlash .9s infinite;text-shadow:0 0 10px rgba(255,23,68,.9)}
 @keyframes redFlash{0%,100%{opacity:1}50%{opacity:.25}}
-.g{color:var(--g)}.r{color:var(--r)}.y{color:var(--y)}.c{color:var(--c)}.closed{color:var(--r)!important;animation:redFlash .8s infinite}
+.closed{color:var(--r)!important;animation:redFlash .8s infinite}
 
+/* MAIN */
 #main{display:grid;grid-template-columns:minmax(0,1fr) 600px;gap:3px;min-height:0}
-#chart{height:calc(100% - 24px);background:#000}
+#chart{height:calc(100% - 24px);background:#000;min-height:0}
 #tv_chart{width:100%;height:100%}
-#right{display:grid;grid-template-rows:170px 155px 1fr;gap:3px;min-height:0}
+#right{display:grid;grid-template-rows:205px 160px minmax(0,1fr);gap:3px;min-height:0}
 
+/* SESSION CENTER */
 .sessionBody{height:calc(100% - 24px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:6px}
 .sBox{background:var(--p2);border:1px solid var(--ln);border-radius:4px;padding:8px;overflow:hidden}
-.sLabel{font-size:10px;color:var(--sub);font-weight:900}
-.sNow{font-size:24px;color:var(--g);font-weight:900;margin-top:6px}
-.sNext{font-size:23px;color:var(--o);font-weight:900;margin-top:6px}
-.sCount{font-size:25px;color:var(--o);font-family:monospace;font-weight:900;margin-top:6px}
-.sText{font-size:12px;margin-top:6px}
-.sWarn{font-size:13px;margin-top:7px;color:var(--g);font-weight:900}
+.sLabel{font-size:10px;color:var(--sub);font-weight:900;letter-spacing:.4px}
+.sNow{font-size:24px;color:var(--g);font-weight:900;margin-top:5px;line-height:1.05}
+.sNext{font-size:23px;color:var(--o);font-weight:900;margin-top:5px;line-height:1.05}
+.sTime{font-size:11px;color:#fff;margin-top:4px;font-weight:900}
+.sSmall{font-size:9px;color:var(--sub);font-weight:900;margin-top:8px}
+.sBigClock{font-size:19px;color:var(--c);font-family:monospace;font-weight:900;margin-top:3px}
+.sCount{font-size:22px;color:var(--y);font-family:monospace;font-weight:900;margin-top:3px}
+.sStatus{font-size:21px;color:var(--g);font-weight:900;margin-top:10px}
+.sStatusClosed{font-size:21px;color:var(--r);font-weight:900;margin-top:10px;animation:redFlash .8s infinite}
 
-.cmdScroll{height:calc(100% - 24px);overflow-y:auto;padding:5px}
-.cmdGrid{display:grid;grid-template-columns:66px 1fr 115px 125px;gap:4px;min-height:180px}
-.panel{background:var(--p2);border:1px solid var(--ln);border-radius:4px;padding:5px}
-.trend{font-size:14px;text-align:center;font-weight:900;border:1px solid var(--ln);border-radius:4px;padding:4px;margin-bottom:4px}
-.buy{color:var(--g)}.sell{color:var(--r)}
-.biasTitle{font-size:10px;color:var(--y);font-weight:900}
-.biasMain{font-size:14px;color:var(--g);font-weight:900;margin:4px 0}
-.info{display:flex;justify-content:space-between;border-bottom:1px solid #222244;padding:2px 0;font-size:10px}
-.priceBox{font-size:15px;font-weight:900;text-align:center;border:1px solid;border-radius:4px;padding:3px;margin-bottom:4px}
-.priceBuy{border-color:var(--g);background:rgba(0,230,118,.12)}
-.priceSell{border-color:var(--r);background:rgba(255,23,68,.12)}
-.rapidMain{font-size:19px;color:var(--r);font-weight:900;text-align:center;margin-top:10px}
-.rapidSub{text-align:center;font-size:12px;font-weight:900;margin-top:7px}
+/* COMMAND */
+.commandBody{height:calc(100% - 24px);padding:6px;display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.cmdBox{background:var(--p2);border:1px solid var(--ln);border-radius:4px;padding:7px;overflow:hidden}
+.cmdLabel{font-size:9px;color:var(--sub);font-weight:900}
+.cmdValue{font-size:18px;font-weight:900;margin-top:5px;font-family:monospace}
+.cmdGreen{color:var(--g)}.cmdRed{color:var(--r)}.cmdYellow{color:var(--y)}.cmdCyan{color:var(--c)}
+.rapidBox{grid-column:span 3;text-align:center;background:#15070b;border-color:var(--r);display:none}
+.rapidBox.show{display:block;animation:redFlash .65s infinite}
+.rapidTitle{font-size:20px;color:var(--r);font-weight:900}
+.rapidSub{font-size:15px;color:#fff;font-weight:900;margin-top:3px}
 
-.liveNewsWrap{height:calc(100% - 24px);display:grid;grid-template-rows:28px 1fr;gap:4px;padding:4px}
+/* NEWS */
+.liveNewsWrap{height:calc(100% - 24px);display:grid;grid-template-rows:28px minmax(0,1fr);gap:4px;padding:4px}
 .newsTabs{display:flex;gap:4px}
 .newsTab{flex:1;background:#10101d;color:#fff;border:1px solid var(--ln);border-radius:4px;font-size:10px;font-weight:900;cursor:pointer}
 .newsTab.active{border-color:var(--y);color:var(--y)}
@@ -70,6 +109,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 .ntitle{font-size:11px;font-weight:900;margin-top:2px;line-height:1.3}
 .ntime{font-size:9px;color:var(--sub);margin-top:2px}
 
+/* CALENDAR */
 #tvEconomicCalendar{height:calc(100% - 24px);width:100%;overflow:hidden}
 #tvEconomicCalendar iframe{width:100%!important;height:100%!important}
 .footer{display:flex;justify-content:space-between;align-items:center;color:var(--sub);font-size:10px;padding:0 8px}
@@ -83,25 +123,27 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 
 <div id="topbar">
   <div class="box"><div><div class="l1">NEXUS FX WAR ROOM</div><div class="l2">XAUUSD COMMAND CENTER</div></div></div>
-  <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center"><div class="sub">JST TIME</div><div id="clock" class="clock">--:--:--</div><div id="date" class="sub">----</div></div>
+  <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center">
+    <div class="sub">JST TIME</div><div id="clock" class="clock">--:--:--</div><div id="date" class="sub">----</div>
+  </div>
   <div class="box"><div><div class="sub">STATUS</div><div class="live">LIVE</div></div></div>
   <div class="box"><button class="btn" onclick="enableAlert()">ALERT ON</button></div>
-  <div class="box"><div class="sub">TRADINGVIEW PRICE / LIVE NEWS / HIGH IMPACT ALERT</div></div>
+  <div class="box"><div class="sub">PRICE / LIVE NEWS / SESSION / XAUUSD COMMAND</div></div>
 </div>
 
 <div id="tvPriceBar">
   <div class="tradingview-widget-container">
     <div class="tradingview-widget-container__widget"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
     {
       "symbols":[
         {"proName":"OANDA:XAUUSD","title":"XAUUSD"},
+        {"proName":"TVC:DXY","title":"DXY"},
         {"proName":"FX:USDJPY","title":"USDJPY"},
         {"proName":"FX:EURUSD","title":"EURUSD"},
         {"proName":"FX:GBPUSD","title":"GBPUSD"},
         {"proName":"BINANCE:BTCUSDT","title":"BTCUSD"},
-        {"proName":"BINANCE:ETHUSDT","title":"ETHUSD"},
-        {"proName":"NASDAQ:NDX","title":"NAS100"}
+        {"proName":"BINANCE:ETHUSDT","title":"ETHUSD"}
       ],
       "showSymbolLogo":false,
       "isTransparent":true,
@@ -115,7 +157,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 
 <div class="flowLine">
   <div id="megaTicker" class="flowInner">
-    LIVE NEWS | HIGH IMPACT | 中東リスク | 紅海リスク | FED WATCH | 現在セッション 読込中
+    🟢 CURRENT SESSION | 🟠 NEXT SESSION | 🔴 LIVE BLOOMBERG TV | 🔴 LIVE CNBC LIVE | 🔴 LIVE KITCO GOLD | 🔴 LIVE XAUUSD ANALYSIS | 📰 GOLD NEWS | 📰 FED NEWS | 📰 USDJPY NEWS | 🟠 MIDDLE EAST RISK | 🟠 RED SEA RISK | 🟠 ISRAEL - IRAN NEWS | 🟠 UKRAINE RISK | 🟡 FED WATCH | 🟡 DXY WATCH | 🟡 US TREASURY WATCH | 🟢 SAFE HAVEN FLOW
   </div>
 </div>
 
@@ -129,20 +171,47 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
     <div class="card">
       <div class="hd">SESSION CENTER <span id="sessionLevel">NORMAL</span></div>
       <div class="sessionBody">
-        <div class="sBox"><div class="sLabel">CURRENT SESSION</div><div id="currentSession" class="sNow">---</div><div id="sessionTime" class="sText">--</div><div id="tradeState" class="sWarn">OPEN</div></div>
-        <div class="sBox"><div class="sLabel">NEXT SESSION</div><div id="nextSession" class="sNext">---</div><div id="nextTime" class="sText">--</div></div>
-        <div class="sBox"><div class="sLabel">TIME LEFT</div><div id="sessionCountdown" class="sCount">--:--:--</div><div id="sessionWarn" class="sWarn">NORMAL</div></div>
+        <div class="sBox">
+          <div class="sLabel">CURRENT SESSION</div>
+          <div id="currentSession" class="sNow">---</div>
+          <div id="sessionTime" class="sTime">--</div>
+          <div class="sSmall">CURRENT TIME</div>
+          <div id="currentTimeInSession" class="sBigClock">--:--:-- JST</div>
+          <div class="sSmall">SESSION CLOSE</div>
+          <div id="sessionClose" class="sCount">--:--:--</div>
+        </div>
+
+        <div class="sBox">
+          <div class="sLabel">NEXT SESSION</div>
+          <div id="nextSession" class="sNext">---</div>
+          <div id="nextTime" class="sTime">--</div>
+          <div class="sSmall">OPEN IN</div>
+          <div id="openIn" class="sCount">--:--:--</div>
+        </div>
+
+        <div class="sBox">
+          <div class="sLabel">MARKET STATUS</div>
+          <div id="marketStatus" class="sStatus">---</div>
+          <div class="sSmall" id="marketCountLabel">DAILY CLOSE</div>
+          <div id="marketCount" class="sCount">--:--:--</div>
+        </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="hd">XAUUSD COMMAND</div>
-      <div class="cmdScroll"><div class="cmdGrid">
-        <div class="panel"><div class="trend buy">LONG<br>BUY</div><div class="trend buy">MID<br>BUY</div><div class="trend sell">SHORT<br>SELL</div></div>
-        <div class="panel"><div class="biasTitle">BIAS</div><div class="biasMain">BUY DIP BIAS</div><div class="info"><span>TREND</span><span>UP</span></div><div class="info"><span>VOLATILITY</span><span>HIGH</span></div><div class="info"><span>FED</span><span>WATCH</span></div></div>
-        <div class="panel"><div class="buy">BUY ZONE</div><div class="priceBox priceBuy">4540.00</div><div class="priceBox priceBuy">4530.00</div><div class="sell">SELL ZONE</div><div class="priceBox priceSell">4560.00</div><div class="priceBox priceSell">4575.00</div></div>
-        <div class="panel"><div class="biasTitle sell">PRICE ACTION ALERT</div><div id="rapidMain" class="rapidMain">NORMAL</div><div id="rapidSub" class="rapidSub">MONITORING</div></div>
-      </div></div>
+      <div class="hd">XAUUSD COMMAND <span>REALTIME ONLY</span></div>
+      <div class="commandBody">
+        <div class="cmdBox"><div class="cmdLabel">CURRENT PRICE</div><div id="xPrice" class="cmdValue cmdCyan">---</div></div>
+        <div class="cmdBox"><div class="cmdLabel">DAY HIGH</div><div id="xHigh" class="cmdValue cmdGreen">---</div></div>
+        <div class="cmdBox"><div class="cmdLabel">DAY LOW</div><div id="xLow" class="cmdValue cmdRed">---</div></div>
+        <div class="cmdBox"><div class="cmdLabel">DAILY CHANGE</div><div id="xChange" class="cmdValue">---</div></div>
+        <div class="cmdBox"><div class="cmdLabel">VOLATILITY</div><div id="xVol" class="cmdValue cmdYellow">---</div></div>
+        <div class="cmdBox"><div class="cmdLabel">UPDATE</div><div id="xUpdate" class="cmdValue cmdCyan">--:--</div></div>
+        <div id="rapidBox" class="cmdBox rapidBox">
+          <div id="rapidTitle" class="rapidTitle">---</div>
+          <div id="rapidSub" class="rapidSub">---</div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -160,7 +229,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 </div>
 
 <div id="bottom" class="card">
-  <div class="hd">HIGH IMPACT NEWS / 日本関連 / XAUUSD関連 <span>TRADINGVIEW LIVE CALENDAR</span></div>
+  <div class="hd">HIGH IMPACT NEWS <span>TradingView Economic Calendar / USD・JPY / High Impact</span></div>
   <div id="tvEconomicCalendar">
     <div class="tradingview-widget-container" style="height:100%;width:100%">
       <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
@@ -187,22 +256,17 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-famil
 </div>
 
 <script>
+const TWELVE_KEY="885967facd734407b8f15fbdb27ef911";
 let alertEnabled=false;
-
-const events=[
-  {name:"US NFP",time:"2026-06-05T21:30:00+09:00"},
-  {name:"US CPI",time:"2026-06-10T21:30:00+09:00"},
-  {name:"CORE CPI",time:"2026-06-10T21:30:00+09:00"},
-  {name:"US PPI",time:"2026-06-11T21:30:00+09:00"},
-  {name:"FOMC",time:"2026-06-18T03:00:00+09:00"},
-  {name:"PCE",time:"2026-06-27T21:30:00+09:00"}
-];
+let lastXau=null;
+let lastRapidAt=0;
 
 const NEWS={
   xauusd:[
     ["LIVE動画","XAUUSD Live / Gold Live","https://www.youtube.com/results?search_query=XAUUSD+live+gold",true],
+    ["LIVE動画","Bloomberg TV Live","https://www.youtube.com/results?search_query=Bloomberg+TV+Live",true],
+    ["LIVE動画","CNBC Live","https://www.youtube.com/results?search_query=CNBC+Live",true],
     ["Kitco","金・銀ニュース / Gold News","https://www.kitco.com/news/gold/",false],
-    ["Investing","XAUUSD情報 / Gold Futures","https://www.investing.com/commodities/gold",false],
     ["TradingView","XAUUSD分析 / アイデア","https://www.tradingview.com/symbols/XAUUSD/ideas/",false]
   ],
   japan:[
@@ -221,20 +285,27 @@ const NEWS={
 function pad(n){return String(n).padStart(2,"0")}
 function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
 function hms(d){return pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds())}
-function cd(ms){if(ms<=0)return"00:00:00";let s=Math.floor(ms/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;return d>0?d+"D "+pad(h)+":"+pad(m)+":"+pad(s):pad(h)+":"+pad(m)+":"+pad(s)}
+function cd(ms){
+  if(ms<=0)return"00:00:00";
+  let s=Math.floor(ms/1000),h=Math.floor(s/3600);
+  s%=3600;let m=Math.floor(s/60);s%=60;
+  return pad(h)+":"+pad(m)+":"+pad(s);
+}
 function todayAt(h,m){const d=nowJST();d.setHours(h,m,0,0);return d}
 function nextAt(h,m){const d=nowJST();d.setHours(h,m,0,0);if(d<nowJST())d.setDate(d.getDate()+1);return d}
 function nextMondayAt(h,m){const d=nowJST();while(d.getDay()!==1)d.setDate(d.getDate()+1);d.setHours(h,m,0,0);return d}
-
+function fridayClose(n){
+  const d=new Date(n);
+  while(d.getDay()!==6)d.setDate(d.getDate()+1);
+  d.setHours(7,0,0,0);
+  return d;
+}
 function enableAlert(){alertEnabled=true;beep()}
 function beep(){
   if(!alertEnabled)return;
   try{
-    const a=new AudioContext();
-    const o=a.createOscillator();
-    const g=a.createGain();
-    o.connect(g);g.connect(a.destination);
-    o.frequency.value=880;
+    const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();
+    o.connect(g);g.connect(a.destination);o.frequency.value=880;
     g.gain.setValueAtTime(.12,a.currentTime);
     g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.15);
     o.start();o.stop(a.currentTime+.15);
@@ -243,27 +314,12 @@ function beep(){
 
 function getSess(n){
   const day=n.getDay(),min=n.getHours()*60+n.getMinutes();
-  if((day===6&&min>=7*60)||day===0||(day===1&&min<7*60))return{cur:"CLOSED",next:"ASIA",st:"MARKET CLOSED",nextT:"MON 07:00 JST",start:nextMondayAt(7,0),closed:true};
-  if(min>=7*60&&min<15*60)return{cur:"ASIA",next:"LONDON",st:"07:00 - 15:00 JST",nextT:"15:00 JST",start:todayAt(15,0),closed:false};
-  if(min>=15*60&&min<21*60)return{cur:"LONDON",next:"US",st:"15:00 - 21:00 JST",nextT:"21:00 JST",start:todayAt(21,0),closed:false};
-  return{cur:"US",next:"ASIA",st:"21:00 - 07:00 JST",nextT:"07:00 JST",start:nextAt(7,0),closed:false};
-}
-
-function eventClass(ms){
-  if(ms<=15*60*1000)return"alertMsg";
-  if(ms<=60*60*1000)return"warnMsg";
-  return"normalMsg";
-}
-
-function buildEventText(){
-  const now=Date.now();
-  return events.map(e=>{
-    const ms=new Date(e.time).getTime()-now;
-    if(ms<=0)return"";
-    const cls=eventClass(ms);
-    if(ms<=15*60*1000)beep();
-    return `<span class="${cls}">HIGH IMPACT ${e.name} あと ${cd(ms)}</span>`;
-  }).filter(Boolean).join(" | ");
+  if((day===6&&min>=7*60)||day===0||(day===1&&min<7*60)){
+    return{cur:"CLOSED",next:"ASIA",st:"MARKET CLOSED",nextT:"MON 07:00 JST",sessionClose:nextMondayAt(7,0),openIn:nextMondayAt(7,0),closed:true};
+  }
+  if(min>=7*60&&min<15*60)return{cur:"ASIA",next:"LONDON",st:"07:00 - 15:00 JST",nextT:"15:00 JST",sessionClose:todayAt(15,0),openIn:todayAt(15,0),closed:false};
+  if(min>=15*60&&min<21*60)return{cur:"LONDON",next:"US",st:"15:00 - 21:00 JST",nextT:"21:00 JST",sessionClose:todayAt(21,0),openIn:todayAt(21,0),closed:false};
+  return{cur:"US",next:"ASIA",st:"21:00 - 07:00 JST",nextT:"07:00 JST",sessionClose:nextAt(7,0),openIn:nextAt(7,0),closed:false};
 }
 
 function renderNews(type,btn){
@@ -279,47 +335,95 @@ function renderNews(type,btn){
   `).join("");
 }
 
+async function updateXauCommand(){
+  try{
+    const url="https://api.twelvedata.com/quote?symbol="+encodeURIComponent("XAU/USD")+"&apikey="+TWELVE_KEY;
+    const r=await fetch(url);
+    const q=await r.json();
+    const price=Number(q.close||q.price);
+    const high=Number(q.high);
+    const low=Number(q.low);
+    const prev=Number(q.previous_close);
+    if(!price)return;
+
+    const change=prev?((price-prev)/prev)*100:0;
+    const rangePct=price?((high-low)/price)*100:0;
+
+    document.getElementById("xPrice").textContent=price.toFixed(2);
+    document.getElementById("xHigh").textContent=high?high.toFixed(2):"---";
+    document.getElementById("xLow").textContent=low?low.toFixed(2):"---";
+    document.getElementById("xChange").textContent=(change>=0?"+":"")+change.toFixed(2)+"%";
+    document.getElementById("xChange").className="cmdValue "+(change>=0?"cmdGreen":"cmdRed");
+    document.getElementById("xUpdate").textContent=hms(nowJST()).slice(0,5);
+
+    let vol="LOW";
+    if(rangePct>=1.2)vol="EXTREME";
+    else if(rangePct>=0.7)vol="HIGH";
+    else if(rangePct>=0.35)vol="NORMAL";
+    document.getElementById("xVol").textContent=vol;
+
+    if(lastXau!==null){
+      const move=((price-lastXau)/lastXau)*100;
+      if(Math.abs(move)>=0.25 && Date.now()-lastRapidAt>60000){
+        const box=document.getElementById("rapidBox");
+        box.className="cmdBox rapidBox show";
+        document.getElementById("rapidTitle").textContent=move>0?"🚨 XAUUSD RAPID RISE":"🚨 XAUUSD RAPID DROP";
+        document.getElementById("rapidSub").textContent=(move>0?"+":"")+move.toFixed(2)+"%";
+        lastRapidAt=Date.now();
+        beep();
+      }
+    }
+    lastXau=price;
+  }catch(e){}
+}
+
 function update(){
   const n=nowJST();
   document.getElementById("clock").textContent=hms(n);
   document.getElementById("date").textContent=n.getFullYear()+"/"+pad(n.getMonth()+1)+"/"+pad(n.getDate());
   document.getElementById("footerTime").textContent="UPDATE: "+hms(n)+" JST";
 
-  const ss=getSess(n),left=ss.start-n;
+  const ss=getSess(n);
   document.getElementById("currentSession").textContent=ss.cur;
-  document.getElementById("nextSession").textContent=ss.next;
   document.getElementById("sessionTime").textContent=ss.st;
+  document.getElementById("currentTimeInSession").textContent=hms(n)+" JST";
+  document.getElementById("sessionClose").textContent=cd(ss.sessionClose-n);
+  document.getElementById("nextSession").textContent=ss.next;
   document.getElementById("nextTime").textContent=ss.nextT;
-  document.getElementById("sessionCountdown").textContent=cd(left);
+  document.getElementById("openIn").textContent=cd(ss.openIn-n);
 
   if(ss.closed){
-    document.getElementById("currentSession").className="sNow closed";
-    document.getElementById("tradeState").textContent="MARKET CLOSED";
-    document.getElementById("tradeState").className="sWarn closed";
-    document.getElementById("sessionWarn").textContent="WEEKEND CLOSED";
-    document.getElementById("sessionWarn").className="sWarn closed";
+    document.getElementById("marketStatus").textContent="MARKET CLOSED";
+    document.getElementById("marketStatus").className="sStatusClosed";
+    document.getElementById("marketCountLabel").textContent="MARKET OPEN";
+    document.getElementById("marketCount").textContent=cd(ss.openIn-n);
     document.getElementById("sessionLevel").textContent="CLOSED";
   }else{
-    document.getElementById("currentSession").className="sNow";
-    document.getElementById("tradeState").textContent="MARKET OPEN";
-    document.getElementById("tradeState").className="sWarn";
-    document.getElementById("sessionWarn").textContent="NORMAL";
-    document.getElementById("sessionWarn").className="sWarn";
-    document.getElementById("sessionLevel").textContent="NORMAL";
+    document.getElementById("marketStatus").textContent="MARKET OPEN";
+    document.getElementById("marketStatus").className="sStatus";
+    document.getElementById("marketCountLabel").textContent=n.getDay()===5?"WEEKEND CLOSE":"DAILY CLOSE";
+    document.getElementById("marketCount").textContent=cd(ss.sessionClose-n);
+    document.getElementById("sessionLevel").textContent="OPEN";
   }
 
-  const newsText=`<span class="liveMsg">LIVE NEWS XAUUSD動画 / 中東LIVE / FX LIVE は右側から確認</span>`;
-  const eventText=buildEventText();
-
   document.getElementById("megaTicker").innerHTML=
-    "現在セッション "+ss.cur+
-    " | 次セッション "+ss.next+
-    " | 残り "+cd(left)+
-    " | "+newsText+
-    " | "+eventText+
-    " | <span class='warnMsg'>中東リスク監視</span>"+
-    " | <span class='warnMsg'>紅海リスク監視</span>"+
-    " | <span class='warnMsg'>FED WATCH</span>";
+    `<span class="normalMsg">🟢 CURRENT SESSION : ${ss.cur}</span>`+
+    ` | <span class="normalMsg">🟠 NEXT SESSION : ${ss.next}</span>`+
+    ` | <span class="liveMsg">🔴 LIVE BLOOMBERG TV</span>`+
+    ` | <span class="liveMsg">🔴 LIVE CNBC LIVE</span>`+
+    ` | <span class="liveMsg">🔴 LIVE KITCO GOLD</span>`+
+    ` | <span class="liveMsg">🔴 LIVE XAUUSD ANALYSIS</span>`+
+    ` | <span class="normalMsg">📰 GOLD NEWS</span>`+
+    ` | <span class="normalMsg">📰 FED NEWS</span>`+
+    ` | <span class="normalMsg">📰 USDJPY NEWS</span>`+
+    ` | <span class="riskMsg">🟠 MIDDLE EAST RISK</span>`+
+    ` | <span class="riskMsg">🟠 RED SEA RISK</span>`+
+    ` | <span class="riskMsg">🟠 ISRAEL - IRAN NEWS</span>`+
+    ` | <span class="riskMsg">🟠 UKRAINE RISK</span>`+
+    ` | <span class="warnMsg">🟡 FED WATCH</span>`+
+    ` | <span class="warnMsg">🟡 DXY WATCH</span>`+
+    ` | <span class="warnMsg">🟡 US TREASURY WATCH</span>`+
+    ` | <span class="normalMsg">🟢 SAFE HAVEN FLOW</span>`;
 }
 
 function loadChart(){
@@ -327,19 +431,10 @@ function loadChart(){
   s.src="https://s3.tradingview.com/tv.js";
   s.onload=function(){
     new TradingView.widget({
-      autosize:true,
-      symbol:"OANDA:XAUUSD",
-      interval:"15",
-      timezone:"Asia/Tokyo",
-      theme:"dark",
-      style:"1",
-      locale:"ja",
-      container_id:"tv_chart",
-      hide_top_toolbar:false,
-      hide_side_toolbar:false,
-      allow_symbol_change:true,
-      hide_volume:true,
-      withdateranges:true,
+      autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",
+      theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",
+      hide_top_toolbar:false,hide_side_toolbar:false,allow_symbol_change:true,
+      hide_volume:true,withdateranges:true,
       disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],
       overrides:{
         "paneProperties.background":"#000000",
@@ -361,7 +456,9 @@ function loadChart(){
 
 renderNews("xauusd",document.querySelector(".newsTab"));
 update();
+updateXauCommand();
 setInterval(update,1000);
+setInterval(updateXauCommand,5000);
 loadChart();
 </script>
 </body>
