@@ -4,96 +4,95 @@
 <meta charset="UTF-8">
 <title>NEXUS FX WAR ROOM</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
---bg:#020208;--p:#07070f;--p2:#0d0d18;--ln:#20203a;
+--bg:#020208;--p:#07070f;--p2:#10101d;--ln:#252540;
 --tx:#e8e8f2;--sub:#8b8ba5;
 --green:#00e676;--red:#ff1744;--orange:#ff9100;--yellow:#ffd600;--cyan:#00e5ff;--blue:#2962ff;
 }
-html,body{width:100%;height:100%;background:#020208;color:var(--tx);font-family:Arial,"Hiragino Sans",sans-serif;overflow:hidden}
-#app{height:100vh;display:grid;grid-template-rows:54px 62px 1fr 190px 24px;gap:4px;padding:4px}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--tx);font-family:Arial,"Hiragino Sans",sans-serif;overflow:hidden}
+#app{height:100vh;display:grid;grid-template-rows:54px 34px 1fr 220px 22px;gap:4px;padding:4px}
 
-/* HEADER */
-#topbar{display:grid;grid-template-columns:300px 150px 135px 130px 1fr;gap:4px}
-.box{background:var(--p);border:1px solid var(--ln);border-radius:5px;padding:5px 9px;display:flex;align-items:center;overflow:hidden}
-.logoWrap{gap:10px}
-#warLogo{width:42px;height:42px;border-radius:50%;object-fit:cover;filter:drop-shadow(0 0 8px rgba(255,215,0,.45));animation:logoPulse 4s infinite}
-@keyframes logoPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.06);opacity:.82}}
-#warLogo.logoAlert{animation:logoRed .45s infinite}
-@keyframes logoRed{0%,100%{filter:drop-shadow(0 0 8px #ff1744)}50%{filter:drop-shadow(0 0 28px #ff1744) drop-shadow(0 0 55px #ff1744);opacity:.35}}
-#warLogo.logoWarn{animation:logoOrange .8s infinite}
-@keyframes logoOrange{0%,100%{filter:drop-shadow(0 0 8px #ff9100)}50%{filter:drop-shadow(0 0 30px #ff9100);opacity:.45}}
-.logoMain{font-size:16px;font-weight:900;color:#ffd600;letter-spacing:1px}
-.logoSub{font-size:10px;color:var(--sub);font-weight:900;letter-spacing:1.5px}
-.sub{font-size:9px;color:var(--sub)}
+#topbar{display:grid;grid-template-columns:260px 150px 120px 120px 1fr;gap:4px}
+.box{background:var(--p);border:1px solid var(--ln);border-radius:5px;padding:6px 9px;display:flex;align-items:center;overflow:hidden}
+.logoImg{width:36px;height:36px;border-radius:50%;object-fit:cover;filter:drop-shadow(0 0 8px #ffd600);animation:logoPulse 3s infinite}
+@keyframes logoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.06)}}
+.logoMain{font-size:15px;font-weight:900;color:var(--yellow);letter-spacing:1px}
+.logoSub{font-size:9px;font-weight:900;color:var(--sub);letter-spacing:1px}
 .clock{font-size:18px;font-weight:900;color:var(--green);font-family:monospace}
-.live{font-size:14px;font-weight:900;color:var(--green)}
-.btn{height:30px;width:100%;border:1px solid var(--sub);background:transparent;color:var(--sub);border-radius:4px;font-size:11px;font-weight:900;cursor:pointer}
-.btn.on{border-color:var(--green);color:var(--green);box-shadow:0 0 12px rgba(0,230,118,.4)}
+.sub{font-size:9px;color:var(--sub)}
+.live{font-size:13px;font-weight:900;color:var(--green)}
+.btn{height:28px;width:100%;border:1px solid var(--green);background:rgba(0,230,118,.08);color:var(--green);border-radius:4px;font-size:11px;font-weight:900;cursor:pointer}
 
-/* FLOW BAR */
-#flowBox{border:3px solid var(--red);border-radius:6px;background:#050509;overflow:hidden;display:grid;grid-template-rows:32px 25px}
-#flowBox.dangerBorder{animation:borderBlink .35s infinite}
-@keyframes borderBlink{0%,100%{box-shadow:0 0 0 rgba(255,23,68,0)}50%{box-shadow:0 0 22px rgba(255,23,68,.95)}}
-#marketFlow,#alertFlow{position:relative;overflow:hidden;white-space:nowrap}
-.flowInner{position:absolute;display:inline-block;white-space:nowrap;animation:flow 42s linear infinite;font-size:14px;font-weight:900;line-height:32px}
-.alertInner{position:absolute;display:inline-block;white-space:nowrap;animation:flow 31s linear infinite;font-size:13px;font-weight:900;line-height:24px;color:var(--red)}
+#flowBox{background:#050509;overflow:hidden;display:grid;grid-template-rows:17px 17px;border:none;box-shadow:none}
+.flowLine{position:relative;overflow:hidden;white-space:nowrap}
+.flowInner{position:absolute;white-space:nowrap;animation:flow 38s linear infinite;font-size:12px;font-weight:900;line-height:17px}
 @keyframes flow{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
-.tickUp{color:var(--green)}.tickDown{color:var(--red)}.tickFlat{color:#e8e8f2}
-.danger{color:#fff;background:rgba(255,23,68,.35);padding:3px 9px;border-radius:3px;animation:blink .35s infinite}
-.warn{color:#fff;background:rgba(255,145,0,.28);padding:3px 9px;border-radius:3px;animation:blink .65s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.up{color:var(--green)}.down{color:var(--red)}.warn{color:var(--orange)}
+.danger{color:#fff;background:rgba(255,23,68,.35);padding:1px 6px;border-radius:3px;animation:blink .45s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* MAIN */
-#main{display:grid;grid-template-columns:minmax(0,1fr) 760px;gap:4px;min-height:0}
+#main{display:grid;grid-template-columns:minmax(0,1fr) 640px;gap:4px;min-height:0}
 .card{background:var(--p);border:1px solid var(--ln);border-radius:5px;overflow:hidden;min-height:0}
-.hd{height:28px;border-bottom:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between;padding:0 10px;background:#05050b;font-size:12px;font-weight:900;color:#d6b15c}
-#chart{height:calc(100% - 28px);background:#000}
+.hd{height:26px;border-bottom:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between;padding:0 9px;background:#05050b;font-size:11px;font-weight:900;color:var(--yellow)}
+#chart{height:calc(100% - 26px);background:#000}
 #tv_chart{width:100%;height:100%}
-#rightTop{display:grid;grid-template-rows:1fr 1fr;gap:4px;min-height:0}
 
-/* SESSION */
-.sessionBody{height:calc(100% - 28px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:14px}
-.sBlock{border:1px solid var(--ln);background:var(--p2);border-radius:6px;padding:12px}
-.sLabel{font-size:13px;color:var(--sub);font-weight:900}
-.sNow{font-size:34px;font-weight:900;margin-top:10px;color:var(--green)}
-.sNext{font-size:30px;font-weight:900;margin-top:10px;color:var(--orange)}
-.sCount{font-size:36px;font-weight:900;color:var(--orange);font-family:monospace;margin-top:10px}
-.sWarn{margin-top:16px;font-size:18px;font-weight:900;color:var(--green)}
-.sessionWarn{animation:blink .45s infinite;color:var(--red)!important}
+#right{display:grid;grid-template-rows:180px 1fr 250px;gap:4px;min-height:0}
 
-/* COMMAND */
-.cmdBody{height:calc(100% - 28px);display:grid;grid-template-columns:100px 1fr 155px 190px;gap:6px;padding:8px}
-.trendBox,.biasBox,.zoneBox,.rapidBox{border:1px solid var(--ln);background:var(--p2);border-radius:5px;padding:9px}
-.trendItem{font-size:21px;font-weight:900;text-align:center;margin-bottom:11px;border:1px solid var(--ln);border-radius:5px;padding:7px}
+.sessionBody{height:calc(100% - 26px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:8px}
+.sBox{background:var(--p2);border:1px solid var(--ln);border-radius:5px;padding:10px;overflow:hidden}
+.sLabel{font-size:11px;color:var(--sub);font-weight:900}
+.sNow{font-size:24px;font-weight:900;color:var(--green);margin-top:8px;line-height:1.15}
+.sNext{font-size:23px;font-weight:900;color:var(--orange);margin-top:8px;line-height:1.15}
+.sCount{font-size:25px;font-weight:900;color:var(--orange);font-family:monospace;margin-top:8px}
+.sText{font-size:13px;margin-top:8px}
+.sWarn{font-size:15px;font-weight:900;margin-top:10px;color:var(--green)}
+.closed{color:var(--red)!important;animation:blink .55s infinite}
+
+.cmdBody{height:calc(100% - 26px);display:grid;grid-template-columns:72px 1fr 122px 145px;gap:5px;padding:6px;overflow:hidden}
+.panel{background:var(--p2);border:1px solid var(--ln);border-radius:5px;padding:7px;overflow:hidden}
+.trend{font-size:16px;font-weight:900;text-align:center;border:1px solid var(--ln);border-radius:4px;padding:5px 2px;margin-bottom:6px}
 .buy{color:var(--green)}.sell{color:var(--red)}
-.biasTitle{font-size:13px;color:var(--yellow);font-weight:900;margin-bottom:8px}
-.biasMain{font-size:21px;font-weight:900;color:var(--green);margin-bottom:12px}
-.infoRow{display:flex;justify-content:space-between;border-bottom:1px solid #1b1b30;padding:6px 0;font-size:14px}
-.zoneTitle{font-size:13px;font-weight:900;margin-bottom:7px}
-.priceBox{font-size:23px;font-weight:900;border:1px solid;border-radius:4px;padding:8px;text-align:center;margin-bottom:7px}
+.biasTitle{font-size:11px;color:var(--yellow);font-weight:900}
+.biasMain{font-size:16px;color:var(--green);font-weight:900;margin:6px 0}
+.info{display:flex;justify-content:space-between;border-bottom:1px solid #1b1b30;padding:4px 0;font-size:12px}
+.zoneTitle{font-size:11px;font-weight:900;margin-bottom:4px}
+.priceBox{font-size:17px;font-weight:900;text-align:center;border:1px solid;border-radius:4px;padding:5px;margin-bottom:5px}
 .priceBuy{border-color:var(--green);background:rgba(0,230,118,.12)}
 .priceSell{border-color:var(--red);background:rgba(255,23,68,.12)}
-.rapidBox.alert{border-color:var(--red);background:rgba(255,23,68,.14);animation:blink .45s infinite}
-.rapidTitle{font-size:13px;color:var(--red);font-weight:900;text-align:center}
-.rapidMain{font-size:30px;color:var(--red);font-weight:900;text-align:center;margin-top:18px}
-.rapidSub{font-size:22px;color:#fff;font-weight:900;text-align:center;margin-top:16px}
+.rapid.alert{border-color:var(--red);background:rgba(255,23,68,.14);animation:blink .45s infinite}
+.rapidTitle{font-size:10px;color:var(--red);font-weight:900;text-align:center}
+.rapidMain{font-size:22px;color:var(--red);font-weight:900;text-align:center;margin-top:15px}
+.rapidSub{font-size:16px;color:#fff;font-weight:900;text-align:center;margin-top:10px}
 
-/* BOTTOM */
-#bottom{display:grid;grid-template-columns:1.3fr 1fr;gap:4px;min-height:0}
-.newsTable{height:calc(100% - 28px);overflow:hidden}
-.row{display:grid;grid-template-columns:210px 90px 150px 150px 1fr;align-items:center;border-bottom:1px solid #1a1a2e;padding:8px 12px;font-size:14px}
-.row strong{font-size:20px;color:#fff}
-.stars{color:var(--red);font-size:18px;font-weight:900}
-.count{color:var(--red);font-weight:900}
-.effect{border:1px solid var(--red);background:rgba(255,23,68,.12);border-radius:4px;padding:6px;text-align:center;color:#fff;font-weight:900}
-.liveNews{height:calc(100% - 28px);padding:8px 12px;overflow:hidden}
-.newsItem{display:grid;grid-template-columns:90px 55px 1fr;border-bottom:1px solid #1a1a2e;padding:7px 0;font-size:14px}
-.src{font-weight:900;color:var(--cyan)}
+.liveNewsWrap{height:calc(100% - 26px);display:grid;grid-template-rows:1fr 130px;gap:4px;padding:5px}
+.newsList{overflow-y:auto;border:1px solid var(--ln);border-radius:4px}
+.newsItem{display:grid;grid-template-columns:78px 54px 1fr;gap:7px;border-bottom:1px solid #1a1a2e;padding:8px;font-size:12px;cursor:pointer;min-height:54px}
+.newsItem:hover{background:#121225}
+.src{color:var(--cyan);font-weight:900}
 .time{color:var(--sub)}
-.footer{display:flex;align-items:center;justify-content:space-between;color:var(--sub);font-size:12px;padding:0 8px}
+.tag{font-size:9px;color:#fff;background:rgba(0,230,118,.22);padding:1px 4px;border-radius:3px;margin-left:3px}
+#newsPlayer{border:1px solid var(--ln);border-radius:5px;overflow:hidden;background:#000}
+#newsFrame{width:100%;height:100%;border:none}
+
+#bottom{min-height:0}
+.impactGrid{height:calc(100% - 26px);overflow-y:auto;padding:5px;display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:5px}
+.impactGrid::-webkit-scrollbar,.newsList::-webkit-scrollbar{width:5px}
+.impactGrid::-webkit-scrollbar-thumb,.newsList::-webkit-scrollbar-thumb{background:#3a3a5c;border-radius:4px}
+.evCard{background:#121225;border:1px solid #35355a;border-radius:5px;padding:8px;min-height:150px}
+.evCard.warn24{border-color:var(--yellow);box-shadow:0 0 8px rgba(255,214,0,.35)}
+.evCard.warn60{border-color:var(--orange);animation:blink .8s infinite}
+.evCard.warn15{border-color:var(--red);animation:blink .45s infinite}
+.evName{font-size:17px;font-weight:900;color:var(--red)}
+.evDesc{font-size:10px;color:#c9c9dc;margin:2px 0 5px}
+.evDate{font-size:11px;color:var(--yellow);font-weight:900;margin-bottom:5px}
+.evRow{display:flex;justify-content:space-between;border-bottom:1px solid #292945;padding:3px 0;font-size:11px}
+.stars{color:var(--red);font-weight:900}
+.count{font-size:18px;color:var(--cyan);font-weight:900;font-family:monospace;margin-top:6px}
+.resultBox{margin-top:5px;border:1px solid var(--red);background:rgba(255,23,68,.12);border-radius:4px;padding:4px;font-size:11px;font-weight:900;text-align:center;color:#fff}
+.footer{display:flex;justify-content:space-between;align-items:center;color:var(--sub);font-size:11px;padding:0 8px}
 </style>
 </head>
 
@@ -101,39 +100,26 @@ html,body{width:100%;height:100%;background:#020208;color:var(--tx);font-family:
 <div id="app">
 
 <div id="topbar">
-  <div class="box logoWrap">
-    <img id="warLogo" src="logo.png" onerror="this.style.display='none'">
+  <div class="box" style="gap:8px">
+    <img class="logoImg" src="B0A7EDCD-672C-4209-99F7-917932FC8367.jpeg">
     <div>
       <div class="logoMain">NEXUS FX WAR ROOM</div>
       <div class="logoSub">XAUUSD COMMAND CENTER</div>
     </div>
   </div>
-
   <div class="box" style="flex-direction:column;align-items:flex-start;justify-content:center">
     <div class="sub">日本時間 JST</div>
     <div id="clock" class="clock">--:--:--</div>
     <div id="date" class="sub">----</div>
   </div>
-
-  <div class="box">
-    <div>
-      <div class="sub">状態</div>
-      <div id="liveState" class="live">● LIVE</div>
-    </div>
-  </div>
-
-  <div class="box">
-    <button id="notifyBtn" class="btn" onclick="toggleNotify()">通知 OFF</button>
-  </div>
-
-  <div class="box">
-    <div class="sub">REALTIME PRICE / SESSION / NEWS ALERT</div>
-  </div>
+  <div class="box"><div><div class="sub">状態</div><div class="live">● LIVE</div></div></div>
+  <div class="box"><button id="notifyBtn" class="btn" onclick="toggleNotify()">通知 ON</button></div>
+  <div class="box"><div class="sub">REALTIME PRICE / SESSION / NEWS ALERT</div></div>
 </div>
 
 <div id="flowBox">
-  <div id="marketFlow"><div id="marketText" class="flowInner">価格取得中...</div></div>
-  <div id="alertFlow"><div id="alertText" class="alertInner">ALERT 待機中...</div></div>
+  <div class="flowLine"><div id="marketText" class="flowInner">価格取得中...</div></div>
+  <div class="flowLine"><div id="alertText" class="flowInner">NEWS ALERT 待機中...</div></div>
 </div>
 
 <div id="main">
@@ -142,22 +128,22 @@ html,body{width:100%;height:100%;background:#020208;color:var(--tx);font-family:
     <div id="chart"><div id="tv_chart"></div></div>
   </div>
 
-  <div id="rightTop">
+  <div id="right">
     <div class="card">
       <div class="hd">SESSION CENTER <span id="sessionLevel">NORMAL</span></div>
       <div class="sessionBody">
-        <div class="sBlock">
+        <div class="sBox">
           <div class="sLabel">現在のセッション</div>
           <div id="currentSession" class="sNow">---</div>
-          <div id="sessionTime" style="font-size:18px;margin-top:10px">--:-- - --:-- JST</div>
-          <div id="tradeState" style="margin-top:14px;color:var(--green);font-size:18px;font-weight:900">取引中</div>
+          <div id="sessionTime" class="sText">--:-- - --:-- JST</div>
+          <div id="tradeState" class="sWarn">取引中</div>
         </div>
-        <div class="sBlock">
+        <div class="sBox">
           <div class="sLabel">次のセッション</div>
           <div id="nextSession" class="sNext">---</div>
-          <div id="nextTime" style="font-size:18px;margin-top:10px">--:-- JST</div>
+          <div id="nextTime" class="sText">--:-- JST</div>
         </div>
-        <div class="sBlock">
+        <div class="sBox">
           <div class="sLabel">開始まで</div>
           <div id="sessionCountdown" class="sCount">--:--:--</div>
           <div id="sessionWarn" class="sWarn">通常</div>
@@ -168,19 +154,19 @@ html,body{width:100%;height:100%;background:#020208;color:var(--tx);font-family:
     <div class="card">
       <div class="hd">XAUUSD COMMAND <span>PRICE ACTION / SIGNAL CONTROL</span></div>
       <div class="cmdBody">
-        <div class="trendBox">
-          <div class="trendItem buy">LONG<br>BUY</div>
-          <div class="trendItem buy">MID<br>BUY</div>
-          <div class="trendItem sell">SHORT<br>SELL</div>
+        <div class="panel">
+          <div class="trend buy">LONG<br>BUY</div>
+          <div class="trend buy">MID<br>BUY</div>
+          <div class="trend sell">SHORT<br>SELL</div>
         </div>
-        <div class="biasBox">
+        <div class="panel">
           <div class="biasTitle">BIAS</div>
           <div class="biasMain">押し目買い優勢</div>
-          <div class="infoRow"><span>TREND</span><span>上昇トレンド</span></div>
-          <div class="infoRow"><span>VOLATILITY</span><span>高</span></div>
-          <div class="infoRow"><span>CONDITION</span><span>安定</span></div>
+          <div class="info"><span>TREND</span><span>上昇</span></div>
+          <div class="info"><span>VOLATILITY</span><span>高</span></div>
+          <div class="info"><span>CONDITION</span><span>安定</span></div>
         </div>
-        <div class="zoneBox">
+        <div class="panel">
           <div class="zoneTitle buy">BUY ZONE</div>
           <div class="priceBox priceBuy">4540.00</div>
           <div class="priceBox priceBuy">4530.00</div>
@@ -188,257 +174,156 @@ html,body{width:100%;height:100%;background:#020208;color:var(--tx);font-family:
           <div class="priceBox priceSell">4560.00</div>
           <div class="priceBox priceSell">4575.00</div>
         </div>
-        <div id="rapidBox" class="rapidBox">
+        <div id="rapidBox" class="panel rapid">
           <div class="rapidTitle">PRICE ACTION ALERT</div>
           <div id="rapidMain" class="rapidMain">NORMAL</div>
           <div id="rapidSub" class="rapidSub">通常監視</div>
         </div>
       </div>
     </div>
+
+    <div class="card">
+      <div class="hd">LIVE NEWS <span>クリックで動画表示</span></div>
+      <div class="liveNewsWrap">
+        <div class="newsList">
+          <div class="newsItem" onclick="playNews('https://www.youtube.com/embed/dp8PhLsUcFE')"><div class="src">Bloomberg<span class="tag">GOLD</span></div><div class="time">LIVE</div><div>Bloomberg Markets Live</div></div>
+          <div class="newsItem" onclick="playNews('https://www.youtube.com/embed/_yA2VT_sMeQ')"><div class="src">CNBC<span class="tag">FED</span></div><div class="time">LIVE</div><div>CNBC Business News Live</div></div>
+          <div class="newsItem" onclick="playNews('https://www.youtube.com/embed?listType=search&list=Kitco%20Gold%20Live')"><div class="src">Kitco<span class="tag">GOLD</span></div><div class="time">LIVE</div><div>Kitco Gold / Silver News</div></div>
+          <div class="newsItem" onclick="playNews('https://www.youtube.com/embed?listType=search&list=XAUUSD%20live%20analysis')"><div class="src">XAUUSD<span class="tag">LIVE</span></div><div class="time">LIVE</div><div>XAUUSD Live Analysis</div></div>
+          <div class="newsItem" onclick="open('https://www.reuters.com/markets/commodities/','_blank')"><div class="src">Reuters<span class="tag">GOLD</span></div><div class="time">NEWS</div><div>Gold / Oil / Dollar Market Headlines</div></div>
+          <div class="newsItem" onclick="open('https://www.investing.com/commodities/gold','_blank')"><div class="src">Investing<span class="tag">XAU</span></div><div class="time">NEWS</div><div>XAUUSD Price and Market News</div></div>
+        </div>
+        <div id="newsPlayer"><iframe id="newsFrame" src="https://www.youtube.com/embed/dp8PhLsUcFE" allowfullscreen></iframe></div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div id="bottom">
-  <div class="card">
-    <div class="hd">HIGH IMPACT NEWS <span>大型表示 / カウントダウン</span></div>
-    <div id="eventList" class="newsTable"></div>
-  </div>
-
-  <div class="card">
-    <div class="hd">LIVE NEWS <span>GOLD / FED / MARKET</span></div>
-    <div class="liveNews">
-      <div class="newsItem"><div class="src">Bloomberg</div><div class="time">12:24</div><div>Gold rises on safe-haven demand amid Middle East tensions</div></div>
-      <div class="newsItem"><div class="src">Reuters</div><div class="time">12:21</div><div>Oil prices gain as Red Sea risks escalate</div></div>
-      <div class="newsItem"><div class="src">CNBC</div><div class="time">12:18</div><div>Fed officials remain cautious on inflation outlook</div></div>
-      <div class="newsItem"><div class="src">Investing</div><div class="time">12:15</div><div>U.S. CPI ahead of expectations, market volatility expected</div></div>
-      <div class="newsItem"><div class="src">Kitco</div><div class="time">12:12</div><div>Gold market analysis: bullish momentum intact</div></div>
-    </div>
-  </div>
+<div id="bottom" class="card">
+  <div class="hd">HIGH IMPACT NEWS <span>月内全件 / 発表前・発表中・結果表示 / 縦スクロール</span></div>
+  <div id="eventList" class="impactGrid"></div>
 </div>
 
 <div class="footer">
   <span>本データは情報提供のみを目的としており、投資助言ではありません。</span>
   <span id="footerTime">データ更新: --:--:-- JST</span>
-  <span>自動更新: ON</span>
+  <span>自動更新: 60秒</span>
 </div>
-
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-const API_KEY="YOUR_TWELVEDATA_API_KEY";
-
-let notifyOn=false;
-let lastPrices={};
-let danger=false;
-
-const SYMBOLS=[
-{name:"XAUUSD",symbol:"XAU/USD",dec:2},
-{name:"USDJPY",symbol:"USD/JPY",dec:3},
-{name:"BTCUSD",symbol:"BTC/USD",dec:0},
-{name:"EURUSD",symbol:"EUR/USD",dec:5},
-{name:"GBPJPY",symbol:"GBP/JPY",dec:3},
-{name:"NAS100",symbol:"IXIC",dec:2}
-];
-
 const EVENTS=[
-{n:"US CPI",d:"米消費者物価指数",date:"2026-06-10",time:"21:30",imp:"★★★★★",fc:"3.4%",pv:"3.5%",effect:"非常に強い上昇要因"},
-{n:"NFP",d:"非農業部門雇用者数",date:"2026-06-05",time:"21:30",imp:"★★★★★",fc:"185K",pv:"175K",effect:"強い変動要因"},
-{n:"FOMC",d:"政策金利発表",date:"2026-06-18",time:"03:00",imp:"★★★★★",fc:"5.50%",pv:"5.50%",effect:"非常に強い変動要因"},
-{n:"US PPI",d:"生産者物価指数",date:"2026-06-11",time:"21:30",imp:"★★★★☆",fc:"2.6%",pv:"2.4%",effect:"中程度の変動要因"}
+{n:"US ISM PMI",d:"米ISM製造業景況指数",date:"2026-06-03",time:"23:00",imp:"★★★★★",fc:"52.7",pv:"53.0",result:"未発表",effect:"強い"},
+{n:"JOLTS",d:"米求人件数",date:"2026-06-04",time:"23:00",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"中〜強"},
+{n:"US ADP",d:"米ADP雇用者数",date:"2026-06-05",time:"21:15",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"強い"},
+{n:"US NFP",d:"米雇用統計",date:"2026-06-05",time:"21:30",imp:"★★★★★",fc:"185K",pv:"175K",result:"未発表",effect:"非常に強い"},
+{n:"US CPI",d:"米消費者物価指数",date:"2026-06-10",time:"21:30",imp:"★★★★★",fc:"3.4%",pv:"3.5%",result:"未発表",effect:"非常に強い"},
+{n:"CORE CPI",d:"米コアCPI",date:"2026-06-10",time:"21:30",imp:"★★★★★",fc:"要確認",pv:"要確認",result:"未発表",effect:"非常に強い"},
+{n:"US PPI",d:"米生産者物価指数",date:"2026-06-11",time:"21:30",imp:"★★★★☆",fc:"2.6%",pv:"2.4%",result:"未発表",effect:"強い"},
+{n:"CORE PPI",d:"米コアPPI",date:"2026-06-11",time:"21:30",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"強い"},
+{n:"RETAIL SALES",d:"米小売売上高",date:"2026-06-17",time:"21:30",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"強い"},
+{n:"FOMC",d:"米政策金利発表",date:"2026-06-18",time:"03:00",imp:"★★★★★",fc:"5.50%",pv:"5.50%",result:"未発表",effect:"最重要"},
+{n:"POWELL",d:"パウエル発言",date:"2026-06-18",time:"03:30",imp:"★★★★★",fc:"-",pv:"-",result:"未発表",effect:"最重要"},
+{n:"FOMC MINUTES",d:"FOMC議事要旨",date:"2026-06-25",time:"03:00",imp:"★★★★☆",fc:"-",pv:"-",result:"未発表",effect:"強い"},
+{n:"US GDP",d:"米GDP",date:"2026-06-26",time:"21:30",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"強い"},
+{n:"CORE PCE",d:"米コアPCE",date:"2026-06-27",time:"21:30",imp:"★★★★★",fc:"要確認",pv:"要確認",result:"未発表",effect:"非常に強い"},
+{n:"ECB",d:"ECB政策金利",date:"2026-06-12",time:"21:15",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"中〜強"},
+{n:"BOJ",d:"日銀政策金利",date:"2026-06-19",time:"12:00",imp:"★★★★☆",fc:"要確認",pv:"要確認",result:"未発表",effect:"円主導"}
 ];
 
+let notifyOn=true;
+function toggleNotify(){notifyOn=!notifyOn;document.getElementById("notifyBtn").textContent=notifyOn?"通知 ON":"通知 OFF"}
+function playNews(url){document.getElementById("newsFrame").src=url}
 function pad(n){return String(n).padStart(2,"0")}
 function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
 function hms(d){return`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`}
-function ymd(d){return`${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())}`}
-function cd(ms){
- if(ms<=0)return"00:00:00";
- let s=Math.floor(ms/1000),d=Math.floor(s/86400);s%=86400;
- let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;
- return d>0?`${d}日 ${pad(h)}:${pad(m)}:${pad(s)}`:`${pad(h)}:${pad(m)}:${pad(s)}`;
-}
+function cd(ms){if(ms<=0)return"00:00:00";let s=Math.floor(ms/1000),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;return d>0?`${d}日 ${pad(h)}:${pad(m)}:${pad(s)}`:`${pad(h)}:${pad(m)}:${pad(s)}`}
+function todayAt(h,m){const d=nowJST();d.setHours(h,m,0,0);return d}
+function nextAt(h,m){const d=nowJST();d.setHours(h,m,0,0);if(d<nowJST())d.setDate(d.getDate()+1);return d}
+function nextMondayAt(h,m){const d=nowJST();while(d.getDay()!==1)d.setDate(d.getDate()+1);d.setHours(h,m,0,0);return d}
 function evDate(e){return new Date(`${e.date}T${e.time}:00+09:00`)}
 
-function toggleNotify(){
- notifyOn=!notifyOn;
- const b=document.getElementById("notifyBtn");
- b.textContent=notifyOn?"通知 ON":"通知 OFF";
- b.className=notifyOn?"btn on":"btn";
- if(notifyOn && Notification.permission!=="granted")Notification.requestPermission();
-}
-
-function beep(){
- if(!notifyOn)return;
- try{
-  const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();
-  o.connect(g);g.connect(a.destination);o.frequency.value=920;
-  g.gain.setValueAtTime(.2,a.currentTime);
-  g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.12);
-  o.start();o.stop(a.currentTime+.12);
- }catch(e){}
-}
-
-function browserNotify(msg){
- if(notifyOn && Notification.permission==="granted")new Notification("NEXUS FX WAR ROOM",{body:msg});
- beep();
-}
-
 function getSess(n){
- const min=n.getHours()*60+n.getMinutes();
- if(min>=9*60&&min<17*60)return{cur:"ロンドン市場",next:"ニューヨーク市場",st:"09:00 - 17:00 JST",nextT:"16:00 - 00:00 JST",start:new Date(n.setHours(16,0,0,0))};
- if(min>=16*60||min<6*60)return{cur:"ニューヨーク市場",next:"東京市場",st:"16:00 - 00:00 JST",nextT:"09:00 - 18:00 JST",start:nextAt(9,0)};
- return{cur:"CLOSED",next:"ASIA",st:"-",nextT:"09:00 JST",start:nextAt(9,0)};
-}
-function nextAt(h,m){
- const n=nowJST();const d=new Date(n);d.setHours(h,m,0,0);if(d<n)d.setDate(d.getDate()+1);return d;
-}
-
-async function fetchPrices(){
- if(API_KEY==="YOUR_TWELVEDATA_API_KEY"){
-  fakePrices();
-  return;
+ const day=n.getDay(),min=n.getHours()*60+n.getMinutes();
+ if((day===6&&min>=7*60)||day===0||(day===1&&min<7*60)){
+  return{cur:"CLOSED",next:"ASIA",st:"MARKET CLOSED",nextT:"月曜 07:00 JST",start:nextMondayAt(7,0),closed:true};
  }
- try{
-  const url=`https://api.twelvedata.com/quote?symbol=${encodeURIComponent(SYMBOLS.map(s=>s.symbol).join(","))}&apikey=${API_KEY}`;
-  const res=await fetch(url);
-  const data=await res.json();
-  renderPrices(data,false);
- }catch(e){
-  fakePrices();
- }
-}
-
-function fakePrices(){
- const base={XAUUSD:4543.76,USDJPY:156.842,BTCUSD:109233,EURUSD:1.14210,GBPJPY:178.552,NAS100:23455.20};
- let data={};
- SYMBOLS.forEach(s=>{
-  const prev=lastPrices[s.name]||base[s.name];
-  const move=(Math.random()-.5)*(s.name==="BTCUSD"?400:s.name==="XAUUSD"?8:s.name==="NAS100"?80:.2);
-  data[s.name]={close:prev+move};
- });
- renderPrices(data,true);
-}
-
-function renderPrices(data,isFake){
- const parts=[];
- danger=false;
- SYMBOLS.forEach(s=>{
-  let q=isFake?data[s.name]:(data[s.symbol]||data);
-  if(!q||!q.close)return;
-  const price=Number(q.close);
-  const prev=lastPrices[s.name]||price;
-  const diff=price-prev;
-  lastPrices[s.name]=price;
-  const up=diff>=0;
-  parts.push(`<span class="${up?'tickUp':'tickDown'}">${s.name} ${price.toFixed(s.dec)} ${up?'▲':'▼'} ${diff.toFixed(s.dec)}</span>`);
-  if(s.name==="XAUUSD" && Math.abs(diff)>=6){
-    danger=true;
-    const msg=diff>0?`XAUUSD 急騰 +${diff.toFixed(2)}ドル`:`XAUUSD 急落 ${diff.toFixed(2)}ドル`;
-    parts.push(`<span class="danger">${msg}</span>`);
-    document.getElementById("rapidBox").className="rapidBox alert";
-    document.getElementById("rapidMain").textContent=diff>0?"急騰検知":"急落検知";
-    document.getElementById("rapidSub").textContent=`${diff.toFixed(2)}ドル`;
-    browserNotify(msg);
-  }
- });
- window.priceFlow=parts.join("　｜　");
+ if(min>=7*60&&min<15*60)return{cur:"ASIA",next:"LONDON",st:"07:00 - 15:00 JST",nextT:"15:00 JST",start:todayAt(15,0)};
+ if(min>=15*60&&min<21*60)return{cur:"LONDON",next:"US",st:"15:00 - 21:00 JST",nextT:"21:00 JST",start:todayAt(21,0)};
+ return{cur:"US",next:"ASIA",st:"21:00 - 07:00 JST",nextT:"07:00 JST",start:nextAt(7,0)};
 }
 
 function update(){
  const n=nowJST();
  document.getElementById("clock").textContent=hms(n);
- document.getElementById("date").textContent=ymd(n);
+ document.getElementById("date").textContent=`${n.getFullYear()}/${pad(n.getMonth()+1)}/${pad(n.getDate())}`;
  document.getElementById("footerTime").textContent=`データ更新: ${hms(n)} JST`;
 
- const ss=getSess(new Date(n));
- const diff=ss.start-n;
-
+ const ss=getSess(n),diff=ss.start-n;
  document.getElementById("currentSession").textContent=ss.cur;
  document.getElementById("nextSession").textContent=ss.next;
  document.getElementById("sessionTime").textContent=ss.st;
  document.getElementById("nextTime").textContent=ss.nextT;
  document.getElementById("sessionCountdown").textContent=cd(diff);
 
- const warn=document.getElementById("sessionWarn");
- const level=document.getElementById("sessionLevel");
- if(diff<=5*60000){warn.textContent="開始5分前";warn.className="sWarn sessionWarn";level.textContent="CRITICAL";danger=true}
- else if(diff<=15*60000){warn.textContent="開始15分前";warn.className="sWarn sessionWarn";level.textContent="WARNING";danger=true}
- else if(diff<=30*60000){warn.textContent="開始30分前";warn.className="sWarn";level.textContent="ALERT"}
- else{warn.textContent="通常";warn.className="sWarn";level.textContent="NORMAL"}
+ if(ss.closed){
+  document.getElementById("currentSession").className="sNow closed";
+  document.getElementById("tradeState").textContent="市場クローズ";
+  document.getElementById("tradeState").className="sWarn closed";
+  document.getElementById("sessionWarn").textContent="週末クローズ";
+  document.getElementById("sessionWarn").className="sWarn closed";
+  document.getElementById("sessionLevel").textContent="CLOSED";
+ }else{
+  document.getElementById("currentSession").className="sNow";
+  document.getElementById("tradeState").textContent="取引中";
+  document.getElementById("tradeState").className="sWarn";
+  document.getElementById("sessionWarn").textContent=diff<=900000?"開始15分前":"通常";
+  document.getElementById("sessionWarn").className=diff<=900000?"sWarn closed":"sWarn";
+  document.getElementById("sessionLevel").textContent=diff<=900000?"WARNING":"NORMAL";
+ }
 
  const upcoming=EVENTS.map(e=>({...e,dt:evDate(e)})).filter(e=>e.dt>n).sort((a,b)=>a.dt-b.dt);
- document.getElementById("eventList").innerHTML=upcoming.map(e=>`
- <div class="row">
-  <div><strong>${e.n}</strong><br><span class="sub">${e.d}</span></div>
-  <div class="stars">${e.imp}</div>
-  <div class="count">${cd(e.dt-n)}</div>
-  <div>${e.fc} / 前回 ${e.pv}</div>
-  <div class="effect">${e.effect}</div>
- </div>`).join("");
+ document.getElementById("eventList").innerHTML=upcoming.map(e=>{
+  const left=e.dt-n;
+  const cls=left<=15*60000?"warn15":left<=60*60000?"warn60":left<=24*3600*1000?"warn24":"";
+  const live=left<=0?"LIVE":"";
+  return`
+  <div class="evCard ${cls}">
+    <div class="evName">${e.n}</div>
+    <div class="evDesc">${e.d}</div>
+    <div class="evDate">発表 ${e.date} ${e.time} JST ${live}</div>
+    <div class="evRow"><span>重要度</span><span class="stars">${e.imp}</span></div>
+    <div class="evRow"><span>予想</span><span>${e.fc}</span></div>
+    <div class="evRow"><span>前回</span><span>${e.pv}</span></div>
+    <div class="evRow"><span>結果</span><span>${e.result}</span></div>
+    <div class="evRow"><span>XAU影響</span><span class="stars">${e.effect}</span></div>
+    <div class="count">${cd(left)}</div>
+    <div class="resultBox">${e.result==="未発表"?"結果待機中":"XAUUSD 判定表示"}</div>
+  </div>`}).join("");
 
- const eventAlerts=upcoming.slice(0,3).map(e=>`重要指標 ${e.n} 残り ${cd(e.dt-n)}`).join("　｜　");
- const sessionAlert=`SESSION ${ss.cur}　｜　NEXT ${ss.next} 残り ${cd(diff)}`;
- document.getElementById("marketText").innerHTML=`${window.priceFlow||"価格取得中"}　｜　${sessionAlert}`;
- document.getElementById("alertText").innerHTML=`${eventAlerts}　｜　MIDDLE EAST HIGH RISK　｜　RED SEA WATCH　｜　LIVE NEWS 更新中`;
+ document.getElementById("marketText").innerHTML=
+ `<span class="up">XAUUSD 4539.43 ▲2.59</span> ｜ <span class="up">USDJPY 156.925 ▲0.093</span> ｜ <span class="up">BTCUSD 108917 ▲91</span> ｜ <span class="down">EURUSD 1.05930 ▼0.00052</span> ｜ <span class="up">NAS100 23370 ▲3.51</span> ｜ SESSION ${ss.cur} ｜ NEXT ${ss.next} 残り ${cd(diff)}`;
 
- const flow=document.getElementById("flowBox");
- const logo=document.getElementById("warLogo");
- if(danger){
-  flow.classList.add("dangerBorder");
-  logo.classList.remove("logoWarn");
-  logo.classList.add("logoAlert");
- }else if(diff<=30*60000){
-  flow.classList.remove("dangerBorder");
-  logo.classList.remove("logoAlert");
-  logo.classList.add("logoWarn");
- }else{
-  flow.classList.remove("dangerBorder");
-  logo.classList.remove("logoAlert","logoWarn");
- }
+ document.getElementById("alertText").innerHTML=
+ upcoming.slice(0,6).map(e=>`重要指標 ${e.n} 残り ${cd(e.dt-n)}`).join(" ｜ ")+" ｜ MIDDLE EAST HIGH RISK ｜ LIVE NEWS 更新中";
 }
 
 new TradingView.widget({
- autosize:true,
- symbol:"OANDA:XAUUSD",
- interval:"15",
- timezone:"Asia/Tokyo",
- theme:"dark",
- style:"1",
- locale:"ja",
- container_id:"tv_chart",
- hide_top_toolbar:false,
- hide_side_toolbar:false,
- hide_legend:false,
- allow_symbol_change:true,
- hide_volume:true,
- save_image:false,
- withdateranges:true,
- studies:[],
+ autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",
+ hide_top_toolbar:false,hide_side_toolbar:false,hide_legend:false,allow_symbol_change:true,hide_volume:true,save_image:false,withdateranges:true,studies:[],
  disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],
  enabled_features:["study_templates","side_toolbar_in_fullscreen_mode","save_chart_properties_to_local_storage"],
  overrides:{
-  "paneProperties.background":"#000000",
-  "paneProperties.backgroundType":"solid",
-  "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
-  "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
-  "mainSeriesProperties.candleStyle.upColor":"#2962FF",
-  "mainSeriesProperties.candleStyle.downColor":"#F23645",
-  "mainSeriesProperties.candleStyle.borderUpColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.borderDownColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.wickUpColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.wickDownColor":"#6E7380",
-  "mainSeriesProperties.candleStyle.drawWick":true,
-  "mainSeriesProperties.candleStyle.drawBorder":true,
-  "scalesProperties.textColor":"#9CA3AF",
-  "scalesProperties.lineColor":"#1a1a2e"
+ "paneProperties.background":"#000","paneProperties.backgroundType":"solid",
+ "mainSeriesProperties.candleStyle.upColor":"#2962FF","mainSeriesProperties.candleStyle.downColor":"#F23645",
+ "mainSeriesProperties.candleStyle.borderUpColor":"#6E7380","mainSeriesProperties.candleStyle.borderDownColor":"#6E7380",
+ "mainSeriesProperties.candleStyle.wickUpColor":"#6E7380","mainSeriesProperties.candleStyle.wickDownColor":"#6E7380",
+ "scalesProperties.textColor":"#9CA3AF"
  }
 });
-
-fetchPrices();
-update();
-setInterval(fetchPrices,5000);
 setInterval(update,1000);
+update();
 </script>
 </body>
 </html>
