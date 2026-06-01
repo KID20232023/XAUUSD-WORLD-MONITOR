@@ -6,323 +6,180 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
---bg:#020208;--p:#07070f;--p2:#111124;--ln:#2d2d50;
---g:#00e676;--r:#ff1744;--c:#00e5ff;--gray:#b7b7c3;--dark:#171726;
-}
-html,body{
-width:100%;height:100%;
-background:var(--bg);color:#fff;
-font-family:"Segoe UI","Helvetica Neue",Arial,"Hiragino Sans",Meiryo,sans-serif;
-overflow:hidden;
-}
-#app{
-height:100vh;
-display:grid;
-grid-template-rows:50px 46px 30px minmax(0,1fr) 310px 20px;
-gap:3px;
-padding:3px;
-}
-.card,.box{
-background:var(--p);
-border:1px solid var(--ln);
-border-radius:4px;
-overflow:hidden;
-}
-.hd{
-height:24px;
-padding:0 8px;
-border-bottom:1px solid var(--ln);
-display:flex;
-align-items:center;
-justify-content:space-between;
-background:#04040b;
-color:var(--gray);
-font-size:11px;
-font-weight:900;
-}
-#topbar{
-display:grid;
-grid-template-columns:245px 90px 115px 1fr;
-gap:3px;
-}
-.box{
-padding:5px 8px;
-display:flex;
-align-items:center;
-}
-.l1{
-font-size:13px;
-font-weight:900;
-color:var(--gray);
-letter-spacing:.8px;
-}
-.l2{
-font-size:8px;
-color:#8c8c99;
-font-weight:900;
-}
-.liveWrap{
-font-size:13px;
-font-weight:900;
-color:var(--g);
-display:flex;
-align-items:center;
-gap:7px;
-}
-.liveDot{
-width:9px;
-height:9px;
-border-radius:50%;
-background:var(--r);
-display:inline-block;
-animation:redFlash .8s infinite;
-box-shadow:0 0 10px rgba(255,23,68,.9);
-}
-.btn{
-width:100%;
-height:25px;
-background:rgba(0,230,118,.08);
-border:1px solid var(--g);
-color:var(--g);
-border-radius:4px;
-font-weight:900;
-font-size:10px;
-cursor:pointer;
-transition:.2s;
-}
-.btn:hover{background:rgba(0,230,118,.18)}
-.btn.off{
-background:#15151d;
-border-color:#5a5a7a;
-color:#aaa;
-}
-.timeBox{justify-content:center}
-.timeText{
-color:var(--g);
-font-size:14px;
-font-weight:900;
-font-family:monospace;
-}
-
-/* 1段目 TradingView価格バー：DXYなし */
-#tvPriceBar{
-height:46px;
-overflow:hidden;
-border:1px solid var(--ln);
-background:#050509;
-border-radius:4px;
-}
-#tvPriceBar iframe{
-height:46px!important;
-min-height:46px!important;
-max-height:46px!important;
-}
-
-/* 2段目バナー：SESSION + HIGH IMPACT NEWSのみ */
-.flowLine{
-height:30px;
-position:relative;
-overflow:hidden;
-white-space:nowrap;
-background:#050509;
-border:1px solid var(--ln);
-border-radius:4px;
-}
-.flowInner{
-position:absolute;
-white-space:nowrap;
-animation:flow 95s linear infinite;
-font-size:13px;
-font-weight:900;
-line-height:28px;
-}
-@keyframes flow{
-from{transform:translateX(100vw)}
-to{transform:translateX(-100%)}
-}
-.bannerSession{
-color:var(--gray);
-margin:0 16px;
-}
-.bannerOpen{
-color:var(--r);
-animation:redFlash .9s infinite;
-text-shadow:0 0 8px rgba(255,23,68,.8);
-}
-.bannerTime{
-color:var(--g);
-font-family:monospace;
-font-weight:900;
-}
-.bannerImpact{
-color:#fff;
-margin:0 18px;
-}
-.bannerImpact .dt{
-color:var(--g);
-font-family:monospace;
-font-weight:900;
-}
-.bannerImpact .ccy{
-color:var(--gray);
-font-weight:900;
-}
-.bannerImpact .impactHigh{
-color:#cfcfd8;
-font-weight:900;
-}
-.bannerImpact .impactExtreme{
-color:var(--r);
-font-weight:900;
-animation:redFlash .9s infinite;
-}
-
-/* 共通点滅 */
+:root{--bg:#020208;--p:#07070f;--p2:#111124;--ln:#2d2d50;--g:#00e676;--r:#ff1744;--gray:#b7b7c3;--dark:#171726}
+html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:"Segoe UI","Helvetica Neue",Arial,"Hiragino Sans",Meiryo,sans-serif;overflow:hidden}
+#app{height:100vh;display:grid;grid-template-rows:50px 46px 30px minmax(0,1fr) 310px 20px;gap:3px;padding:3px}
+.card,.box{background:var(--p);border:1px solid var(--ln);border-radius:4px;overflow:hidden}
+.hd{height:24px;padding:0 8px;border-bottom:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between;background:#04040b;color:var(--gray);font-size:11px;font-weight:900}
+#topbar{display:grid;grid-template-columns:245px 90px 115px 1fr;gap:3px}
+.box{padding:5px 8px;display:flex;align-items:center}
+.l1{font-size:13px;font-weight:900;color:var(--gray);letter-spacing:.8px}
+.l2{font-size:8px;color:#8c8c99;font-weight:900}
+.liveWrap{font-size:13px;font-weight:900;color:var(--g);display:flex;align-items:center;gap:7px}
+.liveDot,.dot{border-radius:50%;background:var(--r);display:inline-block;animation:redFlash .8s infinite;box-shadow:0 0 10px rgba(255,23,68,.9)}
+.liveDot{width:9px;height:9px}.dot{width:7px;height:7px;margin-left:5px}
+.btn{width:100%;height:25px;background:rgba(0,230,118,.08);border:1px solid var(--g);color:var(--g);border-radius:4px;font-weight:900;font-size:10px;cursor:pointer;transition:.2s}
+.btn:hover,.videoBtn:hover,.newsTab:hover,.newsItem:hover,.sBox:hover{background:var(--dark)}
+.btn.off{background:#15151d;border-color:#5a5a7a;color:#aaa}
+.timeBox{justify-content:center}.timeText{color:var(--g);font-size:14px;font-weight:900;font-family:monospace}
+#tvPriceBar{height:46px;overflow:hidden;border:1px solid var(--ln);background:#050509;border-radius:4px}
+#tvPriceBar iframe{height:46px!important;min-height:46px!important;max-height:46px!important}
+.flowLine{height:30px;position:relative;overflow:hidden;white-space:nowrap;background:#050509;border:1px solid var(--ln);border-radius:4px}
+.flowInner{position:absolute;white-space:nowrap;animation:flow 115s linear infinite;font-size:13px;font-weight:900;line-height:28px}
+@keyframes flow{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
 @keyframes redFlash{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes blueFlash{0%,100%{opacity:1}50%{opacity:.35}}
+.bannerSession{color:var(--gray);margin:0 16px}
+.bannerOpen{color:var(--r);animation:redFlash .9s infinite;text-shadow:0 0 8px rgba(255,23,68,.8)}
+.bannerTime,.dt,.newsTime,.sLine{color:var(--g);font-family:monospace;font-weight:900}
+.bannerImpact{color:#fff;margin:0 18px;font-weight:900}
+.ccy{color:var(--gray);font-weight:900}
+#main{display:grid;grid-template-columns:minmax(0,1fr) 600px;gap:3px;min-height:0}
+#chart{height:calc(100% - 24px);background:#000}#tv_chart{width:100%;height:100%}
+#right{display:grid;grid-template-rows:205px minmax(0,1fr);gap:3px;min-height:0}
+.sessionBody{height:calc(100% - 24px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:6px}
+.sBox{background:var(--p2);border:1px solid var(--ln);border-radius:4px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:.2s}
+.sTitle{font-size:16px;font-weight:900;letter-spacing:1.2px;color:var(--gray)}
+.sTitle.openTitle{color:var(--r);animation:redFlash 1s infinite;text-shadow:0 0 10px rgba(255,23,68,.8)}
+.sState{font-size:17px;font-weight:900;margin-top:12px;color:#fff}
+.sState.closed{color:#8f8f9c}.sLine{font-size:22px;margin-top:10px;line-height:1}
+.liveNewsWrap{height:calc(100% - 24px);display:grid;grid-template-rows:78px 32px minmax(0,1fr);gap:4px;padding:4px}
+.videoRow{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.videoBtn{background:#0b0b12;border:1px solid #34121a;border-radius:4px;color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:.2s}
+.newsTabs{display:flex;gap:4px}
+.newsTab{flex:1;background:#10101d;color:var(--gray);border:1px solid var(--ln);border-radius:4px;font-size:11px;font-weight:900;cursor:pointer;transition:.2s}
+.newsTab.active{border-color:#3a3a5c;color:var(--gray)}
+.newsList{overflow-y:auto;border:1px solid var(--ln);border-radius:4px}
+.newsItem{display:grid;grid-template-columns:50px 70px 1fr 18px;gap:5px;align-items:center;border-bottom:1px solid #1a1a2e;padding:7px;font-size:11px;min-height:43px;cursor:pointer;transition:.2s}
+.newsSrc{background:#06315f;color:#fff;border-radius:3px;padding:2px 4px;font-size:9px;text-align:center;font-weight:900}
+.newsTitle{font-weight:900;line-height:1.25;color:#d8d8df}.newsArrow{font-size:18px;color:#fff}.loading{padding:12px;color:#00e5ff;font-weight:900}
+#tvEconomicCalendar{height:calc(100% - 24px);width:100%;overflow:hidden}
+#tvEconomicCalendar iframe{width:100%!important;height:100%!important}
+.footer{display:flex;justify-content:space-between;align-items:center;color:#9a9ab5;font-size:10px;padding:0 8px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#3a3a5c;border-radius:4px}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="topbar">
+<div class="box"><div><div class="l1">NEXUS FX WAR ROOM</div><div class="l2">XAUUSD COMMAND CENTER</div></div></div>
+<div class="box"><div class="liveWrap">LIVE <span class="liveDot"></span></div></div>
+<div class="box"><button id="alertBtn" class="btn" onclick="toggleAlert()">ALERT ON</button></div>
+<div class="box timeBox"><div id="timeText" class="timeText">----/--/-- --:--:--</div></div>
+</div>
 
-#main{
-display:grid;
-grid-template-columns:minmax(0,1fr) 600px;
-gap:3px;
-min-height:0;
-}
-#chart{
-height:calc(100% - 24px);
-background:#000;
-}
-#tv_chart{width:100%;height:100%}
-#right{
-display:grid;
-grid-template-rows:205px minmax(0,1fr);
-gap:3px;
-min-height:0;
+<div id="tvPriceBar"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>{"symbols":[{"proName":"OANDA:XAUUSD","title":"XAUUSD"},{"proName":"FX:USDJPY","title":"USDJPY"},{"proName":"FX:EURUSD","title":"EURUSD"},{"proName":"FX:GBPUSD","title":"GBPUSD"},{"proName":"BINANCE:BTCUSDT","title":"BTCUSD"},{"proName":"BINANCE:ETHUSDT","title":"ETHUSD"}],"showSymbolLogo":false,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"ja"}</script></div></div>
+
+<div class="flowLine"><div id="megaTicker" class="flowInner"></div></div>
+
+<div id="main">
+<div class="card"><div class="hd">TRADINGVIEW - REALTIME CHART</div><div id="chart"><div id="tv_chart"></div></div></div>
+<div id="right">
+<div class="card"><div class="hd">SESSION CENTER <span>ASIA / LONDON / US</span></div><div class="sessionBody">
+<div class="sBox"><div id="asiaTitle" class="sTitle">ASIA SESSION</div><div id="asiaState" class="sState">---</div><div id="asiaLine" class="sLine">--:-- - --:--</div></div>
+<div class="sBox"><div id="londonTitle" class="sTitle">LONDON SESSION</div><div id="londonState" class="sState">---</div><div id="londonLine" class="sLine">OPEN --:--</div></div>
+<div class="sBox"><div id="usTitle" class="sTitle">US SESSION</div><div id="usState" class="sState">---</div><div id="usLine" class="sLine">OPEN --:--</div></div>
+</div></div>
+
+<div class="card"><div class="hd">LIVE NEWS 日本語 <span>RSS AUTO UPDATE / LIVE LINKS</span></div><div class="liveNewsWrap">
+<div class="videoRow">
+<div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=Bloomberg+TV+Live')">LIVE BLOOMBERG <span class="dot"></span></div>
+<div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=CNBC+Live')">LIVE CNBC <span class="dot"></span></div>
+<div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=Kitco+Gold+Live')">LIVE KITCO <span class="dot"></span></div>
+<div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=XAUUSD+live+gold')">LIVE XAUUSD <span class="dot"></span></div>
+</div>
+<div class="newsTabs"><button class="newsTab active" onclick="setNewsTab('xauusd',this)">XAUUSD</button><button class="newsTab" onclick="setNewsTab('japan',this)">日本</button><button class="newsTab" onclick="setNewsTab('geo',this)">地政学</button></div>
+<div id="newsList" class="newsList"><div class="loading">RSS LOADING...</div></div>
+</div></div>
+</div>
+</div>
+
+<div id="bottom" class="card"><div class="hd">HIGH IMPACT NEWS <span>TradingView Economic Calendar / USD・JPY / High Impact</span></div><div id="tvEconomicCalendar"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>{"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"1","currencyFilter":"USD,JPY"}</script></div></div></div>
+<div class="footer"><span>INFORMATION ONLY. NOT INVESTMENT ADVICE.</span><span id="footerTime">UPDATE: --:--:--</span><span>AUTO UPDATE ON</span></div>
+</div>
+
+<script>
+let alertOn=true,currentNewsTab="xauusd",alertMemory={};
+
+const HIGH_IMPACT_EVENTS=[
+{date:"06/01",time:"23:00",ccy:"USD",title:"ISM Manufacturing PMI"},
+{date:"06/03",time:"21:15",ccy:"USD",title:"ADP Employment Change"},
+{date:"06/03",time:"23:00",ccy:"USD",title:"ISM Services PMI"},
+{date:"06/05",time:"08:30",ccy:"JPY",title:"Monthly Labour Survey"},
+{date:"06/05",time:"21:30",ccy:"USD",title:"Non-Farm Payrolls"},
+{date:"06/10",time:"21:30",ccy:"USD",title:"Consumer Price Index CPI"},
+{date:"06/11",time:"21:30",ccy:"USD",title:"Producer Price Index PPI"},
+{date:"06/16",time:"15:30",ccy:"JPY",title:"BOJ Press Conference"},
+{date:"06/18",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
+{date:"06/18",time:"03:30",ccy:"USD",title:"FOMC Press Conference"},
+{date:"06/19",time:"08:30",ccy:"JPY",title:"National Core CPI"}
+];
+
+const RSS={
+xauusd:["https://www.fxstreet.com/rss/news","https://www.fxstreet.com/rss/analysis","https://news.google.com/rss/search?q=XAUUSD%20OR%20gold%20price%20OR%20Kitco&hl=en-US&gl=US&ceid=US:en"],
+japan:["https://news.google.com/rss/search?q=USDJPY%20OR%20BOJ%20OR%20Japan%20yen%20OR%20%E6%97%A5%E9%8A%80&hl=ja&gl=JP&ceid=JP:ja"],
+geo:["https://news.google.com/rss/search?q=Middle%20East%20OR%20Red%20Sea%20OR%20Israel%20Iran%20OR%20Ukraine&hl=en-US&gl=US&ceid=US:en"]
+};
+
+function openUrl(u){window.open(u,"_blank")}
+function toggleAlert(){alertOn=!alertOn;const b=document.getElementById("alertBtn");b.textContent=alertOn?"ALERT ON":"ALERT OFF";b.className=alertOn?"btn":"btn off"}
+function beep(key){if(!alertOn)return;const n=Date.now();if(alertMemory[key]&&n-alertMemory[key]<60000)return;alertMemory[key]=n;try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=920;g.gain.setValueAtTime(.14,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.18);o.start();o.stop(a.currentTime+.18)}catch(e){}}
+function pad(n){return String(n).padStart(2,"0")}
+function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
+function hms(d){return pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds())}
+
+function sessionStatus(name){
+const n=nowJST(),min=n.getHours()*60+n.getMinutes();
+const closed=(n.getDay()===6&&min>=420)||n.getDay()===0||(n.getDay()===1&&min<420);
+if(closed)return false;
+if(name==="asia")return min>=420&&min<900;
+if(name==="london")return min>=900&&min<1260;
+if(name==="us")return min>=1260||min<420;
+return false;
 }
 
-/* SESSION CENTER */
-.sessionBody{
-height:calc(100% - 24px);
-display:grid;
-grid-template-columns:1fr 1fr 1fr;
-gap:5px;
-padding:6px;
-}
-.sBox{
-background:var(--p2);
-border:1px solid var(--ln);
-border-radius:4px;
-padding:10px 8px;
-overflow:hidden;
-transition:.2s;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-text-align:center;
-}
-.sBox:hover{background:#161622}
-.sTitle{
-font-size:16px;
-font-weight:900;
-letter-spacing:1.2px;
-line-height:1;
-color:var(--gray);
-}
-.sTitle.openTitle{
-color:var(--r);
-animation:redFlash 1s infinite;
-text-shadow:0 0 10px rgba(255,23,68,.8);
-}
-.sState{
-font-size:17px;
-font-weight:900;
-margin-top:12px;
-color:#fff;
-}
-.sState.closed{color:#8f8f9c}
-.sLine{
-font-size:22px;
-color:var(--g);
-font-weight:900;
-margin-top:10px;
-line-height:1;
-font-family:monospace;
+function setSession(){
+[["asia","07:00 - 15:00","OPEN 07:00"],["london","15:00 - 21:00","OPEN 15:00"],["us","21:00 - 07:00","OPEN 21:00"]].forEach(([id,range,openText])=>{
+const open=sessionStatus(id),t=document.getElementById(id+"Title"),s=document.getElementById(id+"State"),l=document.getElementById(id+"Line");
+t.className=open?"sTitle openTitle":"sTitle";
+s.className=open?"sState":"sState closed";
+s.textContent=open?"OPEN":"CLOSED";
+l.textContent=open?range:openText;
+if(open)beep(id+"_session_open");
+});
 }
 
-/* LIVE NEWS */
-.liveNewsWrap{
-height:calc(100% - 24px);
-display:grid;
-grid-template-rows:78px 32px minmax(0,1fr);
-gap:4px;
-padding:4px;
+async function fetchRSS(url){const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url);const r=await fetch(api);const j=await r.json();return(j.items||[]).map(x=>({title:x.title||"",link:x.link||"#",date:new Date(x.pubDate||Date.now()),src:(j.feed&&j.feed.title?j.feed.title:"NEWS").slice(0,14)}))}
+async function loadNews(type=currentNewsTab){
+const box=document.getElementById("newsList");box.innerHTML='<div class="loading">RSS LOADING...</div>';
+try{const all=(await Promise.all(RSS[type].map(fetchRSS))).flat();all.sort((a,b)=>b.date-a.date);box.innerHTML=all.slice(0,7).map(it=>{const t=it.date.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"});return`<div class="newsItem" onclick="openUrl('${it.link.replace(/'/g,"")}')"><div class="newsTime">${t}</div><div class="newsSrc">${it.src}</div><div class="newsTitle">${it.title}</div><div class="newsArrow">›</div></div>`}).join("")||'<div class="loading">NO NEWS</div>'}catch(e){box.innerHTML='<div class="loading">RSS RETRYING...</div>'}
 }
-.videoRow{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:4px;
+function setNewsTab(type,btn){currentNewsTab=type;document.querySelectorAll(".newsTab").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");loadNews(type)}
+
+function update(){
+const n=nowJST(),dateStr=n.getFullYear()+"/"+pad(n.getMonth()+1)+"/"+pad(n.getDate());
+document.getElementById("timeText").textContent=dateStr+" "+hms(n);
+document.getElementById("footerTime").textContent="UPDATE: "+hms(n);
+setSession();
+
+const a=sessionStatus("asia"),l=sessionStatus("london"),u=sessionStatus("us");
+const sessionPart=
+`<span class="bannerSession ${a?'bannerOpen':''}">ASIA SESSION <span class="bannerTime">07:00 - 15:00</span> ${a?'OPEN':'CLOSED'}</span>`+
+`<span class="bannerSession ${l?'bannerOpen':''}">LONDON SESSION <span class="bannerTime">15:00 - 21:00</span> ${l?'OPEN':'CLOSED'}</span>`+
+`<span class="bannerSession ${u?'bannerOpen':''}">US SESSION <span class="bannerTime">21:00 - 07:00</span> ${u?'OPEN':'CLOSED'}</span>`;
+const impactPart=HIGH_IMPACT_EVENTS.map(e=>`<span class="bannerImpact"><span class="dt">${e.date} ${e.time}</span> <span class="ccy">${e.ccy}</span> ${e.title}</span>`).join("");
+document.getElementById("megaTicker").innerHTML=sessionPart+" | "+impactPart;
 }
-.videoBtn{
-background:#0b0b12;
-border:1px solid #34121a;
-border-radius:4px;
-color:#fff;
-font-size:10px;
-font-weight:900;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-cursor:pointer;
-transition:.2s;
+
+function loadChart(){
+const s=document.createElement("script");s.src="https://s3.tradingview.com/tv.js";
+s.onload=function(){new TradingView.widget({autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",hide_top_toolbar:false,hide_side_toolbar:false,allow_symbol_change:true,hide_volume:true,withdateranges:true,disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],overrides:{"paneProperties.background":"#000000","paneProperties.vertGridProperties.color":"rgba(255,255,255,0.03)","paneProperties.horzGridProperties.color":"rgba(255,255,255,0.03)","mainSeriesProperties.candleStyle.upColor":"#4D6CFF","mainSeriesProperties.candleStyle.downColor":"#FF5A5A","mainSeriesProperties.candleStyle.borderUpColor":"#4D6CFF","mainSeriesProperties.candleStyle.borderDownColor":"#FF5A5A","mainSeriesProperties.candleStyle.wickUpColor":"#8C96A8","mainSeriesProperties.candleStyle.wickDownColor":"#8C96A8","mainSeriesProperties.priceLineColor":"#FF3B3B","scalesProperties.textColor":"#BFC2CC"}})};
+document.body.appendChild(s)
 }
-.videoBtn:hover{
-background:var(--dark);
-border-color:var(--r);
-box-shadow:0 0 10px rgba(255,23,68,.25);
-}
-.videoBtn .dot{
-width:7px;
-height:7px;
-border-radius:50%;
-background:var(--r);
-display:inline-block;
-margin-left:5px;
-animation:redFlash .8s infinite;
-}
-.newsTabs{
-display:flex;
-gap:4px;
-}
-.newsTab{
-flex:1;
-background:#10101d;
-color:var(--gray);
-border:1px solid var(--ln);
-border-radius:4px;
-font-size:11px;
-font-weight:900;
-cursor:pointer;
-transition:.2s;
-}
-.newsTab:hover{
-background:#1b1b2c;
-border-color:#50507c;
-}
-.newsTab.active{
-border-color:#3a3a5c;
-color:var(--gray);
-}
-.newsList{
-overflow-y:auto;
-border:1px solid var(--ln);
-border-radius:4px;
-}
-.newsItem{
-display:grid;
-grid-template-columns:50px 70px 1fr 18px;
-gap:5px;
-align-items:center;
-border-bottom:1px solid #1a1a2e;
-padding
+
+update();loadNews();
+setInterval(update,1000);
+setInterval(()=>loadNews(currentNewsTab),60000);
+loadChart();
+</script>
+</body>
+</html>
