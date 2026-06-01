@@ -32,6 +32,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:"Se
 .bannerOpen{color:var(--r);animation:redFlash .9s infinite;text-shadow:0 0 8px rgba(255,23,68,.8)}
 .bannerTime,.dt,.newsTime,.sLine{color:var(--g);font-family:monospace;font-weight:900}
 .bannerImpact{color:#fff;margin:0 18px;font-weight:900}
+.bannerImpact.hot{color:var(--r);animation:redFlash .8s infinite;text-shadow:0 0 10px rgba(255,23,68,.9)}
 .ccy{color:var(--gray);font-weight:900}
 #main{display:grid;grid-template-columns:minmax(0,1fr) 600px;gap:3px;min-height:0}
 #chart{height:calc(100% - 24px);background:#000}#tv_chart{width:100%;height:100%}
@@ -101,17 +102,17 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:"Se
 let alertOn=true,currentNewsTab="xauusd",alertMemory={};
 
 const HIGH_IMPACT_EVENTS=[
-{date:"06/01",time:"23:00",ccy:"USD",title:"ISM Manufacturing PMI"},
-{date:"06/03",time:"21:15",ccy:"USD",title:"ADP Employment Change"},
-{date:"06/03",time:"23:00",ccy:"USD",title:"ISM Services PMI"},
-{date:"06/05",time:"08:30",ccy:"JPY",title:"Monthly Labour Survey"},
-{date:"06/05",time:"21:30",ccy:"USD",title:"Non-Farm Payrolls"},
-{date:"06/10",time:"21:30",ccy:"USD",title:"Consumer Price Index CPI"},
-{date:"06/11",time:"21:30",ccy:"USD",title:"Producer Price Index PPI"},
-{date:"06/16",time:"15:30",ccy:"JPY",title:"BOJ Press Conference"},
-{date:"06/18",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
-{date:"06/18",time:"03:30",ccy:"USD",title:"FOMC Press Conference"},
-{date:"06/19",time:"08:30",ccy:"JPY",title:"National Core CPI"}
+{date:"2026-06-01",time:"23:00",ccy:"USD",title:"ISM Manufacturing PMI"},
+{date:"2026-06-03",time:"21:15",ccy:"USD",title:"ADP Employment Change"},
+{date:"2026-06-03",time:"23:00",ccy:"USD",title:"ISM Services PMI"},
+{date:"2026-06-05",time:"08:30",ccy:"JPY",title:"Monthly Labour Survey"},
+{date:"2026-06-05",time:"21:30",ccy:"USD",title:"Non-Farm Payrolls"},
+{date:"2026-06-10",time:"21:30",ccy:"USD",title:"Consumer Price Index CPI"},
+{date:"2026-06-11",time:"21:30",ccy:"USD",title:"Producer Price Index PPI"},
+{date:"2026-06-16",time:"15:30",ccy:"JPY",title:"BOJ Press Conference"},
+{date:"2026-06-18",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
+{date:"2026-06-18",time:"03:30",ccy:"USD",title:"FOMC Press Conference"},
+{date:"2026-06-19",time:"08:30",ccy:"JPY",title:"National Core CPI"}
 ];
 
 const RSS={
@@ -126,6 +127,7 @@ function beep(key){if(!alertOn)return;const n=Date.now();if(alertMemory[key]&&n-
 function pad(n){return String(n).padStart(2,"0")}
 function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
 function hms(d){return pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds())}
+function fmtMD(d){return d.slice(5,7)+"/"+d.slice(8,10)}
 
 function sessionStatus(name){
 const n=nowJST(),min=n.getHours()*60+n.getMinutes();
@@ -148,6 +150,22 @@ if(open)beep(id+"_session_open");
 });
 }
 
+function activeEvents(){
+const now=nowJST();
+return HIGH_IMPACT_EVENTS.filter(e=>{
+const eventTime=new Date(`${e.date}T${e.time}:00+09:00`);
+const removeTime=new Date(eventTime.getTime()+60*60*1000);
+return now<=removeTime;
+}).map(e=>{
+const eventTime=new Date(`${e.date}T${e.time}:00+09:00`);
+const flashStart=new Date(eventTime.getTime()-24*60*60*1000);
+const removeTime=new Date(eventTime.getTime()+60*60*1000);
+const hot=now>=flashStart&&now<=removeTime;
+if(hot)beep("impact_"+e.date+"_"+e.time);
+return {...e,hot};
+});
+}
+
 async function fetchRSS(url){const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url);const r=await fetch(api);const j=await r.json();return(j.items||[]).map(x=>({title:x.title||"",link:x.link||"#",date:new Date(x.pubDate||Date.now()),src:(j.feed&&j.feed.title?j.feed.title:"NEWS").slice(0,14)}))}
 async function loadNews(type=currentNewsTab){
 const box=document.getElementById("newsList");box.innerHTML='<div class="loading">RSS LOADING...</div>';
@@ -166,7 +184,9 @@ const sessionPart=
 `<span class="bannerSession ${a?'bannerOpen':''}">ASIA SESSION <span class="bannerTime">07:00 - 15:00</span> ${a?'OPEN':'CLOSED'}</span>`+
 `<span class="bannerSession ${l?'bannerOpen':''}">LONDON SESSION <span class="bannerTime">15:00 - 21:00</span> ${l?'OPEN':'CLOSED'}</span>`+
 `<span class="bannerSession ${u?'bannerOpen':''}">US SESSION <span class="bannerTime">21:00 - 07:00</span> ${u?'OPEN':'CLOSED'}</span>`;
-const impactPart=HIGH_IMPACT_EVENTS.map(e=>`<span class="bannerImpact"><span class="dt">${e.date} ${e.time}</span> <span class="ccy">${e.ccy}</span> ${e.title}</span>`).join("");
+
+const impactPart=activeEvents().map(e=>`<span class="bannerImpact ${e.hot?'hot':''}"><span class="dt">${fmtMD(e.date)} ${e.time}</span> <span class="ccy">${e.ccy}</span> ${e.title}</span>`).join("");
+
 document.getElementById("megaTicker").innerHTML=sessionPart+" | "+impactPart;
 }
 
