@@ -59,8 +59,10 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:"Se
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#3a3a5c;border-radius:4px}
 </style>
 </head>
+
 <body>
 <div id="app">
+
 <div id="topbar">
 <div class="box"><div><div class="l1">NEXUS FX WAR ROOM</div><div class="l2">XAUUSD COMMAND CENTER</div></div></div>
 <div class="box"><div class="liveWrap">LIVE <span class="liveDot"></span></div></div>
@@ -75,6 +77,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:"Se
 <div id="main">
 <div class="card"><div class="hd">TRADINGVIEW - REALTIME CHART</div><div id="chart"><div id="tv_chart"></div></div></div>
 <div id="right">
+
 <div class="card"><div class="hd">SESSION CENTER <span>ASIA / LONDON / US</span></div><div class="sessionBody">
 <div class="sBox"><div id="asiaTitle" class="sTitle">ASIA SESSION</div><div id="asiaState" class="sState">---</div><div id="asiaLine" class="sLine">--:-- - --:--</div></div>
 <div class="sBox"><div id="londonTitle" class="sTitle">LONDON SESSION</div><div id="londonState" class="sState">---</div><div id="londonLine" class="sLine">OPEN --:--</div></div>
@@ -91,10 +94,12 @@ html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:"Se
 <div class="newsTabs"><button class="newsTab active" onclick="setNewsTab('xauusd',this)">XAUUSD</button><button class="newsTab" onclick="setNewsTab('japan',this)">日本</button><button class="newsTab" onclick="setNewsTab('geo',this)">地政学</button></div>
 <div id="newsList" class="newsList"><div class="loading">RSS LOADING...</div></div>
 </div></div>
+
 </div>
 </div>
 
 <div id="bottom" class="card"><div class="hd">HIGH IMPACT NEWS <span>TradingView Economic Calendar / USD・JPY / High Impact</span></div><div id="tvEconomicCalendar"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>{"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"1","currencyFilter":"USD,JPY"}</script></div></div></div>
+
 <div class="footer"><span>INFORMATION ONLY. NOT INVESTMENT ADVICE.</span><span id="footerTime">UPDATE: --:--:--</span><span>AUTO UPDATE ON</span></div>
 </div>
 
@@ -131,16 +136,20 @@ function fmtMD(d){return d.slice(5,7)+"/"+d.slice(8,10)}
 
 function sessionStatus(name){
 const n=nowJST(),min=n.getHours()*60+n.getMinutes();
-const closed=(n.getDay()===6&&min>=420)||n.getDay()===0||(n.getDay()===1&&min<420);
+const closed=(n.getDay()===6&&min>=360)||n.getDay()===0||(n.getDay()===1&&min<420);
 if(closed)return false;
 if(name==="asia")return min>=420&&min<900;
 if(name==="london")return min>=900&&min<1260;
-if(name==="us")return min>=1260||min<420;
+if(name==="us")return min>=1260||min<360;
 return false;
 }
 
 function setSession(){
-[["asia","07:00 - 15:00","OPEN 07:00"],["london","15:00 - 21:00","OPEN 15:00"],["us","21:00 - 07:00","OPEN 21:00"]].forEach(([id,range,openText])=>{
+[
+["asia","07:00 - 15:00","OPEN 07:00"],
+["london","15:00 - 21:00","OPEN 15:00"],
+["us","21:00 - 06:00","OPEN 21:00"]
+].forEach(([id,range,openText])=>{
 const open=sessionStatus(id),t=document.getElementById(id+"Title"),s=document.getElementById(id+"State"),l=document.getElementById(id+"Line");
 t.className=open?"sTitle openTitle":"sTitle";
 s.className=open?"sState":"sState closed";
@@ -183,7 +192,7 @@ const a=sessionStatus("asia"),l=sessionStatus("london"),u=sessionStatus("us");
 const sessionPart=
 `<span class="bannerSession ${a?'bannerOpen':''}">ASIA SESSION <span class="bannerTime">07:00 - 15:00</span> ${a?'OPEN':'CLOSED'}</span>`+
 `<span class="bannerSession ${l?'bannerOpen':''}">LONDON SESSION <span class="bannerTime">15:00 - 21:00</span> ${l?'OPEN':'CLOSED'}</span>`+
-`<span class="bannerSession ${u?'bannerOpen':''}">US SESSION <span class="bannerTime">21:00 - 07:00</span> ${u?'OPEN':'CLOSED'}</span>`;
+`<span class="bannerSession ${u?'bannerOpen':''}">US SESSION <span class="bannerTime">21:00 - 06:00</span> ${u?'OPEN':'CLOSED'}</span>`;
 
 const impactPart=activeEvents().map(e=>`<span class="bannerImpact ${e.hot?'hot':''}"><span class="dt">${fmtMD(e.date)} ${e.time}</span> <span class="ccy">${e.ccy}</span> ${e.title}</span>`).join("");
 
