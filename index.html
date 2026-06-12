@@ -1,3 +1,6 @@
+以下が最新の `index.html` 全文です。
+
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -99,8 +102,19 @@ button{cursor:pointer}
 .news-title{font-size:12px;font-weight:800;line-height:1.35;color:#dfe6ee}
 .news-src{display:inline-block;margin-top:4px;color:var(--muted);font-size:10px;font-weight:800}
 .empty{padding:14px;color:var(--muted);font-size:12px;font-weight:800}
-.calendar{height:calc(100% - 30px)}
-.calendar iframe{width:100%!important;height:100%!important}
+.calendar{height:calc(100% - 30px);display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px}
+.tv-calendar,.mini-month{border:1px solid #141a27;background:#020307;min-width:0;min-height:0;overflow:hidden}
+.tv-calendar .tradingview-widget-container,.tv-calendar .tradingview-widget-container__widget{height:100%!important;width:100%!important}
+.tv-calendar iframe{height:100%!important;width:100%!important}
+.mini-month{display:grid;grid-template-rows:22px 16px minmax(0,1fr)}
+.mini-title{display:flex;align-items:center;justify-content:space-between;padding:0 7px;border-bottom:1px solid #141a27;color:#fff;font-size:11px;font-weight:950}
+.mini-week,.mini-days{display:grid;grid-template-columns:repeat(7,1fr)}
+.mini-week span{display:flex;align-items:center;justify-content:center;color:#7d8798;font-size:9px;font-weight:900}
+.mini-days{grid-template-rows:repeat(6,1fr);min-height:0}
+.day{display:flex;align-items:center;justify-content:center;position:relative;border-top:1px solid rgba(20,26,39,.7);border-right:1px solid rgba(20,26,39,.7);color:#929baa;font-size:10px;font-weight:900}
+.day.today{color:#fff;background:rgba(244,201,93,.12);box-shadow:inset 0 0 14px rgba(244,201,93,.35)}
+.day.impact{color:#fff}
+.day.impact::after{content:"";position:absolute;right:4px;top:4px;width:5px;height:5px;border-radius:50%;background:#ff2b4f;box-shadow:0 0 10px rgba(255,43,79,.85);animation:blink 1.6s step-end infinite}
 .footer{display:flex;justify-content:space-between;align-items:center;gap:8px;border-radius:4px;padding:0 8px;color:var(--muted);font-size:10px;font-weight:800}
 ::-webkit-scrollbar{width:7px;height:7px}
 ::-webkit-scrollbar-thumb{background:#333b4d;border-radius:999px}
@@ -182,12 +196,19 @@ button{cursor:pointer}
       </article>
 
       <article class="panel">
-        <div class="panel-head"><span>HIGH IMPACT ECONOMIC CALENDAR</span><span>USD / JPY</span></div>
-        <div class="calendar">
-          <div class="tradingview-widget-container" style="height:100%;width:100%">
-            <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-            <script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-            {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"1","currencyFilter":"USD,JPY"}</script>
+        <div class="panel-head"><span>HIGH IMPACT ECONOMIC CALENDAR</span><span>USD / JPY / MONTH</span></div>
+        <div class="calendar" id="impactCalendar">
+          <div class="tv-calendar">
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+              <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+              <script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+              {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"1","currencyFilter":"USD,JPY"}</script>
+            </div>
+          </div>
+          <div class="mini-month">
+            <div class="mini-title"><span id="calMonth">---- --</span><span>TODAY</span></div>
+            <div class="mini-week"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+            <div class="mini-days" id="calDays"></div>
           </div>
         </div>
       </article>
@@ -235,6 +256,14 @@ const sessions=[
   {id:"london",name:"London",start:15*60,end:21*60,range:"15:00 - 21:00 JST"},
   {id:"newyork",name:"New York",start:21*60,end:30*60,range:"21:00 - 06:00 JST"}
 ];
+const impactEvents=[
+  {date:"2026-06-16",time:"15:30",ccy:"JPY",title:"BOJ Press Conference"},
+  {date:"2026-06-18",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
+  {date:"2026-06-18",time:"03:30",ccy:"USD",title:"FOMC Press Conference"},
+  {date:"2026-06-19",time:"08:30",ccy:"JPY",title:"National Core CPI"},
+  {date:"2026-06-25",time:"21:30",ccy:"USD",title:"GDP / Jobless Claims"},
+  {date:"2026-06-26",time:"21:30",ccy:"USD",title:"Core PCE Price Index"}
+];
 const feeds={
   gold:[
     "https://www.fxstreet.com/rss/news",
@@ -256,6 +285,34 @@ function normalize(min){return min<0?min+1440:min}
 function minutesUntil(nowMin,start){return normalize(start-nowMin)}
 function sessionOpen(s,nowMin){return s.end>1440?nowMin>=s.start||nowMin<s.end-1440:nowMin>=s.start&&nowMin<s.end}
 function formatDuration(min){const h=Math.floor(min/60),m=min%60;return h>0?`${h}h ${pad(m)}m`:`${m}m`}
+function dateKey(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function impactDate(event){return new Date(`${event.date}T${event.time}:00+09:00`)}
+function sameDay(a,b){return dateKey(a)===dateKey(b)}
+function impactHot(event,now){
+  const t=impactDate(event).getTime();
+  const n=now.getTime();
+  return n>=t-60*60*1000&&n<=t+60*60*1000;
+}
+function renderImpactCalendar(){
+  const now=jstNow();
+  const y=now.getFullYear(),m=now.getMonth();
+  const first=new Date(y,m,1);
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const start=first.getDay();
+  document.getElementById("calMonth").textContent=`${y}/${pad(m+1)}`;
+  const impactDays=new Set(impactEvents.filter(e=>e.date.startsWith(`${y}-${pad(m+1)}`)).map(e=>Number(e.date.slice(8,10))));
+  const cells=[];
+  for(let i=0;i<42;i++){
+    const day=i-start+1;
+    if(day<1||day>daysInMonth){cells.push('<div class="day"></div>');continue}
+    const d=new Date(y,m,day);
+    const cls=["day"];
+    if(sameDay(d,now))cls.push("today");
+    if(impactDays.has(day))cls.push("impact");
+    cells.push(`<div class="${cls.join(" ")}">${day}</div>`);
+  }
+  document.getElementById("calDays").innerHTML=cells.join("");
+}
 function updateClock(){
   const n=jstNow();
   const date=`${n.getFullYear()}/${pad(n.getMonth()+1)}/${pad(n.getDate())}`;
@@ -265,6 +322,7 @@ function updateClock(){
   document.getElementById("updated").textContent="Last update: "+date+" "+time+" JST";
   updateNewsCountdown();
   updateSessions(n);
+  renderImpactCalendar();
 }
 function newsCountdownText(){
   const remain=Math.max(0,state.nextNewsAt-Date.now());
@@ -441,3 +499,4 @@ setInterval(loadNews,NEWS_REFRESH_MS);
 </script>
 </body>
 </html>
+```
