@@ -439,12 +439,17 @@ async function loadNews(){
   state.nextNewsAt=Date.now()+NEWS_REFRESH_MS;
   updateNewsCountdown();
   try{
-    const all=(await Promise.all(feeds[state.news].map(fetchFeed))).flat().sort((a,b)=>b.date-a.date).slice(0,12);
+    const results=await Promise.allSettled(feeds[state.news].map(fetchFeed));
+    const all=results
+      .filter(r=>r.status==="fulfilled")
+      .flatMap(r=>r.value)
+      .sort((a,b)=>b.date-a.date)
+      .slice(0,12);
     state.headlines=all.map(item=>({title:item.title,date:item.date})).filter(item=>item.title);
     box.innerHTML=all.length?all.map((item,index)=>{
       const time=newsTimeLabel(item.date);
       return `<a class="news-item ${index===0?"latest":""} ${newsHot(item.date)?"hot":""}" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${time}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`;
-    }).join(""):'<div class="empty">No headlines found.</div>';
+    }).join(""):'<div class="empty">Gold news feed is empty. Press Refresh.</div>';
   }catch(e){
     state.headlines=[{title:"NEWS FEED RETRYING",date:new Date()}];
     box.innerHTML='<div class="empty">News feed is retrying.</div>';
