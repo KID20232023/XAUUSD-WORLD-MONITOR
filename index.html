@@ -2,213 +2,442 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>NEXUS FX WAR ROOM</title>
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAUUSD WORLD MONITOR</title>
+<meta name="description" content="XAUUSD, USDJPY, major markets, sessions, news, and economic calendar monitor.">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#020208;--p:#07070f;--p2:#111124;--ln:#2d2d50;--g:#00e676;--r:#ff1744;--gray:#b7b7c3;--dark:#171726}
-html,body{width:100%;height:100%;background:var(--bg);color:#fff;font-family:"Segoe UI","Helvetica Neue",Arial,"Hiragino Sans",Meiryo,sans-serif;overflow:hidden}
-#app{height:100vh;display:grid;grid-template-rows:50px 46px 30px minmax(0,1fr) 310px 20px;gap:3px;padding:3px}
-.card,.box{background:var(--p);border:1px solid var(--ln);border-radius:4px;overflow:hidden}
-.hd{height:24px;padding:0 8px;border-bottom:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between;background:#04040b;color:var(--gray);font-size:11px;font-weight:900}
-#topbar{display:grid;grid-template-columns:245px 90px 115px 1fr;gap:3px}
-.box{padding:5px 8px;display:flex;align-items:center}
-.l1{font-size:13px;font-weight:900;color:var(--gray);letter-spacing:.8px}
-.l2{font-size:8px;color:#8c8c99;font-weight:900}
-.liveWrap{font-size:13px;font-weight:900;color:var(--g);display:flex;align-items:center;gap:7px}
-.liveDot,.dot{border-radius:50%;background:var(--r);display:inline-block;animation:redFlash .8s infinite;box-shadow:0 0 10px rgba(255,23,68,.9)}
-.liveDot{width:9px;height:9px}.dot{width:7px;height:7px;margin-left:5px}
-.btn{width:100%;height:25px;background:rgba(0,230,118,.08);border:1px solid var(--g);color:var(--g);border-radius:4px;font-weight:900;font-size:10px;cursor:pointer;transition:.2s}
-.btn:hover,.videoBtn:hover,.newsTab:hover,.newsItem:hover,.sBox:hover{background:var(--dark)}
-.btn.off{background:#15151d;border-color:#5a5a7a;color:#aaa}
-.timeBox{justify-content:center}.timeText{color:var(--g);font-size:14px;font-weight:900;font-family:monospace}
-#tvPriceBar{height:46px;overflow:hidden;border:1px solid var(--ln);background:#050509;border-radius:4px}
-#tvPriceBar iframe{height:46px!important;min-height:46px!important;max-height:46px!important}
-.flowLine{height:30px;position:relative;overflow:hidden;white-space:nowrap;background:#050509;border:1px solid var(--ln);border-radius:4px}
-.flowInner{position:absolute;white-space:nowrap;animation:flow 115s linear infinite;font-size:13px;font-weight:900;line-height:28px}
+*{box-sizing:border-box}
+:root{
+  --bg:#020307;
+  --panel:#070911;
+  --panel2:#0e1220;
+  --line:#20263a;
+  --text:#f2f5f9;
+  --muted:#9aa4b2;
+  --soft:#c8d0da;
+  --gold:#f4c95d;
+  --green:#1fd17b;
+  --red:#ff5871;
+  --cyan:#4db3ff;
+  --violet:#a78bfa;
+  --shadow:none;
+}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI","Helvetica Neue",Arial,"Hiragino Sans",Meiryo,sans-serif}
+body{overflow:hidden}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+#app{height:100vh;display:grid;grid-template-rows:50px 44px 34px minmax(0,1fr) 20px;gap:4px;padding:4px;background:#000}
+.topbar,.ticker,.flowbar,.panel,.footer{border:1px solid #171d2b;background:#020409;box-shadow:var(--shadow)}
+.topbar{display:grid;grid-template-columns:245px 90px 115px minmax(210px,1fr);gap:4px;align-items:stretch;border-radius:2px;padding:4px}
+.brand-box,.live-box,.alert-box,.time-box{background:#020307;border:1px solid #141a27;border-radius:2px;display:flex;align-items:center;padding:0 8px;min-width:0}
+.brand-main{font-size:13px;font-weight:950;color:#dfe6ee;letter-spacing:.7px;line-height:1}
+.brand-sub{font-size:8px;color:#8d96a6;font-weight:900;letter-spacing:.5px;margin-top:5px}
+.live-box{justify-content:center;color:var(--green);font-size:13px;font-weight:950;gap:8px}
+.alert-box{justify-content:center}
+.alert-btn{width:100%;height:25px;background:rgba(31,209,123,.08);border:1px solid var(--green);color:var(--green);border-radius:2px;font-size:10px;font-weight:950}
+.market-strip{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:4px;min-width:0}
+.metric{background:#020307;border:1px solid #141a27;border-radius:2px;padding:7px 8px;min-width:0}
+.metric span{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.5px}
+.metric strong{display:block;margin-top:4px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metric.good strong{color:var(--green)}.metric.warn strong{color:var(--gold)}.metric.hot strong{color:var(--red)}
+.clock{display:grid;grid-template-columns:auto auto auto auto;align-items:center;column-gap:9px;width:100%;white-space:nowrap}
+.clock-date{color:#fff;font-size:14px;font-weight:950;font-family:Consolas,monospace;line-height:1;text-shadow:0 0 8px rgba(255,255,255,.18)}
+.clock-time{color:#fff;font-size:22px;font-weight:950;font-family:Consolas,monospace;letter-spacing:.6px;line-height:1;text-shadow:0 0 10px rgba(255,255,255,.22)}
+.clock-zone{color:#fff;font-size:11px;font-weight:950;margin-left:2px}
+.live-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 14px rgba(31,209,123,.85);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35;transform:scale(.82)}}
+.ticker{border-radius:2px;overflow:hidden;background:#020307}
+.ticker iframe{height:44px!important;min-height:44px!important;max-height:44px!important}
+.flowbar{border-radius:2px;overflow:hidden;background:#020307;position:relative;white-space:nowrap}
+.flow-inner{position:absolute;left:0;top:0;height:100%;display:flex;align-items:center;gap:28px;white-space:nowrap;animation:flow 95s linear infinite;font-size:12px;font-weight:900}
+.flow-item{color:#cfd6e2}
+.flow-label{color:#7d8798;border:1px solid #1b2433;padding:2px 5px;background:#05070d}
+.flow-session{color:var(--green)}
+.flow-news{color:var(--gold)}
+.flow-alert{color:#ff2b4f;animation:blink 1.6s step-end infinite;text-shadow:0 0 10px rgba(255,43,79,.9)}
+.flow-news.hot{color:#fff;animation:blink 1.6s step-end infinite;text-shadow:0 0 10px rgba(255,255,255,.55)}
 @keyframes flow{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
-@keyframes redFlash{0%,100%{opacity:1}50%{opacity:.3}}
-.bannerSession{color:var(--gray);margin:0 16px}
-.bannerOpen{color:var(--r);animation:redFlash .9s infinite;text-shadow:0 0 8px rgba(255,23,68,.8)}
-.bannerTime,.dt,.newsTime,.sLine{color:var(--g);font-family:monospace;font-weight:900}
-.bannerImpact{color:#fff;margin:0 18px;font-weight:900}
-.bannerImpact.hot{color:var(--r);animation:redFlash .8s infinite;text-shadow:0 0 10px rgba(255,23,68,.9)}
-.ccy{color:var(--gray);font-weight:900}
-#main{display:grid;grid-template-columns:minmax(0,1fr) 600px;gap:3px;min-height:0}
-#chart{height:calc(100% - 24px);background:#000}#tv_chart{width:100%;height:100%}
-#right{display:grid;grid-template-rows:205px minmax(0,1fr);gap:3px;min-height:0}
-.sessionBody{height:calc(100% - 24px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:6px}
-.sBox{background:var(--p2);border:1px solid var(--ln);border-radius:4px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:.2s}
-.sTitle{font-size:16px;font-weight:900;letter-spacing:1.2px;color:var(--gray)}
-.sTitle.openTitle{color:var(--r);animation:redFlash 1s infinite;text-shadow:0 0 10px rgba(255,23,68,.8)}
-.sState{font-size:17px;font-weight:900;margin-top:12px;color:#fff}
-.sState.closed{color:#8f8f9c}.sLine{font-size:22px;margin-top:10px;line-height:1}
-.liveNewsWrap{height:calc(100% - 24px);display:grid;grid-template-rows:78px 32px minmax(0,1fr);gap:4px;padding:4px}
-.videoRow{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.videoBtn{background:#0b0b12;border:1px solid #34121a;border-radius:4px;color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:.2s}
-.newsTabs{display:flex;gap:4px}
-.newsTab{flex:1;background:#10101d;color:var(--gray);border:1px solid var(--ln);border-radius:4px;font-size:11px;font-weight:900;cursor:pointer;transition:.2s}
-.newsTab.active{border-color:#3a3a5c;color:var(--gray)}
-.newsList{overflow-y:auto;border:1px solid var(--ln);border-radius:4px}
-.newsItem{display:grid;grid-template-columns:50px 70px 1fr 18px;gap:5px;align-items:center;border-bottom:1px solid #1a1a2e;padding:7px;font-size:11px;min-height:43px;cursor:pointer;transition:.2s}
-.newsSrc{background:#06315f;color:#fff;border-radius:3px;padding:2px 4px;font-size:9px;text-align:center;font-weight:900}
-.newsTitle{font-weight:900;line-height:1.25;color:#d8d8df}.newsArrow{font-size:18px;color:#fff}.loading{padding:12px;color:#00e5ff;font-weight:900}
-#tvEconomicCalendar{height:calc(100% - 24px);width:100%;overflow:hidden}
-#tvEconomicCalendar iframe{width:100%!important;height:100%!important}
-.footer{display:flex;justify-content:space-between;align-items:center;color:#9a9ab5;font-size:10px;padding:0 8px}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#3a3a5c;border-radius:4px}
+@keyframes blink{50%{opacity:.2}}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:4px;min-height:0}
+.maincol,.sidecol{display:grid;gap:4px;min-height:0}
+.maincol{grid-template-rows:minmax(430px,1fr) 250px}
+.sidecol{grid-template-rows:220px minmax(360px,1fr)}
+.panel{border-radius:2px;overflow:hidden;min-height:0}
+.panel-head{height:30px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 8px;border-bottom:1px solid #171d2b;background:#020307;color:var(--soft);font-size:11px;font-weight:900;letter-spacing:.4px}
+.blink-title{color:#ff2b4f;animation:blink 1.6s step-end infinite;text-shadow:0 0 10px rgba(255,43,79,.9)}
+.live-title{color:#fff;text-shadow:0 0 8px rgba(255,255,255,.28)}
+.news-refresh{color:var(--muted);font-size:10px;font-weight:900}
+.panel-tools{display:flex;align-items:center;gap:6px;min-width:0}
+.seg{display:flex;gap:3px;background:#010205;border:1px solid #141a27;border-radius:2px;padding:2px}
+.seg button,.tool-btn{border:0;border-radius:2px;background:transparent;color:var(--muted);font-size:10px;font-weight:900;padding:4px 7px;white-space:nowrap}
+.seg button.active,.tool-btn.active{background:var(--panel2);color:var(--gold)}
+.tool-btn{border:1px solid #141a27;background:#020307;color:var(--soft);text-decoration:none}
+.color-controls{display:flex;align-items:center;gap:4px;background:#010205;border:1px solid #141a27;border-radius:2px;padding:2px 5px}
+.color-controls label{display:flex;align-items:center;gap:3px;color:var(--muted);font-size:10px;font-weight:900;white-space:nowrap}
+.color-controls input{width:20px;height:18px;border:0;background:transparent;padding:0}
+#chart{height:calc(100% - 30px);background:#000}
+#tv_chart{height:100%;width:100%;position:relative}
+.session-grid{height:calc(100% - 30px);display:grid;grid-template-rows:repeat(3,1fr);gap:4px;padding:5px}
+.session{border:1px solid #141a27;background:#020307;border-radius:2px;padding:8px;display:grid;grid-template-columns:76px 70px 1fr;gap:8px;align-items:center;min-width:0}
+.session b{font-size:12px;color:#dfe6ee}
+.session .state{font-size:13px;font-weight:950;letter-spacing:.8px;text-align:center;color:#6f7787}
+.session .range,.session .next{font-size:11px;color:var(--muted);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.session.open{border-color:rgba(255,43,79,.75);background:linear-gradient(90deg,rgba(255,43,79,.14),#020307 52%);animation:blink 1.6s step-end infinite}
+.session.open .state{color:#ff2b4f;animation:blink 1.6s step-end infinite;text-shadow:0 0 10px rgba(255,43,79,.85)}
+.session.soon{border-color:rgba(244,201,93,.45)}
+.session.soon .state{color:var(--gold)}
+.news-body{height:calc(100% - 30px);display:grid;grid-template-rows:auto minmax(0,1fr);gap:5px;padding:5px}
+.news-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.news-tabs button{height:28px;border:1px solid #1b2132;border-radius:4px;background:#05070d;color:var(--muted);font-size:11px;font-weight:900}
+.news-tabs button.active{color:#07100b;background:var(--green);border-color:var(--green)}
+.news-list{overflow:auto;border:1px solid #1b2132;border-radius:4px;background:#03050a}
+.news-item{display:grid;grid-template-columns:48px 1fr;gap:8px;padding:9px;border-bottom:1px solid #1b202b;color:inherit;text-decoration:none}
+.news-item:hover{background:#111720}
+.news-item.latest{border-left:3px solid #fff;background:rgba(255,255,255,.06)}
+.news-item.hot{border-left:3px solid #ff2b4f;background:rgba(255,43,79,.08);animation:blink 1.6s step-end infinite}
+.news-time{font-family:Consolas,monospace;color:#fff;font-size:11px;font-weight:900;line-height:1.35;white-space:pre-line}
+.news-title{font-size:12px;font-weight:800;line-height:1.35;color:#dfe6ee}
+.news-src{display:inline-block;margin-top:4px;color:var(--muted);font-size:10px;font-weight:800}
+.empty{padding:14px;color:var(--muted);font-size:12px;font-weight:800}
+.calendar{height:calc(100% - 30px)}
+.calendar iframe{width:100%!important;height:100%!important}
+.footer{display:flex;justify-content:space-between;align-items:center;gap:8px;border-radius:4px;padding:0 8px;color:var(--muted);font-size:10px;font-weight:800}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-thumb{background:#333b4d;border-radius:999px}
+@media (max-width:1180px){
+  body{overflow:auto}
+  #app{height:auto;min-height:100vh}
+  .topbar{grid-template-columns:1fr;align-items:stretch}
+  .market-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .clock{justify-content:space-between}
+  .layout{grid-template-columns:1fr}
+  .maincol,.sidecol{grid-template-rows:auto}
+  .panel{min-height:260px}
+  .chart-panel{height:62vh;min-height:430px}
+  .session-panel{min-height:210px}
+  .news-panel{min-height:420px}
+}
+@media (max-width:680px){
+  #app{padding:6px;gap:6px}
+  .market-strip{grid-template-columns:1fr}
+  .session-grid{grid-template-columns:1fr}
+  .session-panel{min-height:440px}
+  .panel-head{height:auto;min-height:36px;align-items:flex-start;flex-direction:column;padding:8px 10px}
+  .panel-tools{width:100%;overflow:auto}
+  .seg{min-width:max-content}
+  .footer{flex-direction:column;align-items:flex-start}
+}
 </style>
 </head>
-
 <body>
 <div id="app">
+  <header class="topbar">
+    <div class="brand-box">
+      <div>
+        <div class="brand-main">NEXUS FX WAR ROOM</div>
+        <div class="brand-sub">XAUUSD COMMAND CENTER</div>
+      </div>
+    </div>
+    <div class="live-box">LIVE <span class="live-dot"></span></div>
+    <div class="alert-box"><button class="alert-btn" id="alertBtn" type="button">ALERT ON</button></div>
+    <div class="time-box">
+      <div class="clock"><span class="live-dot"></span><span class="clock-date" id="clockDate">----/--/--</span><strong class="clock-time" id="clockTime">--:--:--</strong><span class="clock-zone">JST</span></div>
+    </div>
+  </header>
 
-<div id="topbar">
-<div class="box"><div><div class="l1">NEXUS FX WAR ROOM</div><div class="l2">XAUUSD COMMAND CENTER</div></div></div>
-<div class="box"><div class="liveWrap">LIVE <span class="liveDot"></span></div></div>
-<div class="box"><button id="alertBtn" class="btn" onclick="toggleAlert()">ALERT ON</button></div>
-<div class="box timeBox"><div id="timeText" class="timeText">----/--/-- --:--:--</div></div>
-</div>
+  <section class="ticker" aria-label="Live currency tape">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {"symbols":[{"proName":"OANDA:XAUUSD","title":"XAUUSD"},{"proName":"FX:USDJPY","title":"USDJPY"},{"proName":"FX:EURUSD","title":"EURUSD"},{"proName":"FX:GBPUSD","title":"GBPUSD"},{"proName":"BINANCE:BTCUSDT","title":"BTCUSD"},{"proName":"BINANCE:ETHUSDT","title":"ETHUSD"}],"showSymbolLogo":false,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"ja"}</script>
+    </div>
+  </section>
 
-<div id="tvPriceBar"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>{"symbols":[{"proName":"OANDA:XAUUSD","title":"XAUUSD"},{"proName":"FX:USDJPY","title":"USDJPY"},{"proName":"FX:EURUSD","title":"EURUSD"},{"proName":"FX:GBPUSD","title":"GBPUSD"},{"proName":"BINANCE:BTCUSDT","title":"BTCUSD"},{"proName":"BINANCE:ETHUSDT","title":"ETHUSD"}],"showSymbolLogo":false,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"ja"}</script></div></div>
+  <section class="flowbar" aria-label="Session and news flow">
+    <div class="flow-inner" id="flowInner"></div>
+  </section>
 
-<div class="flowLine"><div id="megaTicker" class="flowInner"></div></div>
+  <main class="layout">
+    <section class="maincol">
+      <article class="panel chart-panel">
+        <div class="panel-head">
+          <span>XAUUSD ANALYSIS CHART</span>
+          <div class="panel-tools">
+            <div class="seg" id="tfBtns" aria-label="Timeframe selector">
+              <button data-tf="5">5m</button>
+              <button class="active" data-tf="15">15m</button>
+              <button data-tf="60">1h</button>
+              <button data-tf="D">1D</button>
+            </div>
+            <div class="color-controls" aria-label="Candle color controls">
+              <label>UP <input id="upColor" type="color" value="#2f6bff"></label>
+              <label>DOWN <input id="downColor" type="color" value="#ff4d5e"></label>
+              <label>WICK <input id="wickColor" type="color" value="#4b5563"></label>
+            </div>
+            <button class="tool-btn" id="reloadChart" type="button">Reload</button>
+            <a class="tool-btn" href="https://jp.tradingview.com/chart/CLgfBGtt/?source=promo_go_pro_button" target="_blank" rel="noopener">Open</a>
+          </div>
+        </div>
+        <div id="chart"><div id="tv_chart"></div></div>
+      </article>
 
-<div id="main">
-<div class="card"><div class="hd">TRADINGVIEW - REALTIME CHART</div><div id="chart"><div id="tv_chart"></div></div></div>
-<div id="right">
+      <article class="panel">
+        <div class="panel-head"><span>HIGH IMPACT ECONOMIC CALENDAR</span><span>USD / JPY</span></div>
+        <div class="calendar">
+          <div class="tradingview-widget-container" style="height:100%;width:100%">
+            <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+            <script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+            {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"1","currencyFilter":"USD,JPY"}</script>
+          </div>
+        </div>
+      </article>
+    </section>
 
-<div class="card"><div class="hd">SESSION CENTER <span>ASIA / LONDON / US</span></div><div class="sessionBody">
-<div class="sBox"><div id="asiaTitle" class="sTitle">ASIA SESSION</div><div id="asiaState" class="sState">---</div><div id="asiaLine" class="sLine">--:-- - --:--</div></div>
-<div class="sBox"><div id="londonTitle" class="sTitle">LONDON SESSION</div><div id="londonState" class="sState">---</div><div id="londonLine" class="sLine">OPEN --:--</div></div>
-<div class="sBox"><div id="usTitle" class="sTitle">US SESSION</div><div id="usState" class="sState">---</div><div id="usLine" class="sLine">OPEN --:--</div></div>
-</div></div>
+    <aside class="sidecol">
+      <article class="panel session-panel">
+        <div class="panel-head"><span class="blink-title">MARKET HOURS</span><span id="weekState">Market status</span></div>
+        <div class="session-grid" id="sessions"></div>
+      </article>
 
-<div class="card"><div class="hd">LIVE NEWS 日本語 <span>RSS AUTO UPDATE / LIVE LINKS</span></div><div class="liveNewsWrap">
-<div class="videoRow">
-<div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=Bloomberg+TV+Live')">LIVE BLOOMBERG <span class="dot"></span></div>
-<div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=CNBC+Live')">LIVE CNBC <span class="dot"></span></div>
-<div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=Kitco+Gold+Live')">LIVE KITCO <span class="dot"></span></div>
-<div class="videoBtn" onclick="openUrl('https://www.youtube.com/results?search_query=XAUUSD+live+gold')">LIVE XAUUSD <span class="dot"></span></div>
-</div>
-<div class="newsTabs"><button class="newsTab active" onclick="setNewsTab('xauusd',this)">XAUUSD</button><button class="newsTab" onclick="setNewsTab('japan',this)">日本</button><button class="newsTab" onclick="setNewsTab('geo',this)">地政学</button></div>
-<div id="newsList" class="newsList"><div class="loading">RSS LOADING...</div></div>
-</div></div>
+      <article class="panel news-panel">
+        <div class="panel-head">
+          <span class="live-title">LIVE NEWS</span>
+          <div class="panel-tools"><span class="news-refresh" id="newsRefresh">NEXT --:--</span><button class="tool-btn" id="refreshNews" type="button">Refresh</button></div>
+        </div>
+        <div class="news-body">
+          <div class="news-tabs" id="newsTabs">
+            <button class="active" data-news="gold">Gold</button>
+            <button data-news="japan">Japan</button>
+            <button data-news="geo">Geo</button>
+          </div>
+          <div class="news-list" id="newsList"><div class="empty">Loading news...</div></div>
+        </div>
+      </article>
+    </aside>
+  </main>
 
-</div>
-</div>
-
-<div id="bottom" class="card"><div class="hd">HIGH IMPACT NEWS <span>TradingView Economic Calendar / USD・JPY / High Impact</span></div><div id="tvEconomicCalendar"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>{"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"1","currencyFilter":"USD,JPY"}</script></div></div></div>
-
-<div class="footer"><span>INFORMATION ONLY. NOT INVESTMENT ADVICE.</span><span id="footerTime">UPDATE: --:--:--</span><span>AUTO UPDATE ON</span></div>
+  <footer class="footer">
+    <span>Information only. Not investment advice.</span>
+    <span id="updated">Last update: --:--:--</span>
+    <span>Auto refresh enabled</span>
+  </footer>
 </div>
 
 <script>
-let alertOn=true,currentNewsTab="xauusd",alertMemory={};
-
-const HIGH_IMPACT_EVENTS=[
-{date:"2026-06-01",time:"23:00",ccy:"USD",title:"ISM Manufacturing PMI"},
-{date:"2026-06-03",time:"21:15",ccy:"USD",title:"ADP Employment Change"},
-{date:"2026-06-03",time:"23:00",ccy:"USD",title:"ISM Services PMI"},
-{date:"2026-06-05",time:"08:30",ccy:"JPY",title:"Monthly Labour Survey"},
-{date:"2026-06-05",time:"21:30",ccy:"USD",title:"Non-Farm Payrolls"},
-{date:"2026-06-10",time:"21:30",ccy:"USD",title:"Consumer Price Index CPI"},
-{date:"2026-06-11",time:"21:30",ccy:"USD",title:"Producer Price Index PPI"},
-{date:"2026-06-16",time:"15:30",ccy:"JPY",title:"BOJ Press Conference"},
-{date:"2026-06-18",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
-{date:"2026-06-18",time:"03:30",ccy:"USD",title:"FOMC Press Conference"},
-{date:"2026-06-19",time:"08:30",ccy:"JPY",title:"National Core CPI"}
+const sharedChartUrl="https://jp.tradingview.com/chart/CLgfBGtt/?source=promo_go_pro_button";
+const defaultChartColors={up:"#2f6bff",down:"#ff4d5e",wick:"#4b5563"};
+const NEWS_REFRESH_MS=30000;
+let savedChartColors={};
+try{savedChartColors=JSON.parse(localStorage.getItem("xauChartColors")||"{}")}catch(e){}
+const state={symbol:"OANDA:XAUUSD",symbolTitle:"XAUUSD",timeframe:"15",news:"gold",colors:{...defaultChartColors,...savedChartColors},headlines:[],nextNewsAt:Date.now()+NEWS_REFRESH_MS,alertOn:true};
+const sessions=[
+  {id:"asia",name:"Asia",start:7*60,end:15*60,range:"07:00 - 15:00 JST"},
+  {id:"london",name:"London",start:15*60,end:21*60,range:"15:00 - 21:00 JST"},
+  {id:"newyork",name:"New York",start:21*60,end:30*60,range:"21:00 - 06:00 JST"}
 ];
-
-const RSS={
-xauusd:["https://www.fxstreet.com/rss/news","https://www.fxstreet.com/rss/analysis","https://news.google.com/rss/search?q=XAUUSD%20OR%20gold%20price%20OR%20Kitco&hl=en-US&gl=US&ceid=US:en"],
-japan:["https://news.google.com/rss/search?q=USDJPY%20OR%20BOJ%20OR%20Japan%20yen%20OR%20%E6%97%A5%E9%8A%80&hl=ja&gl=JP&ceid=JP:ja"],
-geo:["https://news.google.com/rss/search?q=Middle%20East%20OR%20Red%20Sea%20OR%20Israel%20Iran%20OR%20Ukraine&hl=en-US&gl=US&ceid=US:en"]
+const feeds={
+  gold:[
+    "https://www.fxstreet.com/rss/news",
+    "https://www.fxstreet.com/rss/analysis",
+    "https://news.google.com/rss/search?q=XAUUSD%20OR%20gold%20price%20OR%20Kitco&hl=en-US&gl=US&ceid=US:en"
+  ],
+  japan:[
+    "https://news.google.com/rss/search?q=USDJPY%20OR%20BOJ%20OR%20Japan%20yen%20OR%20%E6%97%A5%E9%8A%80&hl=ja&gl=JP&ceid=JP:ja"
+  ],
+  geo:[
+    "https://news.google.com/rss/search?q=Middle%20East%20OR%20Ukraine%20OR%20Red%20Sea%20OR%20sanctions%20market&hl=en-US&gl=US&ceid=US:en"
+  ]
 };
-
-function openUrl(u){window.open(u,"_blank")}
-function toggleAlert(){alertOn=!alertOn;const b=document.getElementById("alertBtn");b.textContent=alertOn?"ALERT ON":"ALERT OFF";b.className=alertOn?"btn":"btn off"}
-function beep(key){if(!alertOn)return;const n=Date.now();if(alertMemory[key]&&n-alertMemory[key]<60000)return;alertMemory[key]=n;try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=920;g.gain.setValueAtTime(.14,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.18);o.start();o.stop(a.currentTime+.18)}catch(e){}}
 function pad(n){return String(n).padStart(2,"0")}
-function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
-function hms(d){return pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds())}
-function fmtMD(d){return d.slice(5,7)+"/"+d.slice(8,10)}
-
-function sessionStatus(name){
-const n=nowJST(),min=n.getHours()*60+n.getMinutes();
-const closed=(n.getDay()===6&&min>=360)||n.getDay()===0||(n.getDay()===1&&min<420);
-if(closed)return false;
-if(name==="asia")return min>=420&&min<900;
-if(name==="london")return min>=900&&min<1260;
-if(name==="us")return min>=1260||min<360;
-return false;
+function jstNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
+function minuteOfDay(d){return d.getHours()*60+d.getMinutes()}
+function isWeekend(d){const day=d.getDay(),m=minuteOfDay(d);return (day===6&&m>=360)||day===0||(day===1&&m<420)}
+function normalize(min){return min<0?min+1440:min}
+function minutesUntil(nowMin,start){return normalize(start-nowMin)}
+function sessionOpen(s,nowMin){return s.end>1440?nowMin>=s.start||nowMin<s.end-1440:nowMin>=s.start&&nowMin<s.end}
+function formatDuration(min){const h=Math.floor(min/60),m=min%60;return h>0?`${h}h ${pad(m)}m`:`${m}m`}
+function updateClock(){
+  const n=jstNow();
+  const date=`${n.getFullYear()}/${pad(n.getMonth()+1)}/${pad(n.getDate())}`;
+  const time=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  document.getElementById("clockDate").textContent=date;
+  document.getElementById("clockTime").textContent=time;
+  document.getElementById("updated").textContent="Last update: "+date+" "+time+" JST";
+  updateNewsCountdown();
+  updateSessions(n);
 }
-
-function setSession(){
-[
-["asia","07:00 - 15:00","OPEN 07:00"],
-["london","15:00 - 21:00","OPEN 15:00"],
-["us","21:00 - 06:00","OPEN 21:00"]
-].forEach(([id,range,openText])=>{
-const open=sessionStatus(id),t=document.getElementById(id+"Title"),s=document.getElementById(id+"State"),l=document.getElementById(id+"Line");
-t.className=open?"sTitle openTitle":"sTitle";
-s.className=open?"sState":"sState closed";
-s.textContent=open?"OPEN":"CLOSED";
-l.textContent=open?range:openText;
-if(open)beep(id+"_session_open");
-});
+function newsCountdownText(){
+  const remain=Math.max(0,state.nextNewsAt-Date.now());
+  const total=Math.ceil(remain/1000);
+  return `${pad(Math.floor(total/60))}:${pad(total%60)}`;
 }
-
-function activeEvents(){
-const now=nowJST();
-return HIGH_IMPACT_EVENTS.filter(e=>{
-const eventTime=new Date(`${e.date}T${e.time}:00+09:00`);
-const removeTime=new Date(eventTime.getTime()+60*60*1000);
-return now<=removeTime;
-}).map(e=>{
-const eventTime=new Date(`${e.date}T${e.time}:00+09:00`);
-const flashStart=new Date(eventTime.getTime()-24*60*60*1000);
-const removeTime=new Date(eventTime.getTime()+60*60*1000);
-const hot=now>=flashStart&&now<=removeTime;
-if(hot)beep("impact_"+e.date+"_"+e.time);
-return {...e,hot};
-});
+function minutesAgo(date){
+  const d=date instanceof Date&&!Number.isNaN(date.getTime())?date:new Date();
+  return Math.max(0,Math.floor((Date.now()-d.getTime())/60000));
 }
-
-async function fetchRSS(url){const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url);const r=await fetch(api);const j=await r.json();return(j.items||[]).map(x=>({title:x.title||"",link:x.link||"#",date:new Date(x.pubDate||Date.now()),src:(j.feed&&j.feed.title?j.feed.title:"NEWS").slice(0,14)}))}
-async function loadNews(type=currentNewsTab){
-const box=document.getElementById("newsList");box.innerHTML='<div class="loading">RSS LOADING...</div>';
-try{const all=(await Promise.all(RSS[type].map(fetchRSS))).flat();all.sort((a,b)=>b.date-a.date);box.innerHTML=all.slice(0,7).map(it=>{const t=it.date.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"});return`<div class="newsItem" onclick="openUrl('${it.link.replace(/'/g,"")}')"><div class="newsTime">${t}</div><div class="newsSrc">${it.src}</div><div class="newsTitle">${it.title}</div><div class="newsArrow">›</div></div>`}).join("")||'<div class="loading">NO NEWS</div>'}catch(e){box.innerHTML='<div class="loading">RSS RETRYING...</div>'}
+function newsAgeLabel(date){
+  const diff=minutesAgo(date);
+  if(diff<1)return "NOW";
+  if(diff<60)return `${diff}m ago`;
+  return `${Math.floor(diff/60)}h ago`;
 }
-function setNewsTab(type,btn){currentNewsTab=type;document.querySelectorAll(".newsTab").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");loadNews(type)}
-
-function update(){
-const n=nowJST(),dateStr=n.getFullYear()+"/"+pad(n.getMonth()+1)+"/"+pad(n.getDate());
-document.getElementById("timeText").textContent=dateStr+" "+hms(n);
-document.getElementById("footerTime").textContent="UPDATE: "+hms(n);
-setSession();
-
-const a=sessionStatus("asia"),l=sessionStatus("london"),u=sessionStatus("us");
-const sessionPart=
-`<span class="bannerSession ${a?'bannerOpen':''}">ASIA SESSION <span class="bannerTime">07:00 - 15:00</span> ${a?'OPEN':'CLOSED'}</span>`+
-`<span class="bannerSession ${l?'bannerOpen':''}">LONDON SESSION <span class="bannerTime">15:00 - 21:00</span> ${l?'OPEN':'CLOSED'}</span>`+
-`<span class="bannerSession ${u?'bannerOpen':''}">US SESSION <span class="bannerTime">21:00 - 06:00</span> ${u?'OPEN':'CLOSED'}</span>`;
-
-const impactPart=activeEvents().map(e=>`<span class="bannerImpact ${e.hot?'hot':''}"><span class="dt">${fmtMD(e.date)} ${e.time}</span> <span class="ccy">${e.ccy}</span> ${e.title}</span>`).join("");
-
-document.getElementById("megaTicker").innerHTML=sessionPart+" | "+impactPart;
+function newsHot(date){
+  return minutesAgo(date)<=60;
 }
-
+function updateNewsCountdown(){
+  document.getElementById("newsRefresh").textContent="NEXT "+newsCountdownText();
+}
+function updateSessions(n){
+  const nowMin=minuteOfDay(n),closed=isWeekend(n);
+  const wrap=document.getElementById("sessions");
+  let active=[];
+  wrap.innerHTML=sessions.map(s=>{
+    const open=!closed&&sessionOpen(s,nowMin);
+    const until=minutesUntil(nowMin,s.start);
+    const soon=!open&&!closed&&until<=90;
+    if(open)active.push(s.name);
+    const cls=open?"session open":soon?"session soon":"session";
+    const state=open?"OPEN":closed?"WEEKEND":soon?"SOON":"CLOSED";
+    const next=open?"Active now":closed?"Market closed":`Opens in ${formatDuration(until)}`;
+    return `<div class="${cls}"><b>${s.name}</b><div class="state">${state}</div><div class="range">${s.range}</div><div class="next">${next}</div></div>`;
+  }).join("");
+  const upcoming=sessions.map(s=>({name:s.name,until:minutesUntil(nowMin,s.start)})).sort((a,b)=>a.until-b.until)[0];
+  document.getElementById("weekState").textContent=closed?"Weekend":"Live market";
+  updateFlow(active,closed);
+}
+function updateFlow(active,closed){
+  const sessionText=closed?"MARKET CLOSED":active.length?`${active.join(" / ")} SESSION OPEN`:"BETWEEN SESSIONS";
+  const news=state.headlines.length?state.headlines.slice(0,8):[{title:"NEWS FEED STANDBY",date:new Date()}];
+  document.getElementById("flowInner").innerHTML=[
+    `<span class="flow-item flow-label">SESSION</span>`,
+    `<span class="flow-item flow-alert">MARKET HOURS</span>`,
+    `<span class="flow-item flow-session">${escapeHtml(sessionText)}</span>`,
+    `<span class="flow-item flow-label">NEWS UPDATE</span>`,
+    `<span class="flow-item flow-alert">NEXT ${newsCountdownText()}</span>`,
+    `<span class="flow-item flow-label">NEWS</span>`,
+    ...news.map(item=>`<span class="flow-item flow-news ${newsHot(item.date)?"hot":""}">${escapeHtml(newsAgeLabel(item.date))} | ${escapeHtml(item.title)}</span>`)
+  ].join("");
+}
 function loadChart(){
-const s=document.createElement("script");s.src="https://s3.tradingview.com/tv.js";
-s.onload=function(){new TradingView.widget({autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",theme:"dark",style:"1",locale:"ja",container_id:"tv_chart",hide_top_toolbar:false,hide_side_toolbar:false,allow_symbol_change:true,hide_volume:true,withdateranges:true,disabled_features:["volume_force_overlay","create_volume_indicator_by_default","header_compare","header_screenshot"],overrides:{"paneProperties.background":"#000000","paneProperties.vertGridProperties.color":"rgba(255,255,255,0.03)","paneProperties.horzGridProperties.color":"rgba(255,255,255,0.03)","mainSeriesProperties.candleStyle.upColor":"#4D6CFF","mainSeriesProperties.candleStyle.downColor":"#FF5A5A","mainSeriesProperties.candleStyle.borderUpColor":"#4D6CFF","mainSeriesProperties.candleStyle.borderDownColor":"#FF5A5A","mainSeriesProperties.candleStyle.wickUpColor":"#8C96A8","mainSeriesProperties.candleStyle.wickDownColor":"#8C96A8","mainSeriesProperties.priceLineColor":"#FF3B3B","scalesProperties.textColor":"#BFC2CC"}})};
-document.body.appendChild(s)
+  const holder=document.getElementById("tv_chart");
+  holder.innerHTML="";
+  const render=()=>new TradingView.widget({
+    autosize:true,
+    symbol:state.symbol,
+    interval:state.timeframe,
+    timezone:"Asia/Tokyo",
+    theme:"dark",
+    style:"1",
+    locale:"ja",
+    container_id:"tv_chart",
+    hide_volume:true,
+    hide_side_toolbar:false,
+    hide_top_toolbar:false,
+    allow_symbol_change:true,
+    withdateranges:true,
+    disabled_features:["header_compare","header_screenshot","volume_force_overlay","create_volume_indicator_by_default"],
+    overrides:{
+      "paneProperties.background":"#000000",
+      "paneProperties.backgroundType":"solid",
+      "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
+      "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
+      "mainSeriesProperties.candleStyle.upColor":state.colors.up,
+      "mainSeriesProperties.candleStyle.downColor":state.colors.down,
+      "mainSeriesProperties.candleStyle.borderUpColor":state.colors.up,
+      "mainSeriesProperties.candleStyle.borderDownColor":state.colors.down,
+      "mainSeriesProperties.candleStyle.wickUpColor":state.colors.wick,
+      "mainSeriesProperties.candleStyle.wickDownColor":state.colors.wick,
+      "mainSeriesProperties.priceLineColor":"#f4c95d",
+      "scalesProperties.textColor":"#aeb7c5"
+    }
+  });
+  if(window.TradingView){render()}else{
+    const script=document.createElement("script");
+    script.src="https://s3.tradingview.com/tv.js";
+    script.onload=render;
+    document.body.appendChild(script);
+  }
 }
-
-update();loadNews();
-setInterval(update,1000);
-setInterval(()=>loadNews(currentNewsTab),60000);
+async function fetchFeed(url){
+  const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url);
+  const r=await fetch(api);
+  if(!r.ok)throw new Error("rss");
+  const j=await r.json();
+  return (j.items||[]).map(item=>({
+    title:item.title||"Untitled",
+    link:item.link||"#",
+    date:new Date(item.pubDate||Date.now()),
+    src:(j.feed&&j.feed.title?j.feed.title:"NEWS").replace(/ - .*$/,"")
+  }));
+}
+function escapeHtml(text){return String(text).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function safeLink(url){return String(url).replace(/"/g,"%22")}
+function newsTimeLabel(date){
+  const d=date instanceof Date&&!Number.isNaN(date.getTime())?date:new Date();
+  const day=d.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo",month:"2-digit",day:"2-digit"});
+  const time=d.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"});
+  return `${day} ${time} JST\n${newsAgeLabel(d)}`;
+}
+async function loadNews(){
+  const box=document.getElementById("newsList");
+  box.innerHTML='<div class="empty">Loading news...</div>';
+  state.nextNewsAt=Date.now()+NEWS_REFRESH_MS;
+  updateNewsCountdown();
+  try{
+    const all=(await Promise.all(feeds[state.news].map(fetchFeed))).flat().sort((a,b)=>b.date-a.date).slice(0,12);
+    state.headlines=all.map(item=>({title:item.title,date:item.date})).filter(item=>item.title);
+    box.innerHTML=all.length?all.map((item,index)=>{
+      const time=newsTimeLabel(item.date);
+      return `<a class="news-item ${index===0?"latest":""} ${newsHot(item.date)?"hot":""}" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${time}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`;
+    }).join(""):'<div class="empty">No headlines found.</div>';
+  }catch(e){
+    state.headlines=[{title:"NEWS FEED RETRYING",date:new Date()}];
+    box.innerHTML='<div class="empty">News feed is retrying.</div>';
+  }
+  updateSessions(jstNow());
+}
+function saveChartColors(){
+  localStorage.setItem("xauChartColors",JSON.stringify(state.colors));
+}
+function setupChartColors(){
+  const inputs={up:document.getElementById("upColor"),down:document.getElementById("downColor"),wick:document.getElementById("wickColor")};
+  Object.entries(inputs).forEach(([key,input])=>{
+    input.value=state.colors[key];
+    input.addEventListener("input",()=>{
+      state.colors[key]=input.value;
+      saveChartColors();
+      clearTimeout(setupChartColors.timer);
+      setupChartColors.timer=setTimeout(loadChart,180);
+    });
+  });
+}
+document.getElementById("reloadChart").addEventListener("click",loadChart);
+document.getElementById("tfBtns").addEventListener("click",e=>{
+  const btn=e.target.closest("button");if(!btn)return;
+  document.querySelectorAll("#tfBtns button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  state.timeframe=btn.dataset.tf;
+  loadChart();
+});
+document.getElementById("newsTabs").addEventListener("click",e=>{
+  const btn=e.target.closest("button");if(!btn)return;
+  document.querySelectorAll("#newsTabs button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");state.news=btn.dataset.news;loadNews();
+});
+document.getElementById("refreshNews").addEventListener("click",loadNews);
+document.getElementById("alertBtn").addEventListener("click",()=>{
+  state.alertOn=!state.alertOn;
+  const btn=document.getElementById("alertBtn");
+  btn.textContent=state.alertOn?"ALERT ON":"ALERT OFF";
+  btn.style.borderColor=state.alertOn?"var(--green)":"#5b6473";
+  btn.style.color=state.alertOn?"var(--green)":"#9aa4b2";
+});
+setupChartColors();
+updateClock();
+loadNews();
 loadChart();
+setInterval(updateClock,1000);
+setInterval(loadNews,NEWS_REFRESH_MS);
 </script>
 </body>
 </html>
