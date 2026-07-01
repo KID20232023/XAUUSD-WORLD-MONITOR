@@ -55,6 +55,9 @@ button{cursor:pointer}
 .flow-session{color:var(--green)}
 .flow-news{color:var(--gold)}
 .flow-alert{color:#ff2b4f;animation:blink 1.6s step-end infinite;text-shadow:0 0 10px rgba(255,43,79,.9)}
+.flow-impact{color:#ff2b4f;animation:blink 1.2s step-end infinite;text-shadow:0 0 11px rgba(255,43,79,.95)}
+.flow-impact.soon{color:#fff;text-shadow:0 0 12px rgba(255,255,255,.7)}
+.flow-impact.next{color:var(--gold);animation:none;text-shadow:0 0 10px rgba(244,201,93,.6)}
 .flow-news.hot{color:#fff;animation:blink 1.6s step-end infinite;text-shadow:0 0 10px rgba(255,255,255,.55)}
 @keyframes flow{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
 @keyframes blink{50%{opacity:.2}}
@@ -99,7 +102,7 @@ button{cursor:pointer}
 .news-title{font-size:12px;font-weight:800;line-height:1.35;color:#dfe6ee}
 .news-src{display:inline-block;margin-top:4px;color:var(--muted);font-size:10px;font-weight:800}
 .empty{padding:14px;color:var(--muted);font-size:12px;font-weight:800}
-.calendar{height:calc(100% - 30px);display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px}
+.calendar{height:calc(100% - 30px);display:grid;grid-template-columns:1.08fr .92fr;gap:5px;padding:5px}
 .tv-calendar,.mini-month{border:1px solid #141a27;background:#020307;min-width:0;min-height:0;overflow:hidden}
 .tv-calendar .tradingview-widget-container,.tv-calendar .tradingview-widget-container__widget{height:100%!important;width:100%!important}
 .tv-calendar iframe{height:100%!important;width:100%!important}
@@ -110,8 +113,10 @@ button{cursor:pointer}
 .mini-days{grid-template-rows:repeat(6,1fr);min-height:0}
 .day{display:flex;align-items:center;justify-content:center;position:relative;border-top:1px solid rgba(20,26,39,.7);border-right:1px solid rgba(20,26,39,.7);color:#929baa;font-size:10px;font-weight:900}
 .day.today{color:#fff;background:rgba(244,201,93,.12);box-shadow:inset 0 0 14px rgba(244,201,93,.35)}
-.day.impact{color:#fff}
-.day.impact::after{content:"";position:absolute;right:4px;top:4px;width:5px;height:5px;border-radius:50%;background:#ff2b4f;box-shadow:0 0 10px rgba(255,43,79,.85);animation:blink 1.6s step-end infinite}
+.day.impact{color:#fff;background:rgba(255,43,79,.16);box-shadow:inset 0 0 0 1px rgba(255,43,79,.35)}
+.day.impact::after{content:"";position:absolute;right:3px;top:3px;width:8px;height:8px;border-radius:50%;background:#ff2b4f;box-shadow:0 0 13px rgba(255,43,79,1);animation:blink 1.05s step-end infinite}
+.day.today.impact{background:rgba(244,201,93,.16)}
+.day.today.impact::before{content:"";position:absolute;left:4px;bottom:4px;width:6px;height:6px;border-radius:50%;background:#f4c95d;box-shadow:0 0 10px rgba(244,201,93,.95);animation:blink 1.2s step-end infinite}
 .footer{display:flex;justify-content:space-between;align-items:center;gap:8px;border-radius:4px;padding:0 8px;color:var(--muted);font-size:10px;font-weight:800}
 ::-webkit-scrollbar{width:7px;height:7px}
 ::-webkit-scrollbar-thumb{background:#333b4d;border-radius:999px}
@@ -199,7 +204,7 @@ button{cursor:pointer}
             <div class="tradingview-widget-container" style="height:100%;width:100%">
               <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
               <script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-              {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"1","currencyFilter":"USD,JPY"}</script>
+              {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"0,1","currencyFilter":"USD,JPY,EUR,GBP,CNY"}</script>
             </div>
           </div>
           <div class="mini-month">
@@ -255,12 +260,28 @@ const sessions=[
   {id:"newyork",name:"New York",start:21*60,end:30*60,range:"21:00 - 06:00 JST"}
 ];
 const impactEvents=[
-  {date:"2026-06-16",time:"15:30",ccy:"JPY",title:"BOJ Press Conference"},
-  {date:"2026-06-18",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
-  {date:"2026-06-18",time:"03:30",ccy:"USD",title:"FOMC Press Conference"},
-  {date:"2026-06-19",time:"08:30",ccy:"JPY",title:"National Core CPI"},
-  {date:"2026-06-25",time:"21:30",ccy:"USD",title:"GDP / Jobless Claims"},
-  {date:"2026-06-26",time:"21:30",ccy:"USD",title:"Core PCE Price Index"}
+  {date:"2026-07-01",time:"21:15",ccy:"USD",title:"ADP Employment"},
+  {date:"2026-07-01",time:"23:00",ccy:"USD",title:"ISM Manufacturing PMI"},
+  {date:"2026-07-02",time:"21:30",ccy:"USD",title:"NFP / Unemployment"},
+  {date:"2026-07-02",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-06",time:"23:00",ccy:"USD",title:"ISM Services PMI"},
+  {date:"2026-07-07",time:"23:00",ccy:"USD",title:"JOLTS Job Openings"},
+  {date:"2026-07-09",time:"03:00",ccy:"USD",title:"FOMC Minutes"},
+  {date:"2026-07-09",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-15",time:"21:30",ccy:"USD",title:"CPI"},
+  {date:"2026-07-16",time:"21:30",ccy:"USD",title:"PPI"},
+  {date:"2026-07-16",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-17",time:"21:30",ccy:"USD",title:"Retail Sales"},
+  {date:"2026-07-23",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-24",time:"08:30",ccy:"JPY",title:"Japan CPI"},
+  {date:"2026-07-29",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
+  {date:"2026-07-30",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-30",time:"21:30",ccy:"USD",title:"GDP"},
+  {date:"2026-07-31",time:"21:30",ccy:"USD",title:"Core PCE"},
+  {date:"2026-07-31",time:"12:00",ccy:"JPY",title:"BOJ Rate Decision"},
+  {date:"2026-09-16",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
+  {date:"2026-10-28",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
+  {date:"2026-12-09",time:"04:00",ccy:"USD",title:"FOMC Rate Decision"}
 ];
 const feeds={
   gold:[
@@ -286,10 +307,72 @@ function formatDuration(min){const h=Math.floor(min/60),m=min%60;return h>0?`${h
 function dateKey(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
 function impactDate(event){return new Date(`${event.date}T${event.time}:00+09:00`)}
 function sameDay(a,b){return dateKey(a)===dateKey(b)}
+function nthWeekdayOfMonth(y,m,weekday,n){
+  const d=new Date(y,m,1);
+  const offset=(weekday-d.getDay()+7)%7;
+  d.setDate(1+offset+(n-1)*7);
+  return d.getMonth()===m?d:null;
+}
+function lastWeekdayOfMonth(y,m,weekday){
+  const d=new Date(y,m+1,0);
+  d.setDate(d.getDate()-((d.getDay()-weekday+7)%7));
+  return d;
+}
+function monthlyImpactFallback(y,m){
+  const items=[
+    {d:nthWeekdayOfMonth(y,m,3,1),time:"21:15",ccy:"USD",title:"ADP window"},
+    {d:nthWeekdayOfMonth(y,m,5,1),time:"21:30",ccy:"USD",title:"NFP window"},
+    {d:nthWeekdayOfMonth(y,m,1,1),time:"23:00",ccy:"USD",title:"ISM Services window"},
+    {d:nthWeekdayOfMonth(y,m,2,1),time:"23:00",ccy:"USD",title:"JOLTS window"},
+    {d:nthWeekdayOfMonth(y,m,2,2),time:"21:30",ccy:"USD",title:"CPI window"},
+    {d:nthWeekdayOfMonth(y,m,3,2),time:"21:30",ccy:"USD",title:"PPI window"},
+    {d:nthWeekdayOfMonth(y,m,4,3),time:"21:30",ccy:"USD",title:"Retail Sales window"},
+    {d:nthWeekdayOfMonth(y,m,5,4),time:"08:30",ccy:"JPY",title:"Japan CPI window"},
+    {d:lastWeekdayOfMonth(y,m,5),time:"21:30",ccy:"USD",title:"Core PCE window"}
+  ];
+  return items.filter(item=>item.d).map(item=>({
+    date:dateKey(item.d),
+    time:item.time,
+    ccy:item.ccy,
+    title:item.title
+  }));
+}
+function impactEventsForMonth(y,m){
+  const monthKey=`${y}-${pad(m+1)}`;
+  const explicit=impactEvents.filter(e=>e.date.startsWith(monthKey));
+  const byDate=new Map(monthlyImpactFallback(y,m).map(e=>[`${e.date}-${e.title}`,e]));
+  explicit.forEach(e=>byDate.set(`${e.date}-${e.title}`,e));
+  return [...byDate.values()].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+}
 function impactHot(event,now){
   const t=impactDate(event).getTime();
   const n=now.getTime();
   return n>=t-60*60*1000&&n<=t+60*60*1000;
+}
+function timeUntilEvent(event,now){
+  const diff=impactDate(event).getTime()-now.getTime();
+  if(diff<=0)return "LIVE";
+  const min=Math.ceil(diff/60000);
+  if(min<60)return `${min}m`;
+  const h=Math.floor(min/60),m=min%60;
+  if(h<48)return `${h}h ${pad(m)}m`;
+  return `${Math.floor(h/24)}d ${h%24}h`;
+}
+function flowImpactItems(now){
+  const y=now.getFullYear(),m=now.getMonth();
+  const pool=[
+    ...impactEventsForMonth(y,m),
+    ...impactEventsForMonth(new Date(y,m+1,1).getFullYear(),new Date(y,m+1,1).getMonth())
+  ];
+  return pool
+    .filter(event=>impactDate(event).getTime()>=now.getTime()-90*60*1000)
+    .slice(0,10)
+    .map(event=>{
+      const d=impactDate(event);
+      const day=`${pad(d.getMonth()+1)}/${pad(d.getDate())}`;
+      const cls=impactHot(event,now)?"flow-impact soon":"flow-impact next";
+      return `<span class="${cls}">${day} ${event.time} ${escapeHtml(event.ccy)} ${escapeHtml(event.title)} | ${timeUntilEvent(event,now)}</span>`;
+    });
 }
 function renderImpactCalendar(){
   const now=jstNow();
@@ -298,7 +381,13 @@ function renderImpactCalendar(){
   const daysInMonth=new Date(y,m+1,0).getDate();
   const start=first.getDay();
   document.getElementById("calMonth").textContent=`${y}/${pad(m+1)}`;
-  const impactDays=new Set(impactEvents.filter(e=>e.date.startsWith(`${y}-${pad(m+1)}`)).map(e=>Number(e.date.slice(8,10))));
+  const monthEvents=impactEventsForMonth(y,m);
+  const eventsByDay=monthEvents.reduce((map,event)=>{
+    const day=Number(event.date.slice(8,10));
+    if(!map.has(day))map.set(day,[]);
+    map.get(day).push(event);
+    return map;
+  },new Map());
   const cells=[];
   for(let i=0;i<42;i++){
     const day=i-start+1;
@@ -306,8 +395,10 @@ function renderImpactCalendar(){
     const d=new Date(y,m,day);
     const cls=["day"];
     if(sameDay(d,now))cls.push("today");
-    if(impactDays.has(day))cls.push("impact");
-    cells.push(`<div class="${cls.join(" ")}">${day}</div>`);
+    const events=eventsByDay.get(day)||[];
+    if(events.length)cls.push("impact");
+    const title=events.length?` title="${escapeHtml(events.map(e=>`${e.time} ${e.ccy} ${e.title}`).join(" / "))}"`:"";
+    cells.push(`<div class="${cls.join(" ")}"${title}>${day}</div>`);
   }
   document.getElementById("calDays").innerHTML=cells.join("");
 }
@@ -357,16 +448,21 @@ function updateSessions(n){
     const next=open?"Active now":closed?"Market closed":`Opens in ${formatDuration(until)}`;
     return `<div class="${cls}"><b>${s.name}</b><div class="state">${state}</div><div class="range">${s.range}</div><div class="next">${next}</div></div>`;
   }).join("");
+  const upcoming=sessions.map(s=>({name:s.name,until:minutesUntil(nowMin,s.start)})).sort((a,b)=>a.until-b.until)[0];
   document.getElementById("weekState").textContent=closed?"Weekend":"Live market";
   updateFlow(active,closed);
 }
 function updateFlow(active,closed){
   const sessionText=closed?"MARKET CLOSED":active.length?`${active.join(" / ")} SESSION OPEN`:"BETWEEN SESSIONS";
   const news=state.headlines.length?state.headlines.slice(0,8):[{title:"NEWS FEED STANDBY",date:new Date()}];
+  const impacts=flowImpactItems(jstNow());
   document.getElementById("flowInner").innerHTML=[
     `<span class="flow-item flow-label">SESSION</span>`,
     `<span class="flow-item flow-alert">MARKET HOURS</span>`,
     `<span class="flow-item flow-session">${escapeHtml(sessionText)}</span>`,
+    `<span class="flow-item flow-label">HIGH IMPACT</span>`,
+    `<span class="flow-item flow-alert">DANGER EVENTS</span>`,
+    ...impacts,
     `<span class="flow-item flow-label">NEWS UPDATE</span>`,
     `<span class="flow-item flow-alert">NEXT ${newsCountdownText()}</span>`,
     `<span class="flow-item flow-label">NEWS</span>`,
