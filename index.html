@@ -479,6 +479,7 @@ function applyChartColors(){
   try{
     if(tvWidget&&typeof tvWidget.applyOverrides==="function"){
       tvWidget.applyOverrides(candleOverrides());
+      applyGridOff();
     }
   }catch(e){}
 }
@@ -512,8 +513,8 @@ function loadChart(){
         overrides:{
           "paneProperties.background":"#000000",
           "paneProperties.backgroundType":"solid",
-          "paneProperties.vertGridProperties.color":"#000000",
-          "paneProperties.horzGridProperties.color":"#000000",
+          "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
+          "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
           "paneProperties.vertGridProperties.style":0,
           "paneProperties.horzGridProperties.style":0,
           ...candleOverrides(),
@@ -521,6 +522,10 @@ function loadChart(){
           "scalesProperties.textColor":"#aeb7c5"
         }
       });
+      const killGrid=()=>applyGridOff();
+      if(tvWidget&&typeof tvWidget.onChartReady==="function")tvWidget.onChartReady(killGrid);
+      setTimeout(killGrid,1200);
+      setTimeout(killGrid,3000);
     }catch(e){
       box.innerHTML='<div class="empty">Chart loading failed. Press Reload.</div>';
     }
@@ -697,6 +702,20 @@ function fallbackNewsItems(){
 }
 function saveChartColors(){
   localStorage.setItem("xauChartColors",JSON.stringify(state.colors));
+}
+function applyGridOff(){
+  try{
+    if(tvWidget&&typeof tvWidget.applyOverrides==="function"){
+      tvWidget.applyOverrides({
+        "paneProperties.background":"#000000",
+        "paneProperties.backgroundType":"solid",
+        "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
+        "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
+        "paneProperties.vertGridProperties.style":0,
+        "paneProperties.horzGridProperties.style":0
+      });
+    }
+  }catch(e){}
 }
 function setupChartColors(){
   const inputs={up:document.getElementById("upColor"),down:document.getElementById("downColor"),wick:document.getElementById("wickColor")};
