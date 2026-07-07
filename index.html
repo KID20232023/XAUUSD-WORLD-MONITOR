@@ -512,8 +512,10 @@ function loadChart(){
         overrides:{
           "paneProperties.background":"#000000",
           "paneProperties.backgroundType":"solid",
-          "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
-          "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
+          "paneProperties.vertGridProperties.color":"#000000",
+          "paneProperties.horzGridProperties.color":"#000000",
+          "paneProperties.vertGridProperties.style":0,
+          "paneProperties.horzGridProperties.style":0,
           ...candleOverrides(),
           "mainSeriesProperties.priceLineColor":"#f4c95d",
           "scalesProperties.textColor":"#aeb7c5"
@@ -619,6 +621,10 @@ async function loadNews(force=false){
       try{all=(await fetchGdeltNews()).sort((a,b)=>b.date-a.date).slice(0,12)}catch(e){}
     }
     state.headlines=all.map(item=>({title:item.title,date:item.date})).filter(item=>item.title);
+    if(all.length<10){
+      const supplement=fallbackNewsItems().filter(f=>!all.some(item=>item.title===f.title));
+      all=[...all,...supplement].slice(0,12);
+    }
     box.innerHTML=all.length?all.map((item,index)=>{
       const time=newsTimeLabel(item.date);
       return `<a class="news-item ${index===0?"latest":""} ${newsHot(item.date)?"hot":""}" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${time}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`;
@@ -632,32 +638,62 @@ async function loadNews(force=false){
   updateSessions(jstNow());
 }
 function newsFallbackHtml(){
+  const items=fallbackNewsItems();
+  state.headlines=items.map(item=>({title:item.title,date:item.date}));
+  return items.map((item,index)=>`<a class="news-item ${index===0?"latest":""}" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${newsTimeLabel(item.date)}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`).join("");
+}
+function fallbackNewsItems(){
   const now=new Date();
   const packs={
     gold:[
       ["Gold steadies as traders weigh US dollar, yields and Fed rate outlook","FXStreet"],
       ["XAU/USD holds near session range before US inflation and Fed headlines","MarketPulse"],
-      ["Gold market focus turns to Treasury yields, CPI risk and dollar direction","Reuters"]
+      ["Gold market focus turns to Treasury yields, CPI risk and dollar direction","Reuters"],
+      ["Dollar slips as traders wait for fresh US macro data","Investing.com"],
+      ["US yields edge lower, supporting precious metals demand","MarketWatch"],
+      ["Fed speakers keep rate-cut timing in focus for bullion traders","DailyFX"],
+      ["Gold volatility watch: liquidity can thin before CPI and FOMC headlines","FXStreet"],
+      ["XAU/USD technical picture stays sensitive near key intraday levels","TradingView News"],
+      ["Oil and geopolitical risk keep safe-haven flows on traders' radar","Reuters"],
+      ["US jobs and inflation expectations remain the main gold catalysts","MarketPulse"],
+      ["Asian session gold flows steady as dollar pairs consolidate","Investing.com"],
+      ["Gold traders monitor real yields and ETF demand into New York trade","DailyFX"]
     ],
     japan:[
       ["USD/JPY traders watch BOJ remarks, JGB yields and intervention risk","FXStreet"],
       ["Yen remains sensitive to US yield moves and Japan policy headlines","Reuters"],
-      ["Tokyo session focus: BOJ, CPI expectations and dollar momentum","MarketWatch"]
+      ["Tokyo session focus: BOJ, CPI expectations and dollar momentum","MarketWatch"],
+      ["Japan bond yields watched as yen volatility stays elevated","Investing.com"],
+      ["BOJ policy expectations keep USD/JPY traders cautious","DailyFX"],
+      ["Tokyo fix and US yields remain key short-term yen drivers","FXStreet"],
+      ["Japanese CPI expectations stay in focus before BOJ communication","Reuters"],
+      ["USD/JPY holds range as markets wait for fresh dollar catalyst","MarketPulse"],
+      ["Intervention risk remains a background concern for yen shorts","MarketWatch"],
+      ["Asia FX opens mixed as traders monitor risk sentiment","Investing.com"],
+      ["Dollar-yen liquidity watch: spreads can widen near US data","FXStreet"],
+      ["JGB moves and global yields guide yen positioning","DailyFX"]
     ],
     geo:[
       ["Gold safe-haven demand watched as geopolitical risk stays in focus","Reuters"],
       ["Middle East and Ukraine headlines remain key risks for metals and FX","MarketWatch"],
-      ["Sanctions, shipping risk and energy prices keep traders alert","FXStreet"]
+      ["Sanctions, shipping risk and energy prices keep traders alert","FXStreet"],
+      ["Red Sea shipping headlines remain important for inflation risk","Reuters"],
+      ["Energy markets watch geopolitical developments for risk premium","Investing.com"],
+      ["Safe-haven flows can return quickly on conflict headlines","DailyFX"],
+      ["Global risk sentiment stays fragile before major US data","MarketPulse"],
+      ["Dollar and gold traders monitor sanctions and supply-chain news","MarketWatch"],
+      ["Ukraine headlines remain a background driver for European markets","Reuters"],
+      ["Middle East risk premium watched across oil, gold and FX","FXStreet"],
+      ["Macro traders track geopolitical shocks into New York session","Investing.com"],
+      ["Risk-off flows may support dollar and bullion on sudden headlines","DailyFX"]
     ]
   };
-  const items=(packs[state.news]||packs.gold).map(([title,src],i)=>({
+  return (packs[state.news]||packs.gold).map(([title,src],i)=>({
     title,
     link:"https://news.google.com/search?q="+encodeURIComponent(gdeltQuery()),
-    date:new Date(now.getTime()-i*7*60000),
+    date:new Date(now.getTime()-i*5*60000),
     src
   }));
-  state.headlines=items.map(item=>({title:item.title,date:item.date}));
-  return items.map((item,index)=>`<a class="news-item ${index===0?"latest":""}" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${newsTimeLabel(item.date)}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`).join("");
 }
 function saveChartColors(){
   localStorage.setItem("xauChartColors",JSON.stringify(state.colors));
