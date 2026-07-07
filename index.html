@@ -7,7 +7,21 @@
 <meta name="description" content="XAUUSD, USDJPY, major markets, sessions, news, and economic calendar monitor.">
 <style>
 *{box-sizing:border-box}
-:root{--bg:#020307;--panel:#070911;--panel2:#0e1220;--line:#20263a;--text:#f2f5f9;--muted:#9aa4b2;--soft:#c8d0da;--gold:#f4c95d;--green:#1fd17b;--red:#ff5871;--cyan:#4db3ff;--violet:#a78bfa;--shadow:none}
+:root{
+  --bg:#020307;
+  --panel:#070911;
+  --panel2:#0e1220;
+  --line:#20263a;
+  --text:#f2f5f9;
+  --muted:#9aa4b2;
+  --soft:#c8d0da;
+  --gold:#f4c95d;
+  --green:#1fd17b;
+  --red:#ff5871;
+  --cyan:#4db3ff;
+  --violet:#a78bfa;
+  --shadow:none;
+}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI","Helvetica Neue",Arial,"Hiragino Sans",Meiryo,sans-serif}
 body{overflow:hidden}
 button,input,textarea{font:inherit}
@@ -61,6 +75,9 @@ button{cursor:pointer}
 .seg button,.tool-btn{border:0;border-radius:2px;background:transparent;color:var(--muted);font-size:10px;font-weight:900;padding:4px 7px;white-space:nowrap}
 .seg button.active,.tool-btn.active{background:var(--panel2);color:var(--gold)}
 .tool-btn{border:1px solid #141a27;background:#020307;color:var(--soft);text-decoration:none}
+.color-controls{display:flex;align-items:center;gap:4px;background:#010205;border:1px solid #141a27;border-radius:2px;padding:2px 5px}
+.color-controls label{display:flex;align-items:center;gap:3px;color:var(--muted);font-size:10px;font-weight:900;white-space:nowrap}
+.color-controls input{width:20px;height:18px;border:0;background:transparent;padding:0}
 #chart{height:calc(100% - 30px);background:#000}
 #local_chart,#tv_fallback_chart{height:100%;width:100%;border:0;display:block;background:#000}
 .chart-fallback{position:absolute;inset:30px 0 0 0;display:none;align-items:center;justify-content:center;background:#000;color:#dfe6ee;text-align:center;padding:20px;font-size:13px;font-weight:900}
@@ -105,109 +122,182 @@ button{cursor:pointer}
 .footer{display:flex;justify-content:space-between;align-items:center;gap:8px;border-radius:4px;padding:0 8px;color:var(--muted);font-size:10px;font-weight:800}
 ::-webkit-scrollbar{width:7px;height:7px}
 ::-webkit-scrollbar-thumb{background:#333b4d;border-radius:999px}
-@media (max-width:1180px){body{overflow:auto}#app{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr;align-items:stretch}.market-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.clock{justify-content:space-between}.layout{grid-template-columns:1fr}.maincol,.sidecol{grid-template-rows:auto}.panel{min-height:260px}.chart-panel{height:62vh;min-height:430px}.session-panel{min-height:210px}.news-panel{min-height:420px}}
-@media (max-width:680px){#app{padding:6px;gap:6px}.market-strip{grid-template-columns:1fr}.session-grid{grid-template-columns:1fr}.session-panel{min-height:440px}.panel-head{height:auto;min-height:36px;align-items:flex-start;flex-direction:column;padding:8px 10px}.panel-tools{width:100%;overflow:auto}.seg{min-width:max-content}.footer{flex-direction:column;align-items:flex-start}}
+@media (max-width:1180px){
+  body{overflow:auto}
+  #app{height:auto;min-height:100vh}
+  .topbar{grid-template-columns:1fr;align-items:stretch}
+  .market-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .clock{justify-content:space-between}
+  .layout{grid-template-columns:1fr}
+  .maincol,.sidecol{grid-template-rows:auto}
+  .panel{min-height:260px}
+  .chart-panel{height:62vh;min-height:430px}
+  .session-panel{min-height:210px}
+  .news-panel{min-height:420px}
+}
+@media (max-width:680px){
+  #app{padding:6px;gap:6px}
+  .market-strip{grid-template-columns:1fr}
+  .session-grid{grid-template-columns:1fr}
+  .session-panel{min-height:440px}
+  .panel-head{height:auto;min-height:36px;align-items:flex-start;flex-direction:column;padding:8px 10px}
+  .panel-tools{width:100%;overflow:auto}
+  .seg{min-width:max-content}
+  .footer{flex-direction:column;align-items:flex-start}
+}
 </style>
 </head>
 <body>
 <div id="app">
-<header class="topbar">
-<div class="brand-box"><div><div class="brand-main">NEXUS FX WAR ROOM</div><div class="brand-sub">XAUUSD COMMAND CENTER</div></div></div>
-<div class="live-box">LIVE <span class="live-dot"></span></div>
-<div class="alert-box"><button class="alert-btn" id="alertBtn" type="button">ALERT ON</button></div>
-<div class="time-box"><div class="clock"><span class="live-dot"></span><span class="clock-date" id="clockDate">----/--/--</span><strong class="clock-time" id="clockTime">--:--:--</strong><span class="clock-zone">JST</span></div></div>
-</header>
+  <header class="topbar">
+    <div class="brand-box">
+      <div>
+        <div class="brand-main">NEXUS FX WAR ROOM</div>
+        <div class="brand-sub">XAUUSD COMMAND CENTER</div>
+      </div>
+    </div>
+    <div class="live-box">LIVE <span class="live-dot"></span></div>
+    <div class="alert-box"><button class="alert-btn" id="alertBtn" type="button">ALERT ON</button></div>
+    <div class="time-box">
+      <div class="clock"><span class="live-dot"></span><span class="clock-date" id="clockDate">----/--/--</span><strong class="clock-time" id="clockTime">--:--:--</strong><span class="clock-zone">JST</span></div>
+    </div>
+  </header>
 
-<section class="ticker" aria-label="Live currency tape">
-<div class="tradingview-widget-container">
-<div class="tradingview-widget-container__widget"></div>
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-{"symbols":[{"proName":"OANDA:XAUUSD","title":"XAUUSD"},{"proName":"FX:USDJPY","title":"USDJPY"},{"proName":"FX:EURUSD","title":"EURUSD"},{"proName":"FX:GBPUSD","title":"GBPUSD"},{"proName":"BINANCE:BTCUSDT","title":"BTCUSD"},{"proName":"BINANCE:ETHUSDT","title":"ETHUSD"}],"showSymbolLogo":false,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"ja"}</script>
-</div>
-</section>
+  <section class="ticker" aria-label="Live currency tape">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {"symbols":[{"proName":"OANDA:XAUUSD","title":"XAUUSD"},{"proName":"FX:USDJPY","title":"USDJPY"},{"proName":"FX:EURUSD","title":"EURUSD"},{"proName":"FX:GBPUSD","title":"GBPUSD"},{"proName":"BINANCE:BTCUSDT","title":"BTCUSD"},{"proName":"BINANCE:ETHUSDT","title":"ETHUSD"}],"showSymbolLogo":false,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"ja"}</script>
+    </div>
+  </section>
 
-<section class="flowbar" aria-label="Session and news flow"><div class="flow-inner" id="flowInner"></div></section>
+  <section class="flowbar" aria-label="Session and news flow">
+    <div class="flow-inner" id="flowInner"></div>
+  </section>
 
-<main class="layout">
-<section class="maincol">
-<article class="panel chart-panel">
-<div class="panel-head">
-<span>XAUUSD ANALYSIS CHART</span>
-<div class="panel-tools">
-<button class="tool-btn" id="reloadChart" type="button">Reload</button>
-<a class="tool-btn" href="http://localhost:8792/" target="_blank" rel="noopener">Open</a>
-</div>
-</div>
-<div id="chart">
-<iframe id="local_chart" title="Local XAUUSD chart" src="about:blank"></iframe><div id="tv_fallback_chart"></div>
-<div class="chart-fallback" id="chartFallback">
-<div>
-<div>LOCAL CHART IS NOT LOADED</div>
-<div style="color:#9aa4b2;margin-top:6px">Start chart_only_dashboard.py, then press Reload.</div>
-<button type="button" id="retryLocalChart">Reload</button>
-<a href="http://127.0.0.1:8792/?embed=warroom" target="_blank" rel="noopener">Open local chart</a>
-</div>
-</div>
-</div>
-</article>
+  <main class="layout">
+    <section class="maincol">
+      <article class="panel chart-panel">
+        <div class="panel-head">
+          <span>XAUUSD ANALYSIS CHART</span>
+          <div class="panel-tools">
+            <button class="tool-btn" id="reloadChart" type="button">Reload</button>
+            <a class="tool-btn" href="http://localhost:8792/" target="_blank" rel="noopener">Open</a>
+          </div>
+        </div>
+        <div id="chart">
+          <div id="tv_fallback_chart"></div>
+          <div class="chart-fallback" id="chartFallback">
+            <div>
+              <div>LOCAL CHART IS NOT LOADED</div>
+              <div style="color:#9aa4b2;margin-top:6px">Start chart_only_dashboard.py, then press Reload.</div>
+              <button type="button" id="retryLocalChart">Reload</button>
+              <a href="http://127.0.0.1:8792/?embed=warroom" target="_blank" rel="noopener">Open local chart</a>
+            </div>
+          </div>
+        </div>
+      </article>
 
-<article class="panel">
-<div class="panel-head"><span>HIGH IMPACT ECONOMIC CALENDAR</span><span>USD / JPY / MONTH</span></div>
-<div class="calendar" id="impactCalendar">
-<div class="tv-calendar">
-<div class="tradingview-widget-container" style="height:100%;width:100%">
-<div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-{"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"0,1","currencyFilter":"USD,JPY,EUR,GBP,CNY"}</script>
-</div>
-</div>
-<div class="mini-month">
-<div class="mini-title"><span id="calMonth">---- --</span><span>TODAY</span></div>
-<div class="mini-week"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
-<div class="mini-days" id="calDays"></div>
-</div>
-</div>
-</article>
-</section>
+      <article class="panel">
+        <div class="panel-head"><span>HIGH IMPACT ECONOMIC CALENDAR</span><span>USD / JPY / MONTH</span></div>
+        <div class="calendar" id="impactCalendar">
+          <div class="tv-calendar">
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+              <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+              <script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+              {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"ja","importanceFilter":"0,1","currencyFilter":"USD,JPY,EUR,GBP,CNY"}</script>
+            </div>
+          </div>
+          <div class="mini-month">
+            <div class="mini-title"><span id="calMonth">---- --</span><span>TODAY</span></div>
+            <div class="mini-week"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+            <div class="mini-days" id="calDays"></div>
+          </div>
+        </div>
+      </article>
+    </section>
 
-<aside class="sidecol">
-<article class="panel session-panel">
-<div class="panel-head"><span class="blink-title">MARKET HOURS</span><span id="weekState">Market status</span></div>
-<div class="session-grid" id="sessions"></div>
-</article>
+    <aside class="sidecol">
+      <article class="panel session-panel">
+        <div class="panel-head"><span class="blink-title">MARKET HOURS</span><span id="weekState">Market status</span></div>
+        <div class="session-grid" id="sessions"></div>
+      </article>
 
-<article class="panel news-panel">
-<div class="panel-head">
-<span class="live-title">LIVE NEWS</span>
-<div class="panel-tools"><span class="news-refresh" id="newsRefresh">NEXT --:--</span><button class="tool-btn" id="refreshNews" type="button">Refresh</button></div>
-</div>
-<div class="news-body">
-<div class="news-tabs" id="newsTabs">
-<button class="active" data-news="gold">Gold</button>
-<button data-news="japan">Japan</button>
-<button data-news="geo">Geo</button>
-</div>
-<div class="news-list" id="newsList"><div class="empty">Loading news...</div></div>
-</div>
-</article>
-</aside>
-</main>
+      <article class="panel news-panel">
+        <div class="panel-head">
+          <span class="live-title">LIVE NEWS</span>
+          <div class="panel-tools"><span class="news-refresh" id="newsRefresh">NEXT --:--</span><button class="tool-btn" id="refreshNews" type="button">Refresh</button></div>
+        </div>
+        <div class="news-body">
+          <div class="news-tabs" id="newsTabs">
+            <button class="active" data-news="gold">Gold</button>
+            <button data-news="japan">Japan</button>
+            <button data-news="geo">Geo</button>
+          </div>
+          <div class="news-list" id="newsList"><div class="empty">Loading news...</div></div>
+        </div>
+      </article>
+    </aside>
+  </main>
 
-<footer class="footer">
-<span>Information only. Not investment advice.</span>
-<span id="updated">Last update: --:--:--</span>
-<span>Auto refresh enabled</span>
-</footer>
+  <footer class="footer">
+    <span>Information only. Not investment advice.</span>
+    <span id="updated">Last update: --:--:--</span>
+    <span>Auto refresh enabled</span>
+  </footer>
 </div>
 
 <script>
+const sharedChartUrl="https://jp.tradingview.com/chart/CLgfBGtt/?source=promo_go_pro_button";
+const defaultChartColors={up:"#2f6bff",down:"#ff4d5e",wick:"#4b5563"};
 const NEWS_REFRESH_MS=30000;
-const state={news:"gold",headlines:[],nextNewsAt:Date.now()+NEWS_REFRESH_MS,alertOn:true};
+let savedChartColors={};
+try{savedChartColors=JSON.parse(localStorage.getItem("xauChartColors")||"{}")}catch(e){}
+const state={symbol:"OANDA:XAUUSD",symbolTitle:"XAUUSD",timeframe:"15",news:"gold",colors:{...defaultChartColors,...savedChartColors},headlines:[],nextNewsAt:Date.now()+NEWS_REFRESH_MS,alertOn:true};
+let tvWidget=null;
 let newsLoading=false;
-const sessions=[{id:"asia",name:"Asia",start:7*60,end:15*60,range:"07:00 - 15:00 JST"},{id:"london",name:"London",start:15*60,end:21*60,range:"15:00 - 21:00 JST"},{id:"newyork",name:"New York",start:21*60,end:30*60,range:"21:00 - 06:00 JST"}];
+const sessions=[
+  {id:"asia",name:"Asia",start:7*60,end:15*60,range:"07:00 - 15:00 JST"},
+  {id:"london",name:"London",start:15*60,end:21*60,range:"15:00 - 21:00 JST"},
+  {id:"newyork",name:"New York",start:21*60,end:30*60,range:"21:00 - 06:00 JST"}
+];
 const impactEvents=[
-{date:"2026-07-01",time:"21:15",ccy:"USD",title:"ADP Employment"},{date:"2026-07-01",time:"23:00",ccy:"USD",title:"ISM Manufacturing PMI"},{date:"2026-07-02",time:"21:30",ccy:"USD",title:"NFP / Unemployment"},{date:"2026-07-02",time:"21:30",ccy:"USD",title:"Jobless Claims"},{date:"2026-07-06",time:"23:00",ccy:"USD",title:"ISM Services PMI"},{date:"2026-07-07",time:"23:00",ccy:"USD",title:"JOLTS Job Openings"},{date:"2026-07-09",time:"03:00",ccy:"USD",title:"FOMC Minutes"},{date:"2026-07-09",time:"21:30",ccy:"USD",title:"Jobless Claims"},{date:"2026-07-15",time:"21:30",ccy:"USD",title:"CPI"},{date:"2026-07-16",time:"21:30",ccy:"USD",title:"PPI"},{date:"2026-07-16",time:"21:30",ccy:"USD",title:"Jobless Claims"},{date:"2026-07-17",time:"21:30",ccy:"USD",title:"Retail Sales"},{date:"2026-07-23",time:"21:30",ccy:"USD",title:"Jobless Claims"},{date:"2026-07-24",time:"08:30",ccy:"JPY",title:"Japan CPI"},{date:"2026-07-29",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},{date:"2026-07-30",time:"21:30",ccy:"USD",title:"Jobless Claims"},{date:"2026-07-30",time:"21:30",ccy:"USD",title:"GDP"},{date:"2026-07-31",time:"21:30",ccy:"USD",title:"Core PCE"},{date:"2026-07-31",time:"12:00",ccy:"JPY",title:"BOJ Rate Decision"},{date:"2026-09-16",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},{date:"2026-10-28",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},{date:"2026-12-09",time:"04:00",ccy:"USD",title:"FOMC Rate Decision"}];
-const feeds={gold:["https://www.fxstreet.com/rss/news","https://www.fxstreet.com/rss/analysis","https://news.google.com/rss/search?q=XAUUSD%20OR%20gold%20price%20OR%20Kitco&hl=en-US&gl=US&ceid=US:en"],japan:["https://news.google.com/rss/search?q=USDJPY%20OR%20BOJ%20OR%20Japan%20yen%20OR%20%E6%97%A5%E9%8A%80&hl=ja&gl=JP&ceid=JP:ja"],geo:["https://news.google.com/rss/search?q=Middle%20East%20OR%20Ukraine%20OR%20Red%20Sea%20OR%20sanctions%20market&hl=en-US&gl=US&ceid=US:en"]};
+  {date:"2026-07-01",time:"21:15",ccy:"USD",title:"ADP Employment"},
+  {date:"2026-07-01",time:"23:00",ccy:"USD",title:"ISM Manufacturing PMI"},
+  {date:"2026-07-02",time:"21:30",ccy:"USD",title:"NFP / Unemployment"},
+  {date:"2026-07-02",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-06",time:"23:00",ccy:"USD",title:"ISM Services PMI"},
+  {date:"2026-07-07",time:"23:00",ccy:"USD",title:"JOLTS Job Openings"},
+  {date:"2026-07-09",time:"03:00",ccy:"USD",title:"FOMC Minutes"},
+  {date:"2026-07-09",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-15",time:"21:30",ccy:"USD",title:"CPI"},
+  {date:"2026-07-16",time:"21:30",ccy:"USD",title:"PPI"},
+  {date:"2026-07-16",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-17",time:"21:30",ccy:"USD",title:"Retail Sales"},
+  {date:"2026-07-23",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-24",time:"08:30",ccy:"JPY",title:"Japan CPI"},
+  {date:"2026-07-29",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
+  {date:"2026-07-30",time:"21:30",ccy:"USD",title:"Jobless Claims"},
+  {date:"2026-07-30",time:"21:30",ccy:"USD",title:"GDP"},
+  {date:"2026-07-31",time:"21:30",ccy:"USD",title:"Core PCE"},
+  {date:"2026-07-31",time:"12:00",ccy:"JPY",title:"BOJ Rate Decision"},
+  {date:"2026-09-16",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
+  {date:"2026-10-28",time:"03:00",ccy:"USD",title:"FOMC Rate Decision"},
+  {date:"2026-12-09",time:"04:00",ccy:"USD",title:"FOMC Rate Decision"}
+];
+const feeds={
+  gold:[
+    "https://www.fxstreet.com/rss/news",
+    "https://www.fxstreet.com/rss/analysis",
+    "https://news.google.com/rss/search?q=XAUUSD%20OR%20gold%20price%20OR%20Kitco&hl=en-US&gl=US&ceid=US:en"
+  ],
+  japan:[
+    "https://news.google.com/rss/search?q=USDJPY%20OR%20BOJ%20OR%20Japan%20yen%20OR%20%E6%97%A5%E9%8A%80&hl=ja&gl=JP&ceid=JP:ja"
+  ],
+  geo:[
+    "https://news.google.com/rss/search?q=Middle%20East%20OR%20Ukraine%20OR%20Red%20Sea%20OR%20sanctions%20market&hl=en-US&gl=US&ceid=US:en"
+  ]
+};
 function pad(n){return String(n).padStart(2,"0")}
 function jstNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
 function minuteOfDay(d){return d.getHours()*60+d.getMinutes()}
@@ -219,40 +309,368 @@ function formatDuration(min){const h=Math.floor(min/60),m=min%60;return h>0?`${h
 function dateKey(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
 function impactDate(event){return new Date(`${event.date}T${event.time}:00+09:00`)}
 function sameDay(a,b){return dateKey(a)===dateKey(b)}
-function nthWeekdayOfMonth(y,m,weekday,n){const d=new Date(y,m,1);const offset=(weekday-d.getDay()+7)%7;d.setDate(1+offset+(n-1)*7);return d.getMonth()===m?d:null}
-function lastWeekdayOfMonth(y,m,weekday){const d=new Date(y,m+1,0);d.setDate(d.getDate()-((d.getDay()-weekday+7)%7));return d}
-function monthlyImpactFallback(y,m){const items=[{d:nthWeekdayOfMonth(y,m,3,1),time:"21:15",ccy:"USD",title:"ADP window"},{d:nthWeekdayOfMonth(y,m,5,1),time:"21:30",ccy:"USD",title:"NFP window"},{d:nthWeekdayOfMonth(y,m,1,1),time:"23:00",ccy:"USD",title:"ISM Services window"},{d:nthWeekdayOfMonth(y,m,2,1),time:"23:00",ccy:"USD",title:"JOLTS window"},{d:nthWeekdayOfMonth(y,m,2,2),time:"21:30",ccy:"USD",title:"CPI window"},{d:nthWeekdayOfMonth(y,m,3,2),time:"21:30",ccy:"USD",title:"PPI window"},{d:nthWeekdayOfMonth(y,m,4,3),time:"21:30",ccy:"USD",title:"Retail Sales window"},{d:nthWeekdayOfMonth(y,m,5,4),time:"08:30",ccy:"JPY",title:"Japan CPI window"},{d:lastWeekdayOfMonth(y,m,5),time:"21:30",ccy:"USD",title:"Core PCE window"}];return items.filter(item=>item.d).map(item=>({date:dateKey(item.d),time:item.time,ccy:item.ccy,title:item.title}))}
-function impactEventsForMonth(y,m){const monthKey=`${y}-${pad(m+1)}`;const explicit=impactEvents.filter(e=>e.date.startsWith(monthKey));const byDate=new Map(monthlyImpactFallback(y,m).map(e=>[`${e.date}-${e.title}`,e]));explicit.forEach(e=>byDate.set(`${e.date}-${e.title}`,e));return [...byDate.values()].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))}
-function impactHot(event,now){const t=impactDate(event).getTime();const n=now.getTime();return n>=t-60*60*1000&&n<=t+60*60*1000}
-function timeUntilEvent(event,now){const diff=impactDate(event).getTime()-now.getTime();if(diff<=0)return "LIVE";const min=Math.ceil(diff/60000);if(min<60)return `${min}m`;const h=Math.floor(min/60),m=min%60;if(h<48)return `${h}h ${pad(m)}m`;return `${Math.floor(h/24)}d ${h%24}h`}
-function flowImpactItems(now){const y=now.getFullYear(),m=now.getMonth();const pool=[...impactEventsForMonth(y,m),...impactEventsForMonth(new Date(y,m+1,1).getFullYear(),new Date(y,m+1,1).getMonth())];return pool.filter(event=>impactDate(event).getTime()>=now.getTime()-90*60*1000).slice(0,10).map(event=>{const d=impactDate(event);const day=`${pad(d.getMonth()+1)}/${pad(d.getDate())}`;const cls=impactHot(event,now)?"flow-impact soon":"flow-impact next";return `<span class="${cls}">${day} ${event.time} ${escapeHtml(event.ccy)} ${escapeHtml(event.title)} | ${timeUntilEvent(event,now)}</span>`})}
-function renderImpactCalendar(){const now=jstNow();const y=now.getFullYear(),m=now.getMonth();const first=new Date(y,m,1);const daysInMonth=new Date(y,m+1,0).getDate();const start=first.getDay();document.getElementById("calMonth").textContent=`${y}/${pad(m+1)}`;const monthEvents=impactEventsForMonth(y,m);const eventsByDay=monthEvents.reduce((map,event)=>{const day=Number(event.date.slice(8,10));if(!map.has(day))map.set(day,[]);map.get(day).push(event);return map},new Map());const cells=[];for(let i=0;i<42;i++){const day=i-start+1;if(day<1||day>daysInMonth){cells.push('<div class="day"></div>');continue}const d=new Date(y,m,day);const cls=["day"];if(sameDay(d,now))cls.push("today");const events=eventsByDay.get(day)||[];if(events.length)cls.push("impact");const title=events.length?` title="${escapeHtml(events.map(e=>`${e.time} ${e.ccy} ${e.title}`).join(" / "))}"`:"";cells.push(`<div class="${cls.join(" ")}"${title}>${day}</div>`)}document.getElementById("calDays").innerHTML=cells.join("")}
-function updateClock(){const n=jstNow();const date=`${n.getFullYear()}/${pad(n.getMonth()+1)}/${pad(n.getDate())}`;const time=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;document.getElementById("clockDate").textContent=date;document.getElementById("clockTime").textContent=time;document.getElementById("updated").textContent="Last update: "+date+" "+time+" JST";updateNewsCountdown();updateSessions(n);renderImpactCalendar()}
-function newsCountdownText(){const remain=Math.max(0,state.nextNewsAt-Date.now());const total=Math.ceil(remain/1000);return `${pad(Math.floor(total/60))}:${pad(total%60)}`}
-function minutesAgo(date){const d=date instanceof Date&&!Number.isNaN(date.getTime())?date:new Date();return Math.max(0,Math.floor((Date.now()-d.getTime())/60000))}
-function newsAgeLabel(date){const diff=minutesAgo(date);if(diff<1)return "NOW";if(diff<60)return `${diff}m ago`;return `${Math.floor(diff/60)}h ago`}
-function newsHot(date){return minutesAgo(date)<=60}
-function updateNewsCountdown(){document.getElementById("newsRefresh").textContent="NEXT "+newsCountdownText()}
-function updateSessions(n){const nowMin=minuteOfDay(n),closed=isWeekend(n);const wrap=document.getElementById("sessions");let active=[];wrap.innerHTML=sessions.map(s=>{const open=!closed&&sessionOpen(s,nowMin);const until=minutesUntil(nowMin,s.start);const soon=!open&&!closed&&until<=90;if(open)active.push(s.name);const cls=open?"session open":soon?"session soon":"session";const state=open?"OPEN":closed?"WEEKEND":soon?"SOON":"CLOSED";const next=open?"Active now":closed?"Market closed":`Opens in ${formatDuration(until)}`;return `<div class="${cls}"><b>${s.name}</b><div class="state">${state}</div><div class="range">${s.range}</div><div class="next">${next}</div></div>`}).join("");document.getElementById("weekState").textContent=closed?"Weekend":"Live market";updateFlow(active,closed)}
-function updateFlow(active,closed){const sessionText=closed?"MARKET CLOSED":active.length?`${active.join(" / ")} SESSION OPEN`:"BETWEEN SESSIONS";const news=state.headlines.length?state.headlines.slice(0,8):[{title:"NEWS FEED STANDBY",date:new Date()}];const impacts=flowImpactItems(jstNow());document.getElementById("flowInner").innerHTML=[`<span class="flow-item flow-label">SESSION</span>`,`<span class="flow-item flow-alert">MARKET HOURS</span>`,`<span class="flow-item flow-session">${escapeHtml(sessionText)}</span>`,`<span class="flow-item flow-label">HIGH IMPACT</span>`,`<span class="flow-item flow-alert">DANGER EVENTS</span>`,...impacts,`<span class="flow-item flow-label">NEWS UPDATE</span>`,`<span class="flow-item flow-alert">NEXT ${newsCountdownText()}</span>`,`<span class="flow-item flow-label">NEWS</span>`,...news.map(item=>`<span class="flow-item flow-news ${newsHot(item.date)?"hot":""}">${escapeHtml(newsAgeLabel(item.date))} | ${escapeHtml(item.title)}</span>`)].join("")}
-function loadChart(){const localFrame=document.getElementById("local_chart");const tvBox=document.getElementById("tv_fallback_chart");const fallback=document.getElementById("chartFallback");const isLocalHost=["localhost","127.0.0.1"].includes(location.hostname)||location.protocol==="file:";if(fallback)fallback.classList.remove("show");if(isLocalHost){if(tvBox)tvBox.style.display="none";if(localFrame){localFrame.style.display="block";localFrame.src="http://127.0.0.1:8792/?embed=warroom&refresh="+Date.now()}return}if(localFrame)localFrame.style.display="none";if(tvBox){tvBox.style.display="block";renderTradingViewFallback()}}
-function renderTradingViewFallback(){const holder=document.getElementById("tv_fallback_chart");if(!holder)return;holder.innerHTML="";const render=()=>{try{new TradingView.widget({autosize:true,symbol:"OANDA:XAUUSD",interval:"15",timezone:"Asia/Tokyo",theme:"dark",style:"1",locale:"ja",container_id:"tv_fallback_chart",hide_volume:true,hide_side_toolbar:false,hide_top_toolbar:false,allow_symbol_change:true,withdateranges:true,disabled_features:["header_compare","header_screenshot","volume_force_overlay","create_volume_indicator_by_default"],overrides:{"paneProperties.background":"#000000","paneProperties.backgroundType":"solid","paneProperties.vertGridProperties.color":"#000000","paneProperties.horzGridProperties.color":"#000000","mainSeriesProperties.candleStyle.upColor":"#2f6bff","mainSeriesProperties.candleStyle.downColor":"#ff4d5e","mainSeriesProperties.candleStyle.borderUpColor":"#2f6bff","mainSeriesProperties.candleStyle.borderDownColor":"#ff4d5e","mainSeriesProperties.candleStyle.wickUpColor":"#4b5563","mainSeriesProperties.candleStyle.wickDownColor":"#4b5563","mainSeriesProperties.priceLineColor":"#f4c95d","scalesProperties.textColor":"#aeb7c5"}})}catch(e){holder.innerHTML='<div class="empty">Chart loading failed. Press Reload.</div>'}};if(window.TradingView){render();return}const script=document.createElement("script");script.src="https://s3.tradingview.com/tv.js";script.onload=render;script.onerror=()=>{holder.innerHTML='<div class="empty">TradingView script failed. Reload this page.</div>'};document.body.appendChild(script)}
-function rssItemsFromXml(xmlText,url){const xml=new DOMParser().parseFromString(xmlText,"text/xml");const feedTitle=xml.querySelector("channel > title, feed > title")?.textContent||"NEWS";return [...xml.querySelectorAll("item, entry")].map(item=>{const title=item.querySelector("title")?.textContent||"Untitled";const linkNode=item.querySelector("link");const link=linkNode?.getAttribute("href")||linkNode?.textContent||url;const dateText=item.querySelector("pubDate, published, updated")?.textContent||Date.now();return {title,link,date:new Date(dateText),src:feedTitle.replace(/ - .*$/,"")}})}
-async function fetchFeedViaRss2Json(url){const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(cacheBustUrl(url))+"&_="+Date.now();const r=await fetchWithTimeout(api,4000);if(!r.ok)throw new Error("rss");const j=await r.json();return (j.items||[]).map(item=>({title:item.title||"Untitled",link:item.link||"#",date:new Date(item.pubDate||Date.now()),src:(j.feed&&j.feed.title?j.feed.title:"NEWS").replace(/ - .*$/,"")}))}
-async function fetchFeedViaAllOrigins(url){const api="https://api.allorigins.win/raw?url="+encodeURIComponent(cacheBustUrl(url))+"&_="+Date.now();const r=await fetchWithTimeout(api,4000);if(!r.ok)throw new Error("xml");return rssItemsFromXml(await r.text(),url)}
-async function fetchFeed(url){try{const items=await fetchFeedViaAllOrigins(url);if(items.length)return items}catch(e){}return fetchFeedViaRss2Json(url)}
+function nthWeekdayOfMonth(y,m,weekday,n){
+  const d=new Date(y,m,1);
+  const offset=(weekday-d.getDay()+7)%7;
+  d.setDate(1+offset+(n-1)*7);
+  return d.getMonth()===m?d:null;
+}
+function lastWeekdayOfMonth(y,m,weekday){
+  const d=new Date(y,m+1,0);
+  d.setDate(d.getDate()-((d.getDay()-weekday+7)%7));
+  return d;
+}
+function monthlyImpactFallback(y,m){
+  const items=[
+    {d:nthWeekdayOfMonth(y,m,3,1),time:"21:15",ccy:"USD",title:"ADP window"},
+    {d:nthWeekdayOfMonth(y,m,5,1),time:"21:30",ccy:"USD",title:"NFP window"},
+    {d:nthWeekdayOfMonth(y,m,1,1),time:"23:00",ccy:"USD",title:"ISM Services window"},
+    {d:nthWeekdayOfMonth(y,m,2,1),time:"23:00",ccy:"USD",title:"JOLTS window"},
+    {d:nthWeekdayOfMonth(y,m,2,2),time:"21:30",ccy:"USD",title:"CPI window"},
+    {d:nthWeekdayOfMonth(y,m,3,2),time:"21:30",ccy:"USD",title:"PPI window"},
+    {d:nthWeekdayOfMonth(y,m,4,3),time:"21:30",ccy:"USD",title:"Retail Sales window"},
+    {d:nthWeekdayOfMonth(y,m,5,4),time:"08:30",ccy:"JPY",title:"Japan CPI window"},
+    {d:lastWeekdayOfMonth(y,m,5),time:"21:30",ccy:"USD",title:"Core PCE window"}
+  ];
+  return items.filter(item=>item.d).map(item=>({
+    date:dateKey(item.d),
+    time:item.time,
+    ccy:item.ccy,
+    title:item.title
+  }));
+}
+function impactEventsForMonth(y,m){
+  const monthKey=`${y}-${pad(m+1)}`;
+  const explicit=impactEvents.filter(e=>e.date.startsWith(monthKey));
+  const byDate=new Map(monthlyImpactFallback(y,m).map(e=>[`${e.date}-${e.title}`,e]));
+  explicit.forEach(e=>byDate.set(`${e.date}-${e.title}`,e));
+  return [...byDate.values()].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+}
+function impactHot(event,now){
+  const t=impactDate(event).getTime();
+  const n=now.getTime();
+  return n>=t-60*60*1000&&n<=t+60*60*1000;
+}
+function timeUntilEvent(event,now){
+  const diff=impactDate(event).getTime()-now.getTime();
+  if(diff<=0)return "LIVE";
+  const min=Math.ceil(diff/60000);
+  if(min<60)return `${min}m`;
+  const h=Math.floor(min/60),m=min%60;
+  if(h<48)return `${h}h ${pad(m)}m`;
+  return `${Math.floor(h/24)}d ${h%24}h`;
+}
+function flowImpactItems(now){
+  const y=now.getFullYear(),m=now.getMonth();
+  const pool=[
+    ...impactEventsForMonth(y,m),
+    ...impactEventsForMonth(new Date(y,m+1,1).getFullYear(),new Date(y,m+1,1).getMonth())
+  ];
+  return pool
+    .filter(event=>impactDate(event).getTime()>=now.getTime()-90*60*1000)
+    .slice(0,10)
+    .map(event=>{
+      const d=impactDate(event);
+      const day=`${pad(d.getMonth()+1)}/${pad(d.getDate())}`;
+      const cls=impactHot(event,now)?"flow-impact soon":"flow-impact next";
+      return `<span class="${cls}">${day} ${event.time} ${escapeHtml(event.ccy)} ${escapeHtml(event.title)} | ${timeUntilEvent(event,now)}</span>`;
+    });
+}
+function renderImpactCalendar(){
+  const now=jstNow();
+  const y=now.getFullYear(),m=now.getMonth();
+  const first=new Date(y,m,1);
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const start=first.getDay();
+  document.getElementById("calMonth").textContent=`${y}/${pad(m+1)}`;
+  const monthEvents=impactEventsForMonth(y,m);
+  const eventsByDay=monthEvents.reduce((map,event)=>{
+    const day=Number(event.date.slice(8,10));
+    if(!map.has(day))map.set(day,[]);
+    map.get(day).push(event);
+    return map;
+  },new Map());
+  const cells=[];
+  for(let i=0;i<42;i++){
+    const day=i-start+1;
+    if(day<1||day>daysInMonth){cells.push('<div class="day"></div>');continue}
+    const d=new Date(y,m,day);
+    const cls=["day"];
+    if(sameDay(d,now))cls.push("today");
+    const events=eventsByDay.get(day)||[];
+    if(events.length)cls.push("impact");
+    const title=events.length?` title="${escapeHtml(events.map(e=>`${e.time} ${e.ccy} ${e.title}`).join(" / "))}"`:"";
+    cells.push(`<div class="${cls.join(" ")}"${title}>${day}</div>`);
+  }
+  document.getElementById("calDays").innerHTML=cells.join("");
+}
+function updateClock(){
+  const n=jstNow();
+  const date=`${n.getFullYear()}/${pad(n.getMonth()+1)}/${pad(n.getDate())}`;
+  const time=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  document.getElementById("clockDate").textContent=date;
+  document.getElementById("clockTime").textContent=time;
+  document.getElementById("updated").textContent="Last update: "+date+" "+time+" JST";
+  updateNewsCountdown();
+  updateSessions(n);
+  renderImpactCalendar();
+}
+function newsCountdownText(){
+  const remain=Math.max(0,state.nextNewsAt-Date.now());
+  const total=Math.ceil(remain/1000);
+  return `${pad(Math.floor(total/60))}:${pad(total%60)}`;
+}
+function minutesAgo(date){
+  const d=date instanceof Date&&!Number.isNaN(date.getTime())?date:new Date();
+  return Math.max(0,Math.floor((Date.now()-d.getTime())/60000));
+}
+function newsAgeLabel(date){
+  const diff=minutesAgo(date);
+  if(diff<1)return "NOW";
+  if(diff<60)return `${diff}m ago`;
+  return `${Math.floor(diff/60)}h ago`;
+}
+function newsHot(date){
+  return minutesAgo(date)<=60;
+}
+function updateNewsCountdown(){
+  document.getElementById("newsRefresh").textContent="NEXT "+newsCountdownText();
+}
+function updateSessions(n){
+  const nowMin=minuteOfDay(n),closed=isWeekend(n);
+  const wrap=document.getElementById("sessions");
+  let active=[];
+  wrap.innerHTML=sessions.map(s=>{
+    const open=!closed&&sessionOpen(s,nowMin);
+    const until=minutesUntil(nowMin,s.start);
+    const soon=!open&&!closed&&until<=90;
+    if(open)active.push(s.name);
+    const cls=open?"session open":soon?"session soon":"session";
+    const state=open?"OPEN":closed?"WEEKEND":soon?"SOON":"CLOSED";
+    const next=open?"Active now":closed?"Market closed":`Opens in ${formatDuration(until)}`;
+    return `<div class="${cls}"><b>${s.name}</b><div class="state">${state}</div><div class="range">${s.range}</div><div class="next">${next}</div></div>`;
+  }).join("");
+  const upcoming=sessions.map(s=>({name:s.name,until:minutesUntil(nowMin,s.start)})).sort((a,b)=>a.until-b.until)[0];
+  document.getElementById("weekState").textContent=closed?"Weekend":"Live market";
+  updateFlow(active,closed);
+}
+function updateFlow(active,closed){
+  const sessionText=closed?"MARKET CLOSED":active.length?`${active.join(" / ")} SESSION OPEN`:"BETWEEN SESSIONS";
+  const news=state.headlines.length?state.headlines.slice(0,8):[{title:"NEWS FEED STANDBY",date:new Date()}];
+  const impacts=flowImpactItems(jstNow());
+  document.getElementById("flowInner").innerHTML=[
+    `<span class="flow-item flow-label">SESSION</span>`,
+    `<span class="flow-item flow-alert">MARKET HOURS</span>`,
+    `<span class="flow-item flow-session">${escapeHtml(sessionText)}</span>`,
+    `<span class="flow-item flow-label">HIGH IMPACT</span>`,
+    `<span class="flow-item flow-alert">DANGER EVENTS</span>`,
+    ...impacts,
+    `<span class="flow-item flow-label">NEWS UPDATE</span>`,
+    `<span class="flow-item flow-alert">NEXT ${newsCountdownText()}</span>`,
+    `<span class="flow-item flow-label">NEWS</span>`,
+    ...news.map(item=>`<span class="flow-item flow-news ${newsHot(item.date)?"hot":""}">${escapeHtml(newsAgeLabel(item.date))} | ${escapeHtml(item.title)}</span>`)
+  ].join("");
+}
+function candleOverrides(){
+  return {
+    "mainSeriesProperties.candleStyle.upColor":state.colors.up,
+    "mainSeriesProperties.candleStyle.downColor":state.colors.down,
+    "mainSeriesProperties.candleStyle.borderUpColor":state.colors.up,
+    "mainSeriesProperties.candleStyle.borderDownColor":state.colors.down,
+    "mainSeriesProperties.candleStyle.wickUpColor":state.colors.wick,
+    "mainSeriesProperties.candleStyle.wickDownColor":state.colors.wick
+  };
+}
+function applyChartColors(){
+  try{
+    if(tvWidget&&typeof tvWidget.applyOverrides==="function"){
+      tvWidget.applyOverrides(candleOverrides());
+    }
+  }catch(e){}
+}
+function loadChart(){
+  const tvBox=document.getElementById("tv_fallback_chart");
+  const fallback=document.getElementById("chartFallback");
+  const isLocalHost=["localhost","127.0.0.1"].includes(location.hostname)||location.protocol==="file:";
+  if(fallback)fallback.classList.remove("show");
+  if(isLocalHost){
+    if(tvBox)tvBox.style.display="none";
+    let localFrame=document.getElementById("local_chart");
+    if(!localFrame){
+      localFrame=document.createElement("iframe");
+      localFrame.id="local_chart";
+      localFrame.title="Local XAUUSD chart";
+      document.getElementById("chart").prepend(localFrame);
+    }
+    localFrame.style.display="block";
+    localFrame.src="http://127.0.0.1:8792/?embed=warroom&refresh="+Date.now();
+    return;
+  }
+  const oldLocalFrame=document.getElementById("local_chart");
+  if(oldLocalFrame)oldLocalFrame.remove();
+  if(tvBox){tvBox.style.display="block";renderTradingViewFallback();}
+}
+function renderTradingViewFallback(){
+  const holder=document.getElementById("tv_fallback_chart");
+  if(!holder)return;
+  holder.innerHTML="";
+  const render=()=>{
+    try{
+      new TradingView.widget({
+        autosize:true,
+        symbol:"OANDA:XAUUSD",
+        interval:"15",
+        timezone:"Asia/Tokyo",
+        theme:"dark",
+        style:"1",
+        locale:"ja",
+        container_id:"tv_fallback_chart",
+        hide_volume:true,
+        hide_side_toolbar:false,
+        hide_top_toolbar:false,
+        allow_symbol_change:true,
+        withdateranges:true,
+        disabled_features:["header_compare","header_screenshot","volume_force_overlay","create_volume_indicator_by_default"],
+        overrides:{
+          "paneProperties.background":"#000000",
+          "paneProperties.backgroundType":"solid",
+          "paneProperties.vertGridProperties.color":"#000000",
+          "paneProperties.horzGridProperties.color":"#000000",
+          "mainSeriesProperties.candleStyle.upColor":"#2f6bff",
+          "mainSeriesProperties.candleStyle.downColor":"#ff4d5e",
+          "mainSeriesProperties.candleStyle.borderUpColor":"#2f6bff",
+          "mainSeriesProperties.candleStyle.borderDownColor":"#ff4d5e",
+          "mainSeriesProperties.candleStyle.wickUpColor":"#4b5563",
+          "mainSeriesProperties.candleStyle.wickDownColor":"#4b5563",
+          "mainSeriesProperties.priceLineColor":"#f4c95d",
+          "scalesProperties.textColor":"#aeb7c5"
+        }
+      });
+    }catch(e){holder.innerHTML='<div class="empty">Chart loading failed. Press Reload.</div>';}
+  };
+  if(window.TradingView){render();return;}
+  const script=document.createElement("script");
+  script.src="https://s3.tradingview.com/tv.js";
+  script.onload=render;
+  script.onerror=()=>{holder.innerHTML='<div class="empty">TradingView script failed. Reload this page.</div>';};
+  document.body.appendChild(script);
+}
+function rssItemsFromXml(xmlText,url){
+  const xml=new DOMParser().parseFromString(xmlText,"text/xml");
+  const feedTitle=xml.querySelector("channel > title, feed > title")?.textContent||"NEWS";
+  return [...xml.querySelectorAll("item, entry")].map(item=>{
+    const title=item.querySelector("title")?.textContent||"Untitled";
+    const linkNode=item.querySelector("link");
+    const link=linkNode?.getAttribute("href")||linkNode?.textContent||url;
+    const dateText=item.querySelector("pubDate, published, updated")?.textContent||Date.now();
+    return {title,link,date:new Date(dateText),src:feedTitle.replace(/ - .*$/,"")};
+  });
+}
+async function fetchFeedViaRss2Json(url){
+  const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(cacheBustUrl(url))+"&_="+Date.now();
+  const r=await fetchWithTimeout(api,4000);
+  if(!r.ok)throw new Error("rss");
+  const j=await r.json();
+  return (j.items||[]).map(item=>({
+    title:item.title||"Untitled",
+    link:item.link||"#",
+    date:new Date(item.pubDate||Date.now()),
+    src:(j.feed&&j.feed.title?j.feed.title:"NEWS").replace(/ - .*$/,"")
+  }));
+}
+async function fetchFeedViaAllOrigins(url){
+  const api="https://api.allorigins.win/raw?url="+encodeURIComponent(cacheBustUrl(url))+"&_="+Date.now();
+  const r=await fetchWithTimeout(api,4000);
+  if(!r.ok)throw new Error("xml");
+  return rssItemsFromXml(await r.text(),url);
+}
+async function fetchFeed(url){
+  try{
+    const items=await fetchFeedViaAllOrigins(url);
+    if(items.length)return items;
+  }catch(e){}
+  return fetchFeedViaRss2Json(url);
+}
 function escapeHtml(text){return String(text).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function safeLink(url){return String(url).replace(/"/g,"%22")}
-async function fetchWithTimeout(url,ms){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),ms);try{return await fetch(url,{cache:"no-store",signal:controller.signal})}finally{clearTimeout(timer)}}
-function cacheBustUrl(url){const joiner=url.includes("?")?"&":"?";return `${url}${joiner}xau_live=${Date.now()}`}
-function newsTimeLabel(date){const d=date instanceof Date&&!Number.isNaN(date.getTime())?date:new Date();const day=d.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo",month:"2-digit",day:"2-digit"});const time=d.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"});return `${day} ${time} JST\n${newsAgeLabel(d)}`}
-async function loadNews(force=false){if(newsLoading&&!force)return;newsLoading=true;const box=document.getElementById("newsList");if(force||!state.headlines.length)box.innerHTML='<div class="empty">Loading news...</div>';state.nextNewsAt=Date.now()+NEWS_REFRESH_MS;updateNewsCountdown();try{const results=await Promise.allSettled(feeds[state.news].map(fetchFeed));const all=results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value).sort((a,b)=>b.date-a.date).slice(0,12);state.headlines=all.map(item=>({title:item.title,date:item.date})).filter(item=>item.title);box.innerHTML=all.length?all.map((item,index)=>{const time=newsTimeLabel(item.date);return `<a class="news-item ${index===0?"latest":""} ${newsHot(item.date)?"hot":""}" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${time}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`}).join(""):newsFallbackHtml()}catch(e){state.headlines=[{title:"NEWS FEED RETRYING",date:new Date()}];box.innerHTML=newsFallbackHtml()}finally{newsLoading=false}updateSessions(jstNow())}
-function newsFallbackHtml(){const q=state.news==="japan"?"USDJPY BOJ Japan yen":state.news==="geo"?"Middle East Ukraine sanctions gold market":"XAUUSD gold price Kitco";const url="https://news.google.com/search?q="+encodeURIComponent(q);return `<a class="news-item latest hot" href="${url}" target="_blank" rel="noopener"><div class="news-time">LIVE\nOPEN</div><div><div class="news-title">Open latest ${escapeHtml(state.news.toUpperCase())} market headlines</div><span class="news-src">Google News live search</span></div></a>`}
+async function fetchWithTimeout(url,ms){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),ms);
+  try{return await fetch(url,{cache:"no-store",signal:controller.signal})}
+  finally{clearTimeout(timer)}
+}
+function cacheBustUrl(url){
+  const joiner=url.includes("?")?"&":"?";
+  return `${url}${joiner}xau_live=${Date.now()}`;
+}
+function newsTimeLabel(date){
+  const d=date instanceof Date&&!Number.isNaN(date.getTime())?date:new Date();
+  const day=d.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo",month:"2-digit",day:"2-digit"});
+  const time=d.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"});
+  return `${day} ${time} JST\n${newsAgeLabel(d)}`;
+}
+async function loadNews(force=false){
+  if(newsLoading&&!force)return;
+  newsLoading=true;
+  const box=document.getElementById("newsList");
+  if(force||!state.headlines.length)box.innerHTML='<div class="empty">Loading news...</div>';
+  state.nextNewsAt=Date.now()+NEWS_REFRESH_MS;
+  updateNewsCountdown();
+  try{
+    const results=await Promise.allSettled(feeds[state.news].map(fetchFeed));
+    const all=results
+      .filter(r=>r.status==="fulfilled")
+      .flatMap(r=>r.value)
+      .sort((a,b)=>b.date-a.date)
+      .slice(0,12);
+    state.headlines=all.map(item=>({title:item.title,date:item.date})).filter(item=>item.title);
+    box.innerHTML=all.length?all.map((item,index)=>{
+      const time=newsTimeLabel(item.date);
+      return `<a class="news-item ${index===0?"latest":""} ${newsHot(item.date)?"hot":""}" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${time}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`;
+    }).join(""):newsFallbackHtml();
+  }catch(e){
+    state.headlines=[{title:"NEWS FEED RETRYING",date:new Date()}];
+    box.innerHTML=newsFallbackHtml();
+  }finally{
+    newsLoading=false;
+  }
+  updateSessions(jstNow());
+}
+function newsFallbackHtml(){
+  const q=state.news==="japan"?"USDJPY BOJ Japan yen":state.news==="geo"?"Middle East Ukraine sanctions gold market":"XAUUSD gold price Kitco";
+  const url="https://news.google.com/search?q="+encodeURIComponent(q);
+  return `<a class="news-item latest hot" href="${url}" target="_blank" rel="noopener"><div class="news-time">LIVE\nOPEN</div><div><div class="news-title">Open latest ${escapeHtml(state.news.toUpperCase())} market headlines</div><span class="news-src">Google News live search</span></div></a>`;
+}
+function saveChartColors(){
+  localStorage.setItem("xauChartColors",JSON.stringify(state.colors));
+}
+function setupChartColors(){
+  const inputs={up:document.getElementById("upColor"),down:document.getElementById("downColor"),wick:document.getElementById("wickColor")};
+  Object.entries(inputs).forEach(([key,input])=>{
+    input.value=state.colors[key];
+    input.addEventListener("input",()=>{
+      state.colors[key]=input.value;
+      saveChartColors();
+      applyChartColors();
+    });
+  });
+}
 document.getElementById("reloadChart").addEventListener("click",loadChart);
 document.getElementById("retryLocalChart")?.addEventListener("click",loadChart);
-document.getElementById("newsTabs").addEventListener("click",e=>{const btn=e.target.closest("button");if(!btn)return;document.querySelectorAll("#newsTabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");state.news=btn.dataset.news;loadNews(true)});
+document.getElementById("newsTabs").addEventListener("click",e=>{
+  const btn=e.target.closest("button");if(!btn)return;
+  document.querySelectorAll("#newsTabs button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");state.news=btn.dataset.news;loadNews(true);
+});
 document.getElementById("refreshNews").addEventListener("click",()=>loadNews(true));
-document.getElementById("alertBtn").addEventListener("click",()=>{state.alertOn=!state.alertOn;const btn=document.getElementById("alertBtn");btn.textContent=state.alertOn?"ALERT ON":"ALERT OFF";btn.style.borderColor=state.alertOn?"var(--green)":"#5b6473";btn.style.color=state.alertOn?"var(--green)":"#9aa4b2"});
+document.getElementById("alertBtn").addEventListener("click",()=>{
+  state.alertOn=!state.alertOn;
+  const btn=document.getElementById("alertBtn");
+  btn.textContent=state.alertOn?"ALERT ON":"ALERT OFF";
+  btn.style.borderColor=state.alertOn?"var(--green)":"#5b6473";
+  btn.style.color=state.alertOn?"var(--green)":"#9aa4b2";
+});
+try{setupChartColors()}catch(e){}
 try{updateClock()}catch(e){}
 try{loadNews(true)}catch(e){}
 try{loadChart()}catch(e){}
@@ -261,3 +679,4 @@ setInterval(()=>{try{loadNews(false)}catch(e){}},NEWS_REFRESH_MS);
 </script>
 </body>
 </html>
+
