@@ -80,6 +80,9 @@ button{cursor:pointer}
 .color-controls input{width:20px;height:18px;border:0;background:transparent;padding:0}
 #chart{height:calc(100% - 30px);background:#000}
 #local_chart{height:100%;width:100%;border:0;display:block;background:#000}
+.chart-fallback{position:absolute;inset:30px 0 0 0;display:none;align-items:center;justify-content:center;background:#000;color:#dfe6ee;text-align:center;padding:20px;font-size:13px;font-weight:900}
+.chart-fallback.show{display:flex}
+.chart-fallback a,.chart-fallback button{display:inline-flex;align-items:center;justify-content:center;margin:10px 4px 0;padding:7px 10px;border:1px solid #1f9fff;background:#07101d;color:#e9feff;text-decoration:none;border-radius:3px;font-weight:900}
 .session-grid{height:calc(100% - 30px);display:grid;grid-template-rows:repeat(3,1fr);gap:4px;padding:5px}
 .session{border:1px solid #141a27;background:#020307;border-radius:2px;padding:8px;display:grid;grid-template-columns:76px 70px 1fr;gap:8px;align-items:center;min-width:0}
 .session b{font-size:12px;color:#dfe6ee}
@@ -182,7 +185,17 @@ button{cursor:pointer}
             <a class="tool-btn" href="http://localhost:8792/" target="_blank" rel="noopener">Open</a>
           </div>
         </div>
-        <div id="chart"><iframe id="local_chart" title="Local XAUUSD chart" src="http://localhost:8792/?embed=warroom"></iframe></div>
+        <div id="chart">
+          <iframe id="local_chart" title="Local XAUUSD chart" src="http://127.0.0.1:8792/?embed=warroom"></iframe>
+          <div class="chart-fallback" id="chartFallback">
+            <div>
+              <div>LOCAL CHART IS NOT LOADED</div>
+              <div style="color:#9aa4b2;margin-top:6px">Start chart_only_dashboard.py, then press Reload.</div>
+              <button type="button" id="retryLocalChart">Reload</button>
+              <a href="http://127.0.0.1:8792/?embed=warroom" target="_blank" rel="noopener">Open local chart</a>
+            </div>
+          </div>
+        </div>
       </article>
 
       <article class="panel">
@@ -478,7 +491,10 @@ function applyChartColors(){
 function loadChart(){
   const frame=document.getElementById("local_chart");
   if(!frame)return;
-  frame.src="http://localhost:8792/?embed=warroom&refresh="+Date.now();
+  const fallback=document.getElementById("chartFallback");
+  if(fallback)fallback.classList.remove("show");
+  frame.src="http://127.0.0.1:8792/?embed=warroom&refresh="+Date.now();
+  setTimeout(()=>{try{if(!frame.contentWindow&&fallback)fallback.classList.add("show")}catch(e){}},3500);
 }
 function rssItemsFromXml(xmlText,url){
   const xml=new DOMParser().parseFromString(xmlText,"text/xml");
@@ -493,7 +509,7 @@ function rssItemsFromXml(xmlText,url){
 }
 async function fetchFeedViaRss2Json(url){
   const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(cacheBustUrl(url))+"&_="+Date.now();
-  const r=await fetchWithTimeout(api,9000);
+  const r=await fetchWithTimeout(api,4000);
   if(!r.ok)throw new Error("rss");
   const j=await r.json();
   return (j.items||[]).map(item=>({
@@ -505,7 +521,7 @@ async function fetchFeedViaRss2Json(url){
 }
 async function fetchFeedViaAllOrigins(url){
   const api="https://api.allorigins.win/raw?url="+encodeURIComponent(cacheBustUrl(url))+"&_="+Date.now();
-  const r=await fetchWithTimeout(api,9000);
+  const r=await fetchWithTimeout(api,4000);
   if(!r.ok)throw new Error("xml");
   return rssItemsFromXml(await r.text(),url);
 }
@@ -552,14 +568,19 @@ async function loadNews(force=false){
     box.innerHTML=all.length?all.map((item,index)=>{
       const time=newsTimeLabel(item.date);
       return `<a class="news-item ${index===0?"latest":""} ${newsHot(item.date)?"hot":""}" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${time}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`;
-    }).join(""):'<div class="empty">Gold news feed is empty. Press Refresh.</div>';
+    }).join(""):newsFallbackHtml();
   }catch(e){
     state.headlines=[{title:"NEWS FEED RETRYING",date:new Date()}];
-    box.innerHTML='<div class="empty">News feed is retrying.</div>';
+    box.innerHTML=newsFallbackHtml();
   }finally{
     newsLoading=false;
   }
   updateSessions(jstNow());
+}
+function newsFallbackHtml(){
+  const q=state.news==="japan"?"USDJPY BOJ Japan yen":state.news==="geo"?"Middle East Ukraine sanctions gold market":"XAUUSD gold price Kitco";
+  const url="https://news.google.com/search?q="+encodeURIComponent(q);
+  return `<a class="news-item latest hot" href="${url}" target="_blank" rel="noopener"><div class="news-time">LIVE\nOPEN</div><div><div class="news-title">Open latest ${escapeHtml(state.news.toUpperCase())} market headlines</div><span class="news-src">Google News live search</span></div></a>`;
 }
 function saveChartColors(){
   localStorage.setItem("xauChartColors",JSON.stringify(state.colors));
@@ -576,6 +597,7 @@ function setupChartColors(){
   });
 }
 document.getElementById("reloadChart").addEventListener("click",loadChart);
+document.getElementById("retryLocalChart")?.addEventListener("click",loadChart);
 document.getElementById("newsTabs").addEventListener("click",e=>{
   const btn=e.target.closest("button");if(!btn)return;
   document.querySelectorAll("#newsTabs button").forEach(b=>b.classList.remove("active"));
