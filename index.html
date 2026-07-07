@@ -283,13 +283,19 @@ const feeds={
   gold:[
     "https://www.fxstreet.com/rss/news",
     "https://www.fxstreet.com/rss/analysis",
-    "https://news.google.com/rss/search?q=XAUUSD%20OR%20gold%20price%20OR%20Kitco&hl=en-US&gl=US&ceid=US:en"
+    "https://news.google.com/rss/search?q=XAUUSD%20OR%20%22spot%20gold%22%20OR%20%22gold%20price%22%20OR%20bullion%20OR%20Kitco%20OR%20Comex&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=gold%20dollar%20Treasury%20yields%20Federal%20Reserve%20Reuters%20Bloomberg%20CNBC&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=%E9%87%91%E4%BE%A1%E6%A0%BC%20XAUUSD%20%E7%B1%B3%E9%87%91%E5%88%A9%20FRB&hl=ja&gl=JP&ceid=JP:ja"
   ],
   japan:[
-    "https://news.google.com/rss/search?q=USDJPY%20OR%20BOJ%20OR%20Japan%20yen%20OR%20%E6%97%A5%E9%8A%80&hl=ja&gl=JP&ceid=JP:ja"
+    "https://news.google.com/rss/search?q=USDJPY%20OR%20BOJ%20OR%20%22Japanese%20yen%22%20OR%20%22Japan%20CPI%22%20OR%20JGB&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=USDJPY%20BOJ%20yen%20Reuters%20Bloomberg%20CNBC%20Nikkei&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=%E3%83%89%E3%83%AB%E5%86%86%20%E6%97%A5%E9%8A%80%20%E5%86%86%E7%9B%B8%E5%A0%B4%20%E4%BB%8B%E5%85%A5%20%E9%95%B7%E6%9C%9F%E9%87%91%E5%88%A9&hl=ja&gl=JP&ceid=JP:ja"
   ],
   geo:[
-    "https://news.google.com/rss/search?q=Middle%20East%20OR%20Ukraine%20OR%20Red%20Sea%20OR%20sanctions%20market&hl=en-US&gl=US&ceid=US:en"
+    "https://news.google.com/rss/search?q=%22Middle%20East%22%20OR%20Ukraine%20OR%20%22Red%20Sea%22%20OR%20sanctions%20OR%20geopolitical%20risk%20markets&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=geopolitical%20risk%20gold%20oil%20shipping%20Reuters%20Bloomberg%20CNBC&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=%E4%B8%AD%E6%9D%B1%20%E3%82%A6%E3%82%AF%E3%83%A9%E3%82%A4%E3%83%8A%20%E5%88%B6%E8%A3%81%20%E5%9C%B0%E6%94%BF%E5%AD%A6%E3%83%AA%E3%82%B9%E3%82%AF%20%E5%B8%82%E5%A0%B4&hl=ja&gl=JP&ceid=JP:ja"
   ]
 };
 function pad(n){return String(n).padStart(2,"0")}
@@ -479,63 +485,35 @@ function applyChartColors(){
   try{
     if(tvWidget&&typeof tvWidget.applyOverrides==="function"){
       tvWidget.applyOverrides(candleOverrides());
-      applyGridOff();
     }
   }catch(e){}
 }
 function loadChart(){
   const box=document.getElementById("tv_chart");
   if(!box)return;
-  box.innerHTML='<div id="tv_chart_inner" style="height:100%;width:100%;background:#000"></div>';
-  const render=()=>{
-    try{
-      tvWidget=new TradingView.widget({
-        autosize:true,
-        symbol:"OANDA:XAUUSD",
-        interval:"15",
-        timezone:"Asia/Tokyo",
-        theme:"dark",
-        style:"1",
-        locale:"ja",
-        container_id:"tv_chart_inner",
-        hide_volume:true,
-        hide_top_toolbar:false,
-        hide_side_toolbar:false,
-        allow_symbol_change:false,
-        save_image:false,
-        studies:[],
-        disabled_features:[
-          "volume_force_overlay",
-          "create_volume_indicator_by_default",
-          "header_compare",
-          "header_screenshot"
-        ],
-        overrides:{
-          "paneProperties.background":"#000000",
-          "paneProperties.backgroundType":"solid",
-          "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
-          "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
-          "paneProperties.vertGridProperties.style":0,
-          "paneProperties.horzGridProperties.style":0,
-          ...candleOverrides(),
-          "mainSeriesProperties.priceLineColor":"#f4c95d",
-          "scalesProperties.textColor":"#aeb7c5"
-        }
-      });
-      const killGrid=()=>applyGridOff();
-      if(tvWidget&&typeof tvWidget.onChartReady==="function")tvWidget.onChartReady(killGrid);
-      setTimeout(killGrid,1200);
-      setTimeout(killGrid,3000);
-    }catch(e){
-      box.innerHTML='<div class="empty">Chart loading failed. Press Reload.</div>';
-    }
-  };
-  if(window.TradingView){render();return;}
+  box.innerHTML='<div class="tradingview-widget-container" style="height:100%;width:100%;background:#000"><div class="tradingview-widget-container__widget" style="height:100%;width:100%;background:#000"></div></div>';
   const script=document.createElement("script");
-  script.src="https://s3.tradingview.com/tv.js";
-  script.onload=render;
-  script.onerror=()=>{box.innerHTML='<div class="empty">TradingView failed. Reload this page.</div>';};
-  document.body.appendChild(script);
+  script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+  script.async=true;
+  script.text=JSON.stringify({
+    autosize:true,
+    symbol:"OANDA:XAUUSD",
+    interval:"15",
+    timezone:"Asia/Tokyo",
+    theme:"dark",
+    style:"1",
+    locale:"ja",
+    backgroundColor:"#000000",
+    gridColor:"#000000",
+    hide_volume:true,
+    hide_top_toolbar:false,
+    hide_side_toolbar:false,
+    allow_symbol_change:false,
+    save_image:false,
+    calendar:false,
+    support_host:"https://www.tradingview.com"
+  });
+  box.querySelector(".tradingview-widget-container").appendChild(script);
 }
 function rssItemsFromXml(xmlText,url){
   const xml=new DOMParser().parseFromString(xmlText,"text/xml");
@@ -592,12 +570,12 @@ function newsTimeLabel(date){
   return `${day} ${time} JST\n${newsAgeLabel(d)}`;
 }
 function gdeltQuery(){
-  if(state.news==="japan")return 'USDJPY OR BOJ OR "Japanese yen"';
-  if(state.news==="geo")return '"Middle East" OR Ukraine OR sanctions OR "Red Sea"';
-  return 'XAUUSD OR "gold price" OR "Federal Reserve" OR dollar';
+  if(state.news==="japan")return '(USDJPY OR "Japanese yen" OR BOJ OR JGB OR "Japan CPI" OR intervention) sourcelang:eng';
+  if(state.news==="geo")return '("Middle East" OR Ukraine OR "Red Sea" OR sanctions OR "geopolitical risk" OR shipping) sourcelang:eng';
+  return '(XAUUSD OR "spot gold" OR "gold price" OR bullion OR "Treasury yields" OR "Federal Reserve") sourcelang:eng';
 }
 async function fetchGdeltNews(){
-  const api="https://api.gdeltproject.org/api/v2/doc/doc?mode=ArtList&format=json&maxrecords=12&sort=DateDesc&query="+encodeURIComponent(gdeltQuery())+"&_="+Date.now();
+  const api="https://api.gdeltproject.org/api/v2/doc/doc?mode=ArtList&format=json&maxrecords=18&sort=DateDesc&query="+encodeURIComponent(gdeltQuery())+"&_="+Date.now();
   const r=await fetchWithTimeout(api,5000);
   if(!r.ok)throw new Error("gdelt");
   const j=await r.json();
@@ -608,6 +586,15 @@ async function fetchGdeltNews(){
     src:item.domain||"GDELT live"
   }));
 }
+function uniqueNews(items){
+  const seen=new Set();
+  return items.filter(item=>{
+    const key=String(item.title||"").toLowerCase().replace(/\s+/g," ").trim();
+    if(!key||seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
+}
 async function loadNews(force=false){
   if(newsLoading&&!force)return;
   newsLoading=true;
@@ -617,13 +604,13 @@ async function loadNews(force=false){
   updateNewsCountdown();
   try{
     const results=await Promise.allSettled(feeds[state.news].map(fetchFeed));
-    let all=results
+    let all=uniqueNews(results
       .filter(r=>r.status==="fulfilled")
       .flatMap(r=>r.value)
-      .sort((a,b)=>b.date-a.date)
+      .sort((a,b)=>b.date-a.date))
       .slice(0,12);
     if(!all.length){
-      try{all=(await fetchGdeltNews()).sort((a,b)=>b.date-a.date).slice(0,12)}catch(e){}
+      try{all=uniqueNews((await fetchGdeltNews()).sort((a,b)=>b.date-a.date)).slice(0,12)}catch(e){}
     }
     state.headlines=all.map(item=>({title:item.title,date:item.date})).filter(item=>item.title);
     if(all.length<10){
@@ -695,27 +682,13 @@ function fallbackNewsItems(){
   };
   return (packs[state.news]||packs.gold).map(([title,src],i)=>({
     title,
-    link:"https://news.google.com/search?q="+encodeURIComponent(gdeltQuery()),
+    link:"https://news.google.com/search?q="+encodeURIComponent(title+" "+src),
     date:new Date(now.getTime()-i*5*60000),
     src
   }));
 }
 function saveChartColors(){
   localStorage.setItem("xauChartColors",JSON.stringify(state.colors));
-}
-function applyGridOff(){
-  try{
-    if(tvWidget&&typeof tvWidget.applyOverrides==="function"){
-      tvWidget.applyOverrides({
-        "paneProperties.background":"#000000",
-        "paneProperties.backgroundType":"solid",
-        "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
-        "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
-        "paneProperties.vertGridProperties.style":0,
-        "paneProperties.horzGridProperties.style":0
-      });
-    }
-  }catch(e){}
 }
 function setupChartColors(){
   const inputs={up:document.getElementById("upColor"),down:document.getElementById("downColor"),wick:document.getElementById("wickColor")};
