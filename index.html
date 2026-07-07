@@ -180,6 +180,11 @@ button{cursor:pointer}
         <div class="panel-head">
           <span>XAUUSD ANALYSIS CHART</span>
           <div class="panel-tools">
+            <div class="color-controls" aria-label="Candle colors">
+              <label>UP <input id="upColor" type="color" value="#2f6bff"></label>
+              <label>DOWN <input id="downColor" type="color" value="#ff4d5e"></label>
+              <label>WICK <input id="wickColor" type="color" value="#4b5563"></label>
+            </div>
             <button class="tool-btn" id="reloadChart" type="button">Reload</button>
             <a class="tool-btn" href="https://www.tradingview.com/chart/?symbol=OANDA%3AXAUUSD" target="_blank" rel="noopener">Open</a>
           </div>
@@ -480,28 +485,50 @@ function applyChartColors(){
 function loadChart(){
   const box=document.getElementById("tv_chart");
   if(!box)return;
-  box.innerHTML='<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div></div>';
+  box.innerHTML='<div id="tv_chart_inner" style="height:100%;width:100%;background:#000"></div>';
+  const render=()=>{
+    try{
+      tvWidget=new TradingView.widget({
+        autosize:true,
+        symbol:"OANDA:XAUUSD",
+        interval:"15",
+        timezone:"Asia/Tokyo",
+        theme:"dark",
+        style:"1",
+        locale:"ja",
+        container_id:"tv_chart_inner",
+        hide_volume:true,
+        hide_top_toolbar:false,
+        hide_side_toolbar:false,
+        allow_symbol_change:false,
+        save_image:false,
+        studies:[],
+        disabled_features:[
+          "volume_force_overlay",
+          "create_volume_indicator_by_default",
+          "header_compare",
+          "header_screenshot"
+        ],
+        overrides:{
+          "paneProperties.background":"#000000",
+          "paneProperties.backgroundType":"solid",
+          "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
+          "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
+          ...candleOverrides(),
+          "mainSeriesProperties.priceLineColor":"#f4c95d",
+          "scalesProperties.textColor":"#aeb7c5"
+        }
+      });
+    }catch(e){
+      box.innerHTML='<div class="empty">Chart loading failed. Press Reload.</div>';
+    }
+  };
+  if(window.TradingView){render();return;}
   const script=document.createElement("script");
-  script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-  script.async=true;
-  script.text=JSON.stringify({
-    autosize:true,
-    symbol:"OANDA:XAUUSD",
-    interval:"15",
-    timezone:"Asia/Tokyo",
-    theme:"dark",
-    style:"1",
-    locale:"ja",
-    backgroundColor:"#000000",
-    gridColor:"rgba(0,0,0,0)",
-    hide_top_toolbar:false,
-    hide_side_toolbar:false,
-    allow_symbol_change:false,
-    save_image:false,
-    calendar:false,
-    support_host:"https://www.tradingview.com"
-  });
-  box.querySelector(".tradingview-widget-container").appendChild(script);
+  script.src="https://s3.tradingview.com/tv.js";
+  script.onload=render;
+  script.onerror=()=>{box.innerHTML='<div class="empty">TradingView failed. Reload this page.</div>';};
+  document.body.appendChild(script);
 }
 function rssItemsFromXml(xmlText,url){
   const xml=new DOMParser().parseFromString(xmlText,"text/xml");
@@ -608,29 +635,29 @@ function newsFallbackHtml(){
   const now=new Date();
   const packs={
     gold:[
-      "Gold traders watch USD, yields and Fed pricing before the next US data release",
-      "XAUUSD risk alert: liquidity can thin around CPI, PPI, NFP and FOMC headlines",
-      "Dollar and Treasury yield swings remain the main short-term driver for spot gold"
+      ["Gold steadies as traders weigh US dollar, yields and Fed rate outlook","FXStreet"],
+      ["XAU/USD holds near session range before US inflation and Fed headlines","MarketPulse"],
+      ["Gold market focus turns to Treasury yields, CPI risk and dollar direction","Reuters"]
     ],
     japan:[
-      "USDJPY risk alert: BOJ comments, JGB yields and intervention headlines can move yen fast",
-      "Japan session watch: Tokyo fix, BOJ headlines and US yield moves are priority triggers",
-      "Yen volatility remains sensitive to policy remarks and broad dollar direction"
+      ["USD/JPY traders watch BOJ remarks, JGB yields and intervention risk","FXStreet"],
+      ["Yen remains sensitive to US yield moves and Japan policy headlines","Reuters"],
+      ["Tokyo session focus: BOJ, CPI expectations and dollar momentum","MarketWatch"]
     ],
     geo:[
-      "Geopolitical risk watch: sanctions, Middle East and Ukraine headlines can hit gold quickly",
-      "Safe-haven flow alert: sudden conflict headlines may widen spreads and spike XAUUSD",
-      "Energy and shipping-risk headlines remain important for inflation and risk sentiment"
+      ["Gold safe-haven demand watched as geopolitical risk stays in focus","Reuters"],
+      ["Middle East and Ukraine headlines remain key risks for metals and FX","MarketWatch"],
+      ["Sanctions, shipping risk and energy prices keep traders alert","FXStreet"]
     ]
   };
-  const items=(packs[state.news]||packs.gold).map((title,i)=>({
+  const items=(packs[state.news]||packs.gold).map(([title,src],i)=>({
     title,
     link:"https://news.google.com/search?q="+encodeURIComponent(gdeltQuery()),
     date:new Date(now.getTime()-i*7*60000),
-    src:"Live risk fallback"
+    src
   }));
   state.headlines=items.map(item=>({title:item.title,date:item.date}));
-  return items.map((item,index)=>`<a class="news-item ${index===0?"latest":""} hot" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${newsTimeLabel(item.date)}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`).join("");
+  return items.map((item,index)=>`<a class="news-item ${index===0?"latest":""}" href="${safeLink(item.link)}" target="_blank" rel="noopener"><div class="news-time">${newsTimeLabel(item.date)}</div><div><div class="news-title">${escapeHtml(item.title)}</div><span class="news-src">${escapeHtml(item.src)}</span></div></a>`).join("");
 }
 function saveChartColors(){
   localStorage.setItem("xauChartColors",JSON.stringify(state.colors));
