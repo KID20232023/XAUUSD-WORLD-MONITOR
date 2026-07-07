@@ -79,7 +79,7 @@ button{cursor:pointer}
 .color-controls label{display:flex;align-items:center;gap:3px;color:var(--muted);font-size:10px;font-weight:900;white-space:nowrap}
 .color-controls input{width:20px;height:18px;border:0;background:transparent;padding:0}
 #chart{height:calc(100% - 30px);background:#000}
-#tv_chart{height:100%;width:100%;position:relative}
+#local_chart{height:100%;width:100%;border:0;display:block;background:#000}
 .session-grid{height:calc(100% - 30px);display:grid;grid-template-rows:repeat(3,1fr);gap:4px;padding:5px}
 .session{border:1px solid #141a27;background:#020307;border-radius:2px;padding:8px;display:grid;grid-template-columns:76px 70px 1fr;gap:8px;align-items:center;min-width:0}
 .session b{font-size:12px;color:#dfe6ee}
@@ -178,22 +178,11 @@ button{cursor:pointer}
         <div class="panel-head">
           <span>XAUUSD ANALYSIS CHART</span>
           <div class="panel-tools">
-            <div class="seg" id="tfBtns" aria-label="Timeframe selector">
-              <button data-tf="5">5m</button>
-              <button class="active" data-tf="15">15m</button>
-              <button data-tf="60">1h</button>
-              <button data-tf="D">1D</button>
-            </div>
-            <div class="color-controls" aria-label="Candle color controls">
-              <label>UP <input id="upColor" type="color" value="#2f6bff"></label>
-              <label>DOWN <input id="downColor" type="color" value="#ff4d5e"></label>
-              <label>WICK <input id="wickColor" type="color" value="#4b5563"></label>
-            </div>
             <button class="tool-btn" id="reloadChart" type="button">Reload</button>
-            <a class="tool-btn" href="https://jp.tradingview.com/chart/CLgfBGtt/?source=promo_go_pro_button" target="_blank" rel="noopener">Open</a>
+            <a class="tool-btn" href="http://localhost:8792/" target="_blank" rel="noopener">Open</a>
           </div>
         </div>
-        <div id="chart"><div id="tv_chart"></div></div>
+        <div id="chart"><iframe id="local_chart" title="Local XAUUSD chart" src="http://localhost:8792/?embed=warroom"></iframe></div>
       </article>
 
       <article class="panel">
@@ -253,6 +242,7 @@ let savedChartColors={};
 try{savedChartColors=JSON.parse(localStorage.getItem("xauChartColors")||"{}")}catch(e){}
 const state={symbol:"OANDA:XAUUSD",symbolTitle:"XAUUSD",timeframe:"15",news:"gold",colors:{...defaultChartColors,...savedChartColors},headlines:[],nextNewsAt:Date.now()+NEWS_REFRESH_MS,alertOn:true};
 let tvWidget=null;
+let newsLoading=false;
 const sessions=[
   {id:"asia",name:"Asia",start:7*60,end:15*60,range:"07:00 - 15:00 JST"},
   {id:"london",name:"London",start:15*60,end:21*60,range:"15:00 - 21:00 JST"},
@@ -486,46 +476,9 @@ function applyChartColors(){
   }catch(e){}
 }
 function loadChart(){
-  const holder=document.getElementById("tv_chart");
-  holder.innerHTML="";
-  const render=()=>{
-    try{
-      tvWidget=new TradingView.widget({
-        autosize:true,
-        symbol:state.symbol,
-        interval:state.timeframe,
-        timezone:"Asia/Tokyo",
-        theme:"dark",
-        style:"1",
-        locale:"ja",
-        container_id:"tv_chart",
-        hide_volume:true,
-        hide_side_toolbar:false,
-        hide_top_toolbar:false,
-        allow_symbol_change:true,
-        withdateranges:true,
-        disabled_features:["header_compare","header_screenshot","volume_force_overlay","create_volume_indicator_by_default"],
-        overrides:{
-          "paneProperties.background":"#000000",
-          "paneProperties.backgroundType":"solid",
-          "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
-          "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
-          ...candleOverrides(),
-          "mainSeriesProperties.priceLineColor":"#f4c95d",
-          "scalesProperties.textColor":"#aeb7c5"
-        }
-      });
-    }catch(e){
-      holder.innerHTML='<div class="empty">Chart loading failed. Press Reload.</div>';
-    }
-  };
-  if(window.TradingView){render()}else{
-    const script=document.createElement("script");
-    script.src="https://s3.tradingview.com/tv.js";
-    script.onload=render;
-    script.onerror=()=>{holder.innerHTML='<div class="empty">TradingView script failed. Reload this page.</div>'};
-    document.body.appendChild(script);
-  }
+  const frame=document.getElementById("local_chart");
+  if(!frame)return;
+  frame.src="http://localhost:8792/?embed=warroom&refresh="+Date.now();
 }
 function rssItemsFromXml(xmlText,url){
   const xml=new DOMParser().parseFromString(xmlText,"text/xml");
@@ -539,8 +492,8 @@ function rssItemsFromXml(xmlText,url){
   });
 }
 async function fetchFeedViaRss2Json(url){
-  const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url);
-  const r=await fetch(api);
+  const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(cacheBustUrl(url))+"&_="+Date.now();
+  const r=await fetchWithTimeout(api,9000);
   if(!r.ok)throw new Error("rss");
   const j=await r.json();
   return (j.items||[]).map(item=>({
@@ -551,29 +504,41 @@ async function fetchFeedViaRss2Json(url){
   }));
 }
 async function fetchFeedViaAllOrigins(url){
-  const api="https://api.allorigins.win/raw?url="+encodeURIComponent(url);
-  const r=await fetch(api);
+  const api="https://api.allorigins.win/raw?url="+encodeURIComponent(cacheBustUrl(url))+"&_="+Date.now();
+  const r=await fetchWithTimeout(api,9000);
   if(!r.ok)throw new Error("xml");
   return rssItemsFromXml(await r.text(),url);
 }
 async function fetchFeed(url){
   try{
-    const items=await fetchFeedViaRss2Json(url);
+    const items=await fetchFeedViaAllOrigins(url);
     if(items.length)return items;
   }catch(e){}
-  return fetchFeedViaAllOrigins(url);
+  return fetchFeedViaRss2Json(url);
 }
 function escapeHtml(text){return String(text).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function safeLink(url){return String(url).replace(/"/g,"%22")}
+async function fetchWithTimeout(url,ms){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),ms);
+  try{return await fetch(url,{cache:"no-store",signal:controller.signal})}
+  finally{clearTimeout(timer)}
+}
+function cacheBustUrl(url){
+  const joiner=url.includes("?")?"&":"?";
+  return `${url}${joiner}xau_live=${Date.now()}`;
+}
 function newsTimeLabel(date){
   const d=date instanceof Date&&!Number.isNaN(date.getTime())?date:new Date();
   const day=d.toLocaleDateString("ja-JP",{timeZone:"Asia/Tokyo",month:"2-digit",day:"2-digit"});
   const time=d.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit"});
   return `${day} ${time} JST\n${newsAgeLabel(d)}`;
 }
-async function loadNews(){
+async function loadNews(force=false){
+  if(newsLoading&&!force)return;
+  newsLoading=true;
   const box=document.getElementById("newsList");
-  box.innerHTML='<div class="empty">Loading news...</div>';
+  if(force||!state.headlines.length)box.innerHTML='<div class="empty">Loading news...</div>';
   state.nextNewsAt=Date.now()+NEWS_REFRESH_MS;
   updateNewsCountdown();
   try{
@@ -591,6 +556,8 @@ async function loadNews(){
   }catch(e){
     state.headlines=[{title:"NEWS FEED RETRYING",date:new Date()}];
     box.innerHTML='<div class="empty">News feed is retrying.</div>';
+  }finally{
+    newsLoading=false;
   }
   updateSessions(jstNow());
 }
@@ -609,19 +576,12 @@ function setupChartColors(){
   });
 }
 document.getElementById("reloadChart").addEventListener("click",loadChart);
-document.getElementById("tfBtns").addEventListener("click",e=>{
-  const btn=e.target.closest("button");if(!btn)return;
-  document.querySelectorAll("#tfBtns button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  state.timeframe=btn.dataset.tf;
-  loadChart();
-});
 document.getElementById("newsTabs").addEventListener("click",e=>{
   const btn=e.target.closest("button");if(!btn)return;
   document.querySelectorAll("#newsTabs button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");state.news=btn.dataset.news;loadNews();
+  btn.classList.add("active");state.news=btn.dataset.news;loadNews(true);
 });
-document.getElementById("refreshNews").addEventListener("click",loadNews);
+document.getElementById("refreshNews").addEventListener("click",()=>loadNews(true));
 document.getElementById("alertBtn").addEventListener("click",()=>{
   state.alertOn=!state.alertOn;
   const btn=document.getElementById("alertBtn");
@@ -631,10 +591,10 @@ document.getElementById("alertBtn").addEventListener("click",()=>{
 });
 try{setupChartColors()}catch(e){}
 try{updateClock()}catch(e){}
-try{loadNews()}catch(e){}
+try{loadNews(true)}catch(e){}
 try{loadChart()}catch(e){}
 setInterval(()=>{try{updateClock()}catch(e){}},1000);
-setInterval(()=>{try{loadNews()}catch(e){}},NEWS_REFRESH_MS);
+setInterval(()=>{try{loadNews(false)}catch(e){}},NEWS_REFRESH_MS);
 </script>
 </body>
 </html>
