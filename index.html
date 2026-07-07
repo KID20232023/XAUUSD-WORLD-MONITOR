@@ -79,7 +79,9 @@ button{cursor:pointer}
 .color-controls label{display:flex;align-items:center;gap:3px;color:var(--muted);font-size:10px;font-weight:900;white-space:nowrap}
 .color-controls input{width:20px;height:18px;border:0;background:transparent;padding:0}
 #chart{height:calc(100% - 30px);background:#000}
-#local_chart{height:100%;width:100%;border:0;display:block;background:#000}
+#tv_chart{height:100%;width:100%;background:#000}
+#tv_chart .tradingview-widget-container,#tv_chart .tradingview-widget-container__widget{height:100%!important;width:100%!important;background:#000}
+#tv_chart iframe{height:100%!important;width:100%!important;background:#000}
 .session-grid{height:calc(100% - 30px);display:grid;grid-template-rows:repeat(3,1fr);gap:4px;padding:5px}
 .session{border:1px solid #141a27;background:#020307;border-radius:2px;padding:8px;display:grid;grid-template-columns:76px 70px 1fr;gap:8px;align-items:center;min-width:0}
 .session b{font-size:12px;color:#dfe6ee}
@@ -179,10 +181,10 @@ button{cursor:pointer}
           <span>XAUUSD ANALYSIS CHART</span>
           <div class="panel-tools">
             <button class="tool-btn" id="reloadChart" type="button">Reload</button>
-            <a class="tool-btn" href="http://localhost:8792/" target="_blank" rel="noopener">Open</a>
+            <a class="tool-btn" href="https://www.tradingview.com/chart/?symbol=OANDA%3AXAUUSD" target="_blank" rel="noopener">Open</a>
           </div>
         </div>
-        <div id="chart"><iframe id="local_chart" title="Trading Desk Chart" src="http://localhost:8792/?embed=warroom"></iframe></div>
+        <div id="chart"><div id="tv_chart"></div></div>
       </article>
 
       <article class="panel">
@@ -476,9 +478,32 @@ function applyChartColors(){
   }catch(e){}
 }
 function loadChart(){
-  const frame=document.getElementById("local_chart");
-  if(frame)frame.src="http://localhost:8792/?embed=warroom&refresh="+Date.now();
-}function rssItemsFromXml(xmlText,url){
+  const box=document.getElementById("tv_chart");
+  if(!box)return;
+  box.innerHTML='<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div></div>';
+  const script=document.createElement("script");
+  script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+  script.async=true;
+  script.text=JSON.stringify({
+    autosize:true,
+    symbol:"OANDA:XAUUSD",
+    interval:"15",
+    timezone:"Asia/Tokyo",
+    theme:"dark",
+    style:"1",
+    locale:"ja",
+    backgroundColor:"#000000",
+    gridColor:"rgba(0,0,0,0)",
+    hide_top_toolbar:false,
+    hide_side_toolbar:false,
+    allow_symbol_change:false,
+    save_image:false,
+    calendar:false,
+    support_host:"https://www.tradingview.com"
+  });
+  box.querySelector(".tradingview-widget-container").appendChild(script);
+}
+function rssItemsFromXml(xmlText,url){
   const xml=new DOMParser().parseFromString(xmlText,"text/xml");
   const feedTitle=xml.querySelector("channel > title, feed > title")?.textContent||"NEWS";
   return [...xml.querySelectorAll("item, entry")].map(item=>{
