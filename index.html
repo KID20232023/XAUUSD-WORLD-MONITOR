@@ -79,20 +79,7 @@ button{cursor:pointer}
 .color-controls label{display:flex;align-items:center;gap:3px;color:var(--muted);font-size:10px;font-weight:900;white-space:nowrap}
 .color-controls input{width:20px;height:18px;border:0;background:transparent;padding:0}
 #chart{height:calc(100% - 30px);background:#000}
-#local_chart,#tv_fallback_chart{height:100%;width:100%;border:0;display:block;background:#000}
-.war-chart{height:100%;display:grid;grid-template-rows:34px minmax(0,1fr);background:#030407;color:#dfe6ee;user-select:none}
-.war-chart-top{display:flex;align-items:center;gap:6px;border-bottom:1px solid #141a27;background:#020307;padding:4px 6px;overflow:hidden}
-.war-chip{border:1px solid #1b2433;background:#070b13;color:#dfe6ee;border-radius:2px;padding:4px 7px;font-size:10px;font-weight:950;white-space:nowrap}
-.war-chip.hot{color:#07100b;background:#1fd17b;border-color:#1fd17b}
-.war-chip.sell{color:#ff5871}.war-chip.buy{color:#4db3ff}.war-chip.gold{color:#f4c95d}
-.war-chart-stage{position:relative;min-height:0;overflow:hidden;background:#000}
-.war-chart-stage canvas{width:100%;height:100%;display:block;background:#000;cursor:grab}
-.war-chart-stage canvas:active{cursor:grabbing}
-.war-watermark{position:absolute;left:12px;top:10px;color:rgba(255,255,255,.22);font-size:11px;font-weight:950;letter-spacing:.7px;pointer-events:none}
-.war-hint{position:absolute;right:10px;bottom:8px;color:#6f7787;font-size:10px;font-weight:900;pointer-events:none}
-.chart-fallback{position:absolute;inset:30px 0 0 0;display:none;align-items:center;justify-content:center;background:#000;color:#dfe6ee;text-align:center;padding:20px;font-size:13px;font-weight:900}
-.chart-fallback.show{display:flex}
-.chart-fallback a,.chart-fallback button{display:inline-flex;align-items:center;justify-content:center;margin:10px 4px 0;padding:7px 10px;border:1px solid #1f9fff;background:#07101d;color:#e9feff;text-decoration:none;border-radius:3px;font-weight:900}
+#local_chart{height:100%;width:100%;border:0;display:block;background:#000}
 .session-grid{height:calc(100% - 30px);display:grid;grid-template-rows:repeat(3,1fr);gap:4px;padding:5px}
 .session{border:1px solid #141a27;background:#020307;border-radius:2px;padding:8px;display:grid;grid-template-columns:76px 70px 1fr;gap:8px;align-items:center;min-width:0}
 .session b{font-size:12px;color:#dfe6ee}
@@ -195,17 +182,7 @@ button{cursor:pointer}
             <a class="tool-btn" href="http://localhost:8792/" target="_blank" rel="noopener">Open</a>
           </div>
         </div>
-        <div id="chart">
-          <div id="tv_fallback_chart"></div>
-          <div class="chart-fallback" id="chartFallback">
-            <div>
-              <div>LOCAL CHART IS NOT LOADED</div>
-              <div style="color:#9aa4b2;margin-top:6px">Start chart_only_dashboard.py, then press Reload.</div>
-              <button type="button" id="retryLocalChart">Reload</button>
-              <a href="http://127.0.0.1:8792/?embed=warroom" target="_blank" rel="noopener">Open local chart</a>
-            </div>
-          </div>
-        </div>
+        <div id="chart"><iframe id="local_chart" title="Trading Desk Chart" src="http://localhost:8792/?embed=warroom"></iframe></div>
       </article>
 
       <article class="panel">
@@ -499,133 +476,9 @@ function applyChartColors(){
   }catch(e){}
 }
 function loadChart(){
-  const tvBox=document.getElementById("tv_fallback_chart");
-  const fallback=document.getElementById("chartFallback");
-  const isLocalHost=["localhost","127.0.0.1"].includes(location.hostname)||location.protocol==="file:";
-  if(fallback)fallback.classList.remove("show");
-  if(isLocalHost){
-    if(tvBox)tvBox.style.display="none";
-    let localFrame=document.getElementById("local_chart");
-    if(!localFrame){
-      localFrame=document.createElement("iframe");
-      localFrame.id="local_chart";
-      localFrame.title="Local XAUUSD chart";
-      document.getElementById("chart").prepend(localFrame);
-    }
-    localFrame.style.display="block";
-    localFrame.src="http://127.0.0.1:8792/?embed=warroom&refresh="+Date.now();
-    return;
-  }
-  const oldLocalFrame=document.getElementById("local_chart");
-  if(oldLocalFrame)oldLocalFrame.remove();
-  if(tvBox){tvBox.style.display="block";renderTradingViewFallback();}
-}
-function renderTradingViewFallback(){
-  const holder=document.getElementById("tv_fallback_chart");
-  if(!holder)return;
-  holder.innerHTML=`<div class="war-chart">
-    <div class="war-chart-top">
-      <span class="war-chip hot">XAUUSD</span>
-      <span class="war-chip">15m</span>
-      <span class="war-chip buy" id="warBid">BID --</span>
-      <span class="war-chip sell" id="warAsk">ASK --</span>
-      <span class="war-chip gold" id="warSpread">SPR --</span>
-      <button class="tool-btn" type="button" id="warPanLeft">Left</button>
-      <button class="tool-btn" type="button" id="warPanRight">Right</button>
-      <button class="tool-btn" type="button" id="warZoomIn">Zoom+</button>
-      <button class="tool-btn" type="button" id="warZoomOut">Zoom-</button>
-      <button class="tool-btn" type="button" id="warReset">Reset</button>
-    </div>
-    <div class="war-chart-stage">
-      <canvas id="warChartCanvas"></canvas>
-      <div class="war-watermark">PUBLIC WAR ROOM CHART / GRID OFF</div>
-      <div class="war-hint">drag: pan / wheel: zoom / double click: reset</div>
-    </div>
-  </div>`;
-  setupWarRoomChart();
-}
-function setupWarRoomChart(){
-  const canvas=document.getElementById("warChartCanvas");
-  if(!canvas)return;
-  const ctx=canvas.getContext("2d");
-  const bidEl=document.getElementById("warBid");
-  const askEl=document.getElementById("warAsk");
-  const sprEl=document.getElementById("warSpread");
-  const data=makeWarCandles(260);
-  let offset=Math.max(0,data.length-120),bars=120,scaleY=1,drag=null;
-  function resize(){
-    const r=canvas.getBoundingClientRect();
-    canvas.width=Math.max(400,Math.floor(r.width*devicePixelRatio));
-    canvas.height=Math.max(260,Math.floor(r.height*devicePixelRatio));
-    draw();
-  }
-  function visible(){
-    offset=Math.max(0,Math.min(offset,data.length-bars));
-    return data.slice(offset,offset+bars);
-  }
-  function draw(){
-    const w=canvas.width,h=canvas.height,dpr=devicePixelRatio;
-    ctx.clearRect(0,0,w,h);
-    ctx.fillStyle="#000";ctx.fillRect(0,0,w,h);
-    const padL=42*dpr,padR=74*dpr,padT=18*dpr,padB=28*dpr;
-    const plotW=w-padL-padR,plotH=h-padT-padB;
-    const v=visible();
-    const highs=v.map(c=>c.h),lows=v.map(c=>c.l);
-    let hi=Math.max(...highs),lo=Math.min(...lows),mid=(hi+lo)/2,range=(hi-lo)*scaleY||1;
-    hi=mid+range/2;lo=mid-range/2;
-    const xStep=plotW/Math.max(1,bars),bodyW=Math.max(2*dpr,xStep*.58);
-    const y=p=>padT+(hi-p)/(hi-lo)*plotH;
-    ctx.strokeStyle="rgba(255,255,255,.18)";
-    ctx.lineWidth=1*dpr;
-    ctx.beginPath();ctx.moveTo(padL,padT);ctx.lineTo(padL,padT+plotH);ctx.lineTo(padL+plotW,padT+plotH);ctx.stroke();
-    const buyTop=y(mid-range*.15),buyBot=y(mid-range*.28),sellTop=y(mid+range*.28),sellBot=y(mid+range*.15);
-    ctx.fillStyle="rgba(77,179,255,.11)";ctx.fillRect(padL,buyTop,plotW,buyBot-buyTop);
-    ctx.fillStyle="rgba(255,88,113,.12)";ctx.fillRect(padL,sellTop,plotW,sellBot-sellTop);
-    ctx.fillStyle="#4db3ff";ctx.font=`${11*dpr}px Segoe UI`;ctx.fillText("Buy ZONE",padL+8*dpr,buyTop+15*dpr);
-    ctx.fillStyle="#ff5871";ctx.fillText("Sell ZONE",padL+8*dpr,sellTop+15*dpr);
-    v.forEach((c,i)=>{
-      const x=padL+i*xStep+xStep/2,up=c.c>=c.o,col=up?"#2f6bff":"#ff4d5e";
-      ctx.strokeStyle="#687386";ctx.lineWidth=1*dpr;ctx.beginPath();ctx.moveTo(x,y(c.h));ctx.lineTo(x,y(c.l));ctx.stroke();
-      ctx.fillStyle=col;ctx.fillRect(x-bodyW/2,Math.min(y(c.o),y(c.c)),bodyW,Math.max(1*dpr,Math.abs(y(c.o)-y(c.c))));
-    });
-    const last=v[v.length-1],price=last.c,py=y(price);
-    ctx.strokeStyle="#f4c95d";ctx.setLineDash([4*dpr,3*dpr]);ctx.beginPath();ctx.moveTo(padL,py);ctx.lineTo(padL+plotW,py);ctx.stroke();ctx.setLineDash([]);
-    ctx.fillStyle="#f4c95d";ctx.fillRect(padL+plotW+4*dpr,py-10*dpr,62*dpr,20*dpr);
-    ctx.fillStyle="#05070d";ctx.font=`${10*dpr}px Consolas`;ctx.fillText(price.toFixed(3),padL+plotW+8*dpr,py+4*dpr);
-    ctx.strokeStyle="#1fd17b";ctx.lineWidth=2*dpr;ctx.beginPath();ctx.moveTo(padL+plotW*.12,y(v[Math.floor(v.length*.25)].l));ctx.lineTo(padL+plotW*.54,y(v[Math.floor(v.length*.58)].l));ctx.stroke();
-    ctx.strokeStyle="#ff5871";ctx.beginPath();ctx.moveTo(padL+plotW*.46,y(v[Math.floor(v.length*.48)].h));ctx.lineTo(padL+plotW*.9,y(v[Math.floor(v.length*.85)].h));ctx.stroke();
-    ctx.fillStyle="#9aa4b2";ctx.font=`${10*dpr}px Consolas`;
-    for(let i=0;i<5;i++){const p=lo+(hi-lo)*i/4;ctx.fillText(p.toFixed(3),padL+plotW+8*dpr,y(p)+3*dpr);}
-    const bid=price-.06,ask=price+.08;
-    if(bidEl)bidEl.textContent="BID "+bid.toFixed(3);
-    if(askEl)askEl.textContent="ASK "+ask.toFixed(3);
-    if(sprEl)sprEl.textContent="SPR "+((ask-bid)*100).toFixed(1);
-  }
-  function pan(n){offset+=n;draw();}
-  function zoom(mult){bars=Math.max(35,Math.min(220,Math.round(bars*mult)));offset=Math.min(offset,data.length-bars);draw();}
-  canvas.addEventListener("pointerdown",e=>{drag={x:e.clientX,offset};canvas.setPointerCapture(e.pointerId);});
-  canvas.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x;offset=drag.offset-Math.round(dx/8);draw();});
-  canvas.addEventListener("pointerup",()=>{drag=null;});
-  canvas.addEventListener("wheel",e=>{e.preventDefault();if(e.ctrlKey){scaleY=Math.max(.35,Math.min(2.8,scaleY+(e.deltaY>0?.12:-.12)));draw();}else zoom(e.deltaY>0?1.12:.88);},{passive:false});
-  canvas.addEventListener("dblclick",()=>{offset=Math.max(0,data.length-120);bars=120;scaleY=1;draw();});
-  document.getElementById("warPanLeft")?.addEventListener("click",()=>pan(-12));
-  document.getElementById("warPanRight")?.addEventListener("click",()=>pan(12));
-  document.getElementById("warZoomIn")?.addEventListener("click",()=>zoom(.84));
-  document.getElementById("warZoomOut")?.addEventListener("click",()=>zoom(1.16));
-  document.getElementById("warReset")?.addEventListener("click",()=>{offset=Math.max(0,data.length-120);bars=120;scaleY=1;draw();});
-  new ResizeObserver(resize).observe(canvas.parentElement);
-  resize();
-}
-function makeWarCandles(count){
-  const now=jstNow(),out=[];let p=4150;
-  for(let i=0;i<count;i++){
-    const drift=Math.sin(i/9)*3.2+Math.cos(i/17)*2.4+(i>170?-1.8:.6);
-    const o=p,c=o+drift+(Math.sin(i*2.11)*4.8),h=Math.max(o,c)+4+Math.abs(Math.sin(i))*5,l=Math.min(o,c)-4-Math.abs(Math.cos(i))*5;
-    out.push({t:new Date(now.getTime()-(count-i)*15*60000),o,h,l,c});p=c;
-  }
-  return out;
-}
-function rssItemsFromXml(xmlText,url){
+  const frame=document.getElementById("local_chart");
+  if(frame)frame.src="http://localhost:8792/?embed=warroom&refresh="+Date.now();
+}function rssItemsFromXml(xmlText,url){
   const xml=new DOMParser().parseFromString(xmlText,"text/xml");
   const feedTitle=xml.querySelector("channel > title, feed > title")?.textContent||"NEWS";
   return [...xml.querySelectorAll("item, entry")].map(item=>{
